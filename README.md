@@ -19,6 +19,13 @@ This package is organized so the top-level extracted directory is `tt-ab-analysi
 - Maintenance guidance lives in:
   - `references/glossary_guide.md`
   - `references/knowledge_guide.md`
+- Compatibility note:
+  - `references/knowledge/*` is a temporary compatibility layer from the older layout
+  - new reads and new writes should default to:
+    - `references/glossary/*`
+    - `references/kb/*`
+    - `references/glossary_guide.md`
+    - `references/knowledge_guide.md`
 - Dynamic incremental ingestion should go to:
   - `userdata/tt-ab-analysis-framework/glossary/`
   - `userdata/tt-ab-analysis-framework/kb/`
