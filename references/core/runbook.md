@@ -41,16 +41,16 @@ Recommended collaboration loop:
 3. explicit `to confirm` list,
 4. user review,
 5. partial ingest of stable entries,
-6. keep unfinished parts in `knowledge/drafts/`,
+6. keep unfinished parts in `drafts/` or the current run's draft area,
 7. continue in the next round when needed.
 
 Practical split:
 
 - put stable, reusable items into:
-  - `knowledge/metric_glossary.md`
-  - `knowledge/business_kb.md`
+  - `references/glossary/`
+  - `references/kb/`
 - keep still-evolving or partially confirmed content in:
-  - `knowledge/drafts/`
+  - `drafts/` or the current run's draft area
 
 ## When the Source Looks Wrong
 

@@ -73,10 +73,13 @@ You do not need to remember the internal helper skills. In most cases, calling `
 
 - Report Generation → `references/core/*`
 - Temporary Guidance Report → `references/core/*`
-- Knowledge Ingestion → `references/knowledge/*` + `references/core/runbook.md`
+- Knowledge Ingestion → `references/glossary/index.md` + `references/kb/index.md` + `references/glossary_guide.md` + `references/knowledge_guide.md` + `references/core/runbook.md`
 
 ## Storage Hint
 
-- Stable shared knowledge → `references/knowledge/*`
+- Stable shared glossary → `references/glossary/*`
+- Stable shared business knowledge → `references/kb/*`
+- Glossary maintenance rules → `references/glossary_guide.md`
+- Business knowledge maintenance rules → `references/knowledge_guide.md`
 - Runtime local incremental layer → `userdata/tt-ab-analysis-framework/*`
 - Memory can help recall, but it is not the main glossary store
