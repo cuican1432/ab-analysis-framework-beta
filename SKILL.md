@@ -67,6 +67,7 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - extract reusable mappings such as `<metric name -> meaning / polarity / note>`
 - write stable confirmed content into the right knowledge layer
 - keep unfinished or uncertain parts as `draft` / `to confirm`
+- place user-provided local knowledge files under `userdata/tt-ab-analysis-framework/` by default instead of rewriting packaged references
 - return a short confirmation by default instead of a long write-up
 
 ## Internal reference map
@@ -83,3 +84,16 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - Business knowledge maintenance rules → `references/knowledge_guide.md`
 - Runtime local incremental layer → `userdata/tt-ab-analysis-framework/*`
 - Memory can help recall, but it is not the main glossary store
+
+## Userdata Boundary
+
+When the user wants to inject local knowledge, local data files, or run-specific reusable notes, use `userdata/tt-ab-analysis-framework/` as the default writable layer.
+
+- Local glossary additions / partial confirmations → `userdata/tt-ab-analysis-framework/glossary/`
+- Local business notes / project context → `userdata/tt-ab-analysis-framework/kb/`
+- User-specific interpretation rules / temporary reusable overrides → `userdata/tt-ab-analysis-framework/custom_rules/`
+
+Do not casually rewrite packaged shared references during normal ingestion:
+
+- packaged shared knowledge stays in `references/glossary/*` and `references/kb/*`
+- local evolving knowledge should go to `userdata/tt-ab-analysis-framework/*`

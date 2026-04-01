@@ -9,7 +9,6 @@ A Mira-installable TT A/B experiment analysis skill package.
 - `references/kb/*`: formal business knowledge content
 - `references/glossary_guide.md`: glossary organization and update rules
 - `references/knowledge_guide.md`: business knowledge organization and update rules
-- `README_for_Mira.md`: existing Mira-facing note from current install
 
 ## Packaging note
 This package is organized so the top-level extracted directory is `tt-ab-analysis-framework/`, which is the expected skill folder root.
@@ -20,8 +19,9 @@ This package is organized so the top-level extracted directory is `tt-ab-analysi
 - Maintenance guidance lives in:
   - `references/glossary_guide.md`
   - `references/knowledge_guide.md`
-- Dynamic incremental ingestion should go to runtime-local persistent storage such as:
-  - `userdata/tt-ab-analysis-framework/ingested_glossary.jsonl`
-  - `userdata/tt-ab-analysis-framework/local_overrides.json`
-  - `userdata/tt-ab-analysis-framework/ingestion_log.jsonl`
+- Dynamic incremental ingestion should go to:
+  - `userdata/tt-ab-analysis-framework/glossary/`
+  - `userdata/tt-ab-analysis-framework/kb/`
+  - `userdata/tt-ab-analysis-framework/custom_rules/`
+- Use `userdata/tt-ab-analysis-framework/` for local files provided by the user.
 - Do not casually rewrite packaged references during normal runtime ingestion.
