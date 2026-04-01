@@ -1,44 +1,113 @@
 # tt-ab-analysis-framework
 
-Source repository for the Mira TT A/B experiment analysis skill package.
+Source repository for the Mira version of `tt-ab-analysis-framework`.
 
-## Included
-- `SKILL.md`: main trigger and routing instructions
-- `references/core/*`: workflow, rules, memory, runbook, tooling
-- `references/knowledge/glossary/*`: formal glossary content
-- `references/knowledge/kb/*`: formal business knowledge content
-- `references/knowledge/glossary_guide.md`: glossary organization and update rules
-- `references/knowledge/knowledge_guide.md`: business knowledge organization and update rules
+This repo is used for:
+- maintaining the source skill package
+- maintaining shared references and local-write conventions
+- building the installable Mira zip
 
-## Packaging note
-This package is organized so the top-level extracted directory is `tt-ab-analysis-framework/`, which is the expected skill folder root.
+---
 
-## Knowledge strategy
-- Stable shared glossary lives in `references/knowledge/glossary/*`
-- Stable shared business knowledge lives in `references/knowledge/kb/*`
-- Maintenance guidance lives in:
+## Quick Start | 快速安装
+
+### Mira install path | Mira 安装方式
+
+Recommended install package:
+
+- `release/tt-ab-analysis-framework-for-mira.zip`
+
+How to install in Mira:
+
+1. Open `Mira`
+2. Open `Skills`
+3. Open `Manage Skills`
+4. Upload `release/tt-ab-analysis-framework-for-mira.zip`
+
+After upload, Mira should recognize:
+- `SKILL.md` at the zip root
+- extracted skill root: `tt-ab-analysis-framework/`
+
+### Package requirement | 打包要求
+
+This package is built so that:
+- `SKILL.md` is at the zip root
+- the extracted top-level skill directory is `tt-ab-analysis-framework/`
+
+---
+
+## What Is In This Repo | 这个仓库里有什么
+
+- `SKILL.md`
+  - main trigger and routing instructions
+- `references/core/*`
+  - workflow, rules, memory, runbook, tooling
+- `references/knowledge/glossary/*`
+  - formal glossary content
+- `references/knowledge/kb/*`
+  - formal business knowledge content
+- `references/knowledge/glossary_guide.md`
+  - glossary organization and update rules
+- `references/knowledge/knowledge_guide.md`
+  - knowledge-layer organization and boundary rules
+- `userdata/tt-ab-analysis-framework/*`
+  - local writable layer for user-provided knowledge, local overrides, and incremental files
+- `release/tt-ab-analysis-framework-for-mira.zip`
+  - installable Mira package built from this source repo
+
+---
+
+## Knowledge Layout | 知识层结构
+
+Stable shared knowledge lives in:
+
+```text
+references/
+├── core/
+└── knowledge/
+    ├── glossary/
+    ├── kb/
+    ├── glossary_guide.md
+    └── knowledge_guide.md
+```
+
+Local incremental knowledge lives in:
+
+```text
+userdata/tt-ab-analysis-framework/
+├── glossary/
+├── kb/
+└── custom_rules/
+```
+
+### Shared vs Local
+
+- `references/core/*`
+  - hard framework rules and analysis behavior
+- `references/knowledge/*`
+  - stable shared glossary and business knowledge
+- `userdata/tt-ab-analysis-framework/*`
+  - local incremental knowledge
+  - local overrides
+  - user-specific additions
+
+### Compatibility note | 兼容说明
+
+- the older flat layout under `references/glossary/*`, `references/kb/*`, and top-level guide files has been retired
+- old layout is deprecated and should not receive new writes
+- all new reads and new writes should go to:
+  - `references/knowledge/glossary/*`
+  - `references/knowledge/kb/*`
   - `references/knowledge/glossary_guide.md`
   - `references/knowledge/knowledge_guide.md`
-- Compatibility note:
-  - the older flat layout under `references/glossary/*`, `references/kb/*`, and top-level guide files has been retired
-  - old layout is deprecated and should not receive new writes
-  - all new reads and new writes should default to:
-    - `references/knowledge/glossary/*`
-    - `references/knowledge/kb/*`
-    - `references/knowledge/glossary_guide.md`
-    - `references/knowledge/knowledge_guide.md`
-- Dynamic incremental ingestion should go to:
-  - `userdata/tt-ab-analysis-framework/glossary/`
-  - `userdata/tt-ab-analysis-framework/kb/`
-  - `userdata/tt-ab-analysis-framework/custom_rules/`
-- Use `userdata/tt-ab-analysis-framework/` for user-provided local knowledge, incremental files, and local overrides.
-- Do not casually rewrite packaged references during normal runtime ingestion.
 
-## Local Userdata Protocol
+---
+
+## Local Userdata Protocol | 本地用户数据写入协议
 
 Use a skill-scoped userdata root instead of generic folders such as `userdata/glossary/` or `userdata/kb/`.
 
-Recommended local writable root:
+Recommended writable root:
 
 ```text
 userdata/tt-ab-analysis-framework/
@@ -49,7 +118,7 @@ userdata/tt-ab-analysis-framework/
 
 Why keep the `tt-ab-analysis-framework` namespace:
 - avoids collisions with other skills or packages
-- keeps Mira/Codex local data easier to audit
+- keeps local data easier to audit
 - makes migration and backup less ambiguous
 
 ### What each folder is for
@@ -105,7 +174,7 @@ Local custom rule:
 - duration: temporary
 ```
 
-### Read precedence
+### Read precedence | 读取优先级
 
 Use this default order:
 
@@ -121,7 +190,7 @@ Notes:
 - local custom rules can refine interpretation, but should not override hard framework rules
 - local glossary / KB files supplement the shared layer; they should not casually rewrite shared references
 
-### Quick Rule
+### Quick Rule | 速记版
 
 - 写定义、别名、polarity，放 `userdata/tt-ab-analysis-framework/glossary/`
 - 写背景、场景、业务说明，放 `userdata/tt-ab-analysis-framework/kb/`
