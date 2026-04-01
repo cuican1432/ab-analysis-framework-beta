@@ -120,3 +120,9 @@ Notes:
 - `references/core/*` is still the hard-rule layer
 - local custom rules can refine interpretation, but should not override hard framework rules
 - local glossary / KB files supplement the shared layer; they should not casually rewrite shared references
+
+### Quick Rule
+
+- 写定义、别名、polarity，放 `userdata/tt-ab-analysis-framework/glossary/`
+- 写背景、场景、业务说明，放 `userdata/tt-ab-analysis-framework/kb/`
+- 写本地特例和临时复用规则，放 `userdata/tt-ab-analysis-framework/custom_rules/`

@@ -1,7 +1,7 @@
-# Knowledge Guide | 知识层组织与边界说明
+# Knowledge Guide | 知识层组织、边界与写入说明
 
-This document explains how the knowledge layer should be organized, separated, and updated.
-这个文件用于说明整个 knowledge layer 应该怎么组织、怎么分边界、以及怎么更新。
+This document explains how the knowledge layer should be organized, separated, written, and updated.
+这个文件用于说明整个 knowledge layer 应该怎么组织、怎么分边界、怎么写入、以及怎么更新。
 
 ## Purpose
 
