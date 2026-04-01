@@ -5,16 +5,13 @@ description: TT A/B 实验分析框架主入口技能。用于实验报告生成
 
 # TT AB Analysis Framework
 
-这是一个面向 `Mira` 的 TT A/B 实验分析主入口技能。  
-Use this as the single front door for TT-style A/B experiment work in Mira-like environments.
-
 It mainly supports three task types:
 
 1. Experiment Report Generation
 2. Report Generation with Temporary Guidance
 3. Knowledge Ingestion
 
-Most users do not need to remember internal helper skills. In most cases, calling `tt-ab-analysis-framework` directly is enough.
+You do not need to remember the internal helper skills. In most cases, calling `tt-ab-analysis-framework` directly is enough.
 
 ## 1) Experiment Report Generation
 
@@ -71,27 +68,12 @@ Most users do not need to remember internal helper skills. In most cases, callin
 - write stable confirmed content into the right knowledge layer
 - keep unfinished or uncertain parts as `draft` / `to confirm`
 - return a short confirmation by default instead of a long write-up
-- treat ingestion as one continuous loop:
-  - source knowledge
-  - structured draft
-  - `to confirm`
-  - partial formal ingest
-  - unfinished parts remain in draft state
 
 ## Internal reference map
 
 - Report Generation → `references/core/*`
 - Temporary Guidance Report → `references/core/*`
 - Knowledge Ingestion → `references/knowledge/*` + `references/core/runbook.md`
-
-## Simulated review mindset
-
-When this package is being reviewed or improved outside a live install, treat it as a sandboxed dry run:
-
-- inspect whether the entry prompts are clear
-- inspect whether routing between the three scenarios is stable
-- inspect whether references are sufficient for report generation and ingestion
-- improve the package so a first-time Mira user can understand it without extra explanation
 
 ## Storage Hint
 
