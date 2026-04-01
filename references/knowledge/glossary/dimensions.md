@@ -73,3 +73,48 @@ value_examples:
 
 warnings: Motivation-based slices are useful for interpretation, but should be treated carefully when the source does not fully explain the classification logic.
 ```
+
+## Entry
+
+```yaml
+dimension_name: Lookback Window
+dimension_aliases:
+  - time window
+  - 回看窗口
+  - 统计窗口
+
+meaning_zh: 指标统计所采用的回看时间窗口，例如 1天、3天、7天、14天、30天。
+meaning_en: The lookback window used by a metric, such as 1 day, 3 days, 7 days, 14 days, or 30 days.
+
+applies_to_groups:
+  - Core-Active Days
+  - Active Hours (HLT)
+
+applies_to_metrics:
+  - Active Days
+  - Last 1-day Active Days
+  - Last 3-day Active Days
+  - Last 7-day Active Days
+  - Last 14-day Active Days
+  - Last 30-day Active Days
+  - HLT - active hours
+  - HLT1-last 1-day active hours/U
+  - HLT3-last 3-day active hours/U
+  - HLT7-last 7-day active hours/U
+  - HLT14-last 14-day active hours/U
+  - HLT30-last 30-day active hours/U
+  - valid_session_cnt/User
+  - VS3-last 3-day ValidSession/U
+  - VS7-last 7-day ValidSession/U
+  - VS14-last 14-day ValidSession/U
+  - VS30-last 30-day ValidSession/U
+
+value_examples:
+  - 1d
+  - 3d
+  - 7d
+  - 14d
+  - 30d
+
+warnings: This is a caliber qualifier, not a business mechanism by itself.
+```

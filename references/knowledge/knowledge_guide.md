@@ -15,15 +15,15 @@ Use the `kb/` folder for reusable business knowledge that helps:
 
 ## Recommended Structure
 
-- `references/kb/index.md`
+- `references/knowledge/kb/index.md`
   - KB 总索引，先看这里再按需读取
-- `references/kb/`
+- `references/knowledge/kb/`
   - stable reusable business knowledge
-- `references/glossary/`
+- `references/knowledge/glossary/`
   - formal glossary content
-- `references/glossary_guide.md`
+- `references/knowledge/glossary_guide.md`
   - glossary organization and update rules
-- `references/knowledge_guide.md`
+- `references/knowledge/knowledge_guide.md`
   - business-knowledge organization and update rules
 
 ## What Belongs in KB
@@ -47,4 +47,4 @@ Use the `kb/` folder for reusable business knowledge that helps:
 - prefer concise reusable notes
 - avoid mixing glossary schema with business explanation
 - move only confirmed content into `kb/`
-- keep `kb/index.md` as the entry page instead of mixing navigation into every topic file
+- keep `references/knowledge/kb/index.md` as the entry page instead of mixing navigation into every topic file

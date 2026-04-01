@@ -47,8 +47,8 @@ Recommended collaboration loop:
 Practical split:
 
 - put stable, reusable items into:
-  - `references/glossary/`
-  - `references/kb/`
+  - `references/knowledge/glossary/`
+  - `references/knowledge/kb/`
 - keep still-evolving or partially confirmed content in:
   - `drafts/` or the current run's draft area
 

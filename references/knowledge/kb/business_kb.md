@@ -4,7 +4,7 @@
 This file is one formal topic page inside `kb/`.
 
 如果你要先看 KB 总览，请先看：
-- `references/kb/index.md`
+- `references/knowledge/kb/index.md`
 
 ## What Belongs Here
 

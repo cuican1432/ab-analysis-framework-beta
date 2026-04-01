@@ -16,13 +16,13 @@ This is the entry page for the formal business knowledge layer.
 - 未确认的 draft 内容
 
 如果你要看“KB 怎么维护、什么该进 KB、什么不该进 KB”，请看：
-- `references/knowledge_guide.md`
+- `references/knowledge/knowledge_guide.md`
 
 ---
 
 ## Current KB Topics | 当前知识主题
 
-- `references/kb/business_kb.md`
+- `references/knowledge/kb/business_kb.md`
   - 通用业务术语与稳定知识条目
 
 ---

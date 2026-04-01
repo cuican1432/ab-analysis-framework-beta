@@ -1,4 +1,4 @@
-# Metric Glossary Guide | 指标字典说明
+# Glossary Guide | 指标字典维护说明
 
 这个文件用于解释：
 - glossary 怎么组织
@@ -6,13 +6,13 @@
 - draft 和 formal 怎么流转
 - 用户怎么更新 glossary
 
-正式入库内容请看：
-- `knowledge/metric_glossary.md`
-- `knowledge/glossary/`
+正式 glossary 内容请看：
+- `references/knowledge/glossary/index.md`
+- `references/knowledge/glossary/`
 
 ## Design Principle | 设计原则
 
-glossary 不建议揉成一张大表。推荐分成三层：
+glossary 不建议揉成一张大表。推荐按正式内容拆成多层文件：
 
 1. `Metric Group Index | 指标组索引`
 2. `Metric Index | 指标索引`
@@ -119,18 +119,19 @@ warnings:
 ### Formal
 
 放在：
-- `knowledge/glossary/`
+- `references/knowledge/glossary/`
 
 特点：
 - 已确认
 - 可复用
 - 不带待确认项
 - 不带 case-specific 结论
+- `references/knowledge/glossary/index.md` 只做索引，不承载维护说明
 
 ### Draft
 
 放在：
-- `knowledge/drafts/`
+- `drafts/` 或当前运行环境的待确认草稿区
 
 特点：
 - 已整理但未定稿

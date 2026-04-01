@@ -14,26 +14,26 @@ This is the entry page for the formal glossary.
 - 某一次实验的结论
 
 如果你要看“怎么维护 glossary、字段是什么意思、draft 和 formal 怎么流转”，请看：
-- `references/glossary_guide.md`
+- `references/knowledge/glossary_guide.md`
 
 ---
 
 ## What Is In The Glossary | 正式字典里有什么
 
 ### 1. Metric Group Index | 指标组索引
-- `references/glossary/metric_groups.md`
+- `references/knowledge/glossary/metric_groups.md`
 - 用来说明一个指标组是什么、通常在哪些实验里出现、常见维度有哪些。
 
 ### 2. Dimension Index | 维度索引
-- `references/glossary/dimensions.md`
+- `references/knowledge/glossary/dimensions.md`
 - 用来说明维度名称、含义、常见取值和解读边界。
 
 ### 3. Dimension Value Index | 维度值索引
-- `references/glossary/dimension_values.md`
+- `references/knowledge/glossary/dimension_values.md`
 - 用来说明维度值本身的业务含义；如果当前没有内容，可以先留空。
 
 ### 4. Metrics By Group | 按指标组拆分的正式指标
-- `references/glossary/metrics_by_group/*.md`
+- `references/knowledge/glossary/metrics_by_group/*.md`
 - 每个文件对应一个正式指标组，存该组下已经确认、可复用的指标条目。
 
 ---
@@ -48,9 +48,13 @@ This is the entry page for the formal glossary.
 
 ## Current Files | 当前已拆出的文件
 
-- `references/glossary/metric_groups.md`
-- `references/glossary/dimensions.md`
-- `references/glossary/dimension_values.md`
-- `references/glossary/metrics_by_group/dm_core.md`
-- `references/glossary/metrics_by_group/dm_group_chat.md`
-- `references/glossary/metrics_by_group/dm_voice_message.md`
+- `references/knowledge/glossary/metric_groups.md`
+- `references/knowledge/glossary/dimensions.md`
+- `references/knowledge/glossary/dimension_values.md`
+- `references/knowledge/glossary/metrics_by_group/dm_core.md`
+- `references/knowledge/glossary/metrics_by_group/dm_group_chat.md`
+- `references/knowledge/glossary/metrics_by_group/dm_voice_message.md`
+- `references/knowledge/glossary/metrics_by_group/core_active_days.md`
+- `references/knowledge/glossary/metrics_by_group/active_hours_hlt.md`
+- `references/knowledge/glossary/metrics_by_group/core_publish_days.md`
+- `references/knowledge/glossary/metrics_by_group/core_key_metrics.md`

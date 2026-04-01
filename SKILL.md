@@ -74,14 +74,14 @@ You do not need to remember the internal helper skills. In most cases, calling `
 
 - Report Generation → `references/core/*`
 - Temporary Guidance Report → `references/core/*`
-- Knowledge Ingestion → `references/glossary/index.md` + `references/kb/index.md` + `references/glossary_guide.md` + `references/knowledge_guide.md` + `references/core/runbook.md`
+- Knowledge Ingestion → `references/knowledge/glossary/index.md` + `references/knowledge/kb/index.md` + `references/knowledge/glossary_guide.md` + `references/knowledge/knowledge_guide.md` + `references/core/runbook.md`
 
 ## Storage Hint
 
-- Stable shared glossary → `references/glossary/*`
-- Stable shared business knowledge → `references/kb/*`
-- Glossary maintenance rules → `references/glossary_guide.md`
-- Business knowledge maintenance rules → `references/knowledge_guide.md`
+- Stable shared glossary → `references/knowledge/glossary/*`
+- Stable shared business knowledge → `references/knowledge/kb/*`
+- Glossary maintenance rules → `references/knowledge/glossary_guide.md`
+- Business knowledge maintenance rules → `references/knowledge/knowledge_guide.md`
 - Runtime local incremental layer → `userdata/tt-ab-analysis-framework/*`
 - Memory can help recall, but it is not the main glossary store
 
@@ -95,5 +95,5 @@ When the user wants to inject local knowledge, local data files, or run-specific
 
 Do not casually rewrite packaged shared references during normal ingestion:
 
-- packaged shared knowledge stays in `references/glossary/*` and `references/kb/*`
+- packaged shared knowledge stays in `references/knowledge/glossary/*` and `references/knowledge/kb/*`
 - local evolving knowledge should go to `userdata/tt-ab-analysis-framework/*`
