@@ -97,3 +97,14 @@ Do not casually rewrite packaged shared references during normal ingestion:
 
 - packaged shared knowledge stays in `references/knowledge/glossary/*` and `references/knowledge/kb/*`
 - local evolving knowledge should go to `userdata/tt-ab-analysis-framework/*`
+
+Default read order:
+
+1. `references/core/*`
+2. current-run explicit temporary guidance
+3. `references/knowledge/*`
+4. `userdata/tt-ab-analysis-framework/custom_rules/*`
+5. `userdata/tt-ab-analysis-framework/glossary/*`
+6. `userdata/tt-ab-analysis-framework/kb/*`
+
+Do not use generic roots such as `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace to avoid collisions with other packages.

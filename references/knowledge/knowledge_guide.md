@@ -1,7 +1,7 @@
-# Knowledge Guide | 业务知识维护说明
+# Knowledge Guide | 知识层组织与边界说明
 
-This document explains how the business knowledge layer should be organized and updated.
-这个文件用于说明业务知识层应该怎么组织、怎么更新。
+This document explains how the knowledge layer should be organized, separated, and updated.
+这个文件用于说明整个 knowledge layer 应该怎么组织、怎么分边界、以及怎么更新。
 
 ## Purpose
 
@@ -12,6 +12,11 @@ Use the `kb/` folder for reusable business knowledge that helps:
 - terminology clarification
 - product-mechanism explanation
 - domain-specific recurring patterns
+
+Use this guide not only for `kb/`, but also for:
+- glossary vs kb boundary
+- references vs userdata boundary
+- shared vs local knowledge split
 
 ## Recommended Structure
 
@@ -24,7 +29,12 @@ Use the `kb/` folder for reusable business knowledge that helps:
 - `references/knowledge/glossary_guide.md`
   - glossary organization and update rules
 - `references/knowledge/knowledge_guide.md`
-  - business-knowledge organization and update rules
+  - knowledge-layer organization and boundary rules
+
+- `userdata/tt-ab-analysis-framework/`
+  - local incremental knowledge
+  - local overrides
+  - user-specific additions
 
 ## What Belongs in KB
 
@@ -41,6 +51,26 @@ Use the `kb/` folder for reusable business knowledge that helps:
 - temporary run-only instructions
 - unresolved draft content
 
+## References vs Userdata
+
+Use `references/knowledge/*` when the content is:
+- shared
+- stable
+- reusable across cases
+- ready to be treated as formal knowledge
+
+Use `userdata/tt-ab-analysis-framework/*` when the content is:
+- local
+- incremental
+- draft
+- user-specific
+- not yet ready to become shared formal knowledge
+
+Recommended local split:
+- `userdata/tt-ab-analysis-framework/glossary/`
+- `userdata/tt-ab-analysis-framework/kb/`
+- `userdata/tt-ab-analysis-framework/custom_rules/`
+
 ## Update Style
 
 - keep entries topic-based
@@ -48,3 +78,4 @@ Use the `kb/` folder for reusable business knowledge that helps:
 - avoid mixing glossary schema with business explanation
 - move only confirmed content into `kb/`
 - keep `references/knowledge/kb/index.md` as the entry page instead of mixing navigation into every topic file
+- do not use generic roots like `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace
