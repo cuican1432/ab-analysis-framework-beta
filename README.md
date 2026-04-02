@@ -17,6 +17,9 @@ Recommended install package:
 
 - `release/tt-ab-analysis-framework-for-mira.zip`
 
+Do not install the GitHub auto-generated source zip from the repository page.
+Use the packaged release zip above instead.
+
 How to install in Mira:
 
 1. Open `Mira`
