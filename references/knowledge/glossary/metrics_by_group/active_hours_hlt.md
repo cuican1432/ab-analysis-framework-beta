@@ -20,6 +20,9 @@ denominator:
 
 polarity: higher_is_better
 priority_hint: P2
+common_dimensions:
+  - time_window
+  - user_id
 
 neighbor_metric_diff: Do not confuse the total active-hours metric with the per-user active-hours variants below.
 interpretation_notes: Core time-spent signal; often used as a supporting guardrail for engagement depth.
@@ -183,6 +186,29 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Same family as VS7/VS14/VS30; shorter window and more sensitive to recent usage changes.
+interpretation_notes: Short-cycle session-depth supplement.
+```
+
+## Metric: VS1-last 1-day ValidSession/U
+
+```yaml
+group_name: Active Hours (HLT)
+metric_name: VS1-last 1-day ValidSession/U
+metric_aliases:
+  - VS1
+
+meaning_zh: 最近1天有效 session 数/用户。
+meaning_en: Average valid sessions per user in the last 1 day lookback window.
+
+caliber_meaning: shortest-window session depth per user
+calculation_method: Average valid sessions per user within the last 1 day window.
+numerator: valid sessions within last 1 day
+denominator: users
+
+polarity: higher_is_better
+priority_hint: P2
+
+neighbor_metric_diff: Same family as VS3/VS7/VS14/VS30; shortest lookback window.
 interpretation_notes: Short-cycle session-depth supplement.
 ```
 

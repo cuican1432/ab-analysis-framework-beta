@@ -20,6 +20,9 @@ denominator: users
 
 polarity: higher_is_better
 priority_hint: P0
+common_dimensions:
+  - time_window
+  - user_id
 
 neighbor_metric_diff: Core base metric; do not confuse it with windowed variants such as Last 7-day Active Days.
 interpretation_notes: Core activity coverage signal. Higher values usually indicate broader user activity coverage.

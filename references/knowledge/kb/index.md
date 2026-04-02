@@ -23,7 +23,13 @@ This is the entry page for the formal business knowledge layer.
 ## Current KB Topics | 当前知识主题
 
 - `references/knowledge/kb/business_kb.md`
-  - 通用业务术语与稳定知识条目
+  - TikTok - Social - Core Interaction
+- `references/knowledge/kb/dm.md`
+  - TikTok - Social - DM
+- `references/knowledge/kb/story.md`
+  - TikTok - Social - Story
+- `references/knowledge/kb/ur.md`
+  - TikTok - Social - UR
 
 ---
 
@@ -32,3 +38,4 @@ This is the entry page for the formal business knowledge layer.
 - 先看这个索引，再按需进入具体 topic
 - 不需要默认把整个 KB 通读一遍
 - 只拿当前 case 真正需要的知识页
+- Core Interaction holds shared cross-domain concepts; DM / Story / UR hold direction-specific concepts and their group mappings

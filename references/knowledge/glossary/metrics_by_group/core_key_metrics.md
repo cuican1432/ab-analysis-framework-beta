@@ -20,6 +20,9 @@ denominator: users
 
 polarity: higher_is_better
 priority_hint: P1
+common_dimensions:
+  - time_window
+  - user_id
 
 neighbor_metric_diff: Do not confuse with PlayTime/U; this one is a broader stay-depth signal.
 interpretation_notes: Frequently used as a core consumption guardrail.
@@ -90,7 +93,7 @@ denominator: users
 polarity: higher_is_better
 priority_hint: P2
 
-neighbor_metric_diff: Do not confuse with PlayTime/U; this one measures count rather than time spent.
+neighbor_metric_diff: Do not confuse with PlayTime/U; this measures count rather than time spent.
 interpretation_notes: Consumption breadth supplement.
 ```
 

@@ -26,13 +26,13 @@ How to install in Mira:
 
 After upload, Mira should recognize:
 - `SKILL.md` at the zip root
-- extracted skill root: `tt-ab-analysis-framework/`
+- `references/`, `userdata/`, and other package files at the same zip root level
 
 ### Package requirement | 打包要求
 
 This package is built so that:
 - `SKILL.md` is at the zip root
-- the extracted top-level skill directory is `tt-ab-analysis-framework/`
+- `README.md`, `references/`, and `userdata/` are packaged at the same zip root level
 
 ---
 

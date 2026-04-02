@@ -20,6 +20,9 @@ denominator: users
 
 polarity: higher_is_better
 priority_hint: P2
+common_dimensions:
+  - time_window
+  - user_id
 
 neighbor_metric_diff: Core base metric; do not confuse it with the shorter or longer lookback-window variants.
 interpretation_notes: Creative coverage signal. Higher values usually indicate broader publishing coverage.
