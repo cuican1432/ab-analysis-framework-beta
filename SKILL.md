@@ -28,6 +28,7 @@ You do not need to remember the internal helper skills. In most cases, calling `
 ### What the system will do
 - run the doc-first analysis workflow
 - silently prioritize stored metric glossary and business knowledge
+- recall core-flag metric groups by default, especially any group marked as company-core, business-core, or sub-business-core
 - perform attribution, risk review, and evidence-boundary labeling when needed
 - output a structured experiment report rather than scattered analysis fragments
 
@@ -108,3 +109,9 @@ Default read order:
 6. `userdata/tt-ab-analysis-framework/kb/*`
 
 Do not use generic roots such as `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace to avoid collisions with other packages.
+
+Metric recall reminder:
+
+- do not narrow the recall set only to the experiment's most obvious business theme
+- any glossary metric group marked as company-core, business-core, or sub-business-core should be recalled by default
+- if a flagged core group is missing from the source, state that it is unavailable instead of silently dropping it

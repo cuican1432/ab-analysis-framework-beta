@@ -67,9 +67,17 @@ Default recall universe:
 
 - `Tier A`
 - `Tier B` core / must-watch metrics
+- any metric group explicitly marked as company-core, business-core, or sub-business-core in the glossary
 - metrics explicitly named in the PRD as targets or guardrails
 - global significant results, defaulting to `p < 0.05`
 - key-dimension significant results, defaulting to `p < 0.03`
+
+Core-flag handling:
+
+- if a metric group is marked `is_company_core = 1`, `is_business_core = 1`, or `is_sub_business_core = 1`, do not skip it just because the experiment theme looks narrower
+- treat flagged core groups as default recall items and review them as guardrails or decision-relevant context
+- `111` groups should be assumed must-watch unless the source explicitly proves they are out of scope for the current experiment
+- if a flagged core group is unavailable in the source, say it is unavailable; do not silently omit it
 
 Priority rules:
 
