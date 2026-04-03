@@ -185,34 +185,11 @@ If you need support-documented messaging and adjacent distribution rules that co
 
 ## Reusable DM Concepts | 可复用 DM 概念
 
-### Direct-message permissions and request flow
+### Support-Documented DM Rules
 
-- TikTok direct messages do not behave like a fully open inbox for everyone.
-- Friends (followers you follow back) can message each other directly.
-- Accounts you follow can also message you directly, but for private accounts this behavior is more restricted until there is a follow-back relationship.
-- People outside the direct-message permission scope usually need to send a message request first.
-- Message requests can be accepted, deleted, or reported.
-- Blocked accounts cannot send message requests.
-- Use this concept when a report needs a stable explanation of who can enter the DM channel directly versus who must go through requests. For the full support-documented rule surface, read `references/knowledge/kb/messaging_support.md`.
-
-### Read status
-
-- Read status is a two-sided DM mechanic.
-- A read receipt becomes visible only when both sides have read status turned on.
-- The support article states that for adults this setting is on by default.
-- Use this concept when interpreting reply behavior, read-confirmation expectations, or DM-experience changes that may interact with visibility of message reads. For the support-backed default-setting wording, read `references/knowledge/kb/messaging_support.md`.
-
-### DM safety controls
-
-- TikTok exposes multiple DM safety controls, including safe mode, filtered keywords, filtered requests, reporting, muting, and blocking.
-- Safe mode and filtered requests are part of the platform-level protection layer, not experiment-specific behavior.
-- These controls are useful as mechanism context when a DM experiment changes message exposure, risk signals, or negative-feedback behavior.
-
-### Business and organization account DM differences
-
-- The support article states that eligible Business or Organization Accounts may have a broader inbox-style option for receiving messages from potential connections and other people on TikTok.
-- This matters when reading DM results that may mix consumer messaging and business-facing messaging behavior.
-- Use this as account-type context, not as a default assumption for all DM cases.
+- For support-documented DM mechanics such as direct-message permissions, request flow, read status, safety controls, and Business / Organization Account inbox differences, use:
+  - `references/knowledge/kb/messaging_support.md`
+- Keep this `dm.md` page focused on DM subdomains, reusable DM concepts, and how DM-related metric groups should be interpreted.
 
 ### Sticker-related Terms To Keep Separate
 
