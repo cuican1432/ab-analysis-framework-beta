@@ -37,6 +37,18 @@ If you need support-documented messaging and adjacent distribution rules that co
 
 ## DM Subdomains | DM 子方向
 
+### Core DM
+
+- 含义：默认覆盖 DM 主链路、且不应被直接缩写成“只看私聊”的核心层概念。
+- Notes: DM-wide core concept; use the source table or raw data to decide whether a specific case is private-chat only, group-chat only, or cross-surface.
+- 对应指标组：
+  - `DM Core`
+  - `Key Project-DM`
+  - `DM Receive`
+  - `DM Receive New`
+  - `DM by Entrance`
+  - `DM by Msg Type`
+
 ### Streaks
 
 - 含义：私信里的连续互动、连续使用和 streak 相关概念。
@@ -68,15 +80,10 @@ If you need support-documented messaging and adjacent distribution rules that co
 - 含义：一对一私信里的发送、接收、回复、深度和对数相关概念。
 - Notes: private-chat concept; keep concrete private-chat metrics in glossary.
 - 对应指标组：
-  - `DM Core`
   - `DM 2-Way`
   - `DM Message Pairs`
-  - `DM by Entrance`
-  - `DM by Msg Type`
   - `DM Quality & Reply Rates`
   - `DM Quality & Reply Rates New`
-  - `DM Receive`
-  - `DM Receive New`
   - `DM Send & Load Fail`
   - `DM Leave Chat`
   - `DM Permission`

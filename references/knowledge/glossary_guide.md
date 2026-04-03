@@ -70,6 +70,8 @@ common_dimensions:
 notes:
 ```
 
+For `common_dimensions`, only record dimensions that are explicitly present in the raw data, source table, or stable formal source. Do not invent default dimensions from habit or prior cases.
+
 ### Metric Template
 
 ```yaml
