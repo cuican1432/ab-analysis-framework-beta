@@ -44,10 +44,10 @@ If you need support-documented messaging and adjacent distribution rules that co
 - 对应指标组：
   - `DM Core`
   - `Key Project-DM`
-  - `DM Receive`
-  - `DM Receive New`
-  - `DM by Entrance`
-  - `DM by Msg Type`
+  - `[DM] DM Receive`
+  - `[DM] DM Receive New`
+  - `[DM] DM by Entrance`
+  - `[DM] DM by Msg Type`
 
 ### Streaks
 
@@ -68,7 +68,7 @@ If you need support-documented messaging and adjacent distribution rules that co
 - 含义：群聊里的创建、进入、发送、接收、留存和消息类型相关概念。
 - Notes: group-chat concept; keep group-chat metrics in glossary.
 - 对应指标组：
-  - `[DM] DM Group Chat`
+  - `DM Group Chat`
   - `[DM] DM Group Chat by Msg Type`
   - `[DM] DM Group Chat 3d Retention`
   - `[DM] DM Group Chat 7d Retention`
@@ -77,20 +77,27 @@ If you need support-documented messaging and adjacent distribution rules that co
 
 ### Private Chat
 
-- 含义：一对一私信里的发送、接收、回复、深度和对数相关概念。
-- Notes: private-chat concept; keep concrete private-chat metrics in glossary.
+- 含义：一对一私信里更明确依赖 pair、MUF 或关系对结构的概念。
+- Notes: private-chat concept; use this bucket only when the group is explicitly private-chat, MUF-based, or pair-based.
 - 对应指标组：
-  - `DM 2-Way`
-  - `DM Message Pairs`
-  - `DM Quality & Reply Rates`
-  - `DM Quality & Reply Rates New`
-  - `DM Send & Load Fail`
-  - `DM Leave Chat`
-  - `DM Permission`
-  - `DM Negative Feedback`
-  - `[DM] DM Core Performance - Android`
-  - `[DM] DM Core Performance - iOS`
-  - `[DM] DM Core Performance - Latency`
+  - `[DM] DM Message Pairs`
+  - `DM Growth Pairs-Key Metrics`
+  - `DM Growth Pairs-Active Days`
+  - `DM Growth Pairs- Retention`
+  - `Muf Growth DM Pairs By time`
+  - `[DM] MuF DM Lifecycle`
+  - `[DM] MuF DM by Motivation`
+  - `[DM] Muf DM Enter From as Dim`
+  - `[DM] Muf DM Msg Type as Dim`
+
+### Two-Way
+
+- 含义：私信里的双向互动、回复质量和对话往返强度相关概念。
+- Notes: two-way interaction concept; use this bucket for reciprocal interaction and reply-quality layers across DM surfaces.
+- 对应指标组：
+  - `[DM] DM 2-Way`
+  - `[DM] DM Quality & Reply Rates`
+  - `[DM] DM Quality & Reply Rates New`
 
 ### B2C Messaging
 
@@ -126,31 +133,29 @@ If you need support-documented messaging and adjacent distribution rules that co
 - 对应指标组：
   - `DM Quick Share`
   - `DM_Share_Type | direct message share type`
-  - `Quick Share Recall`
+  - `Quick Share Recall | Quick Share Recall`
   - `Internal Share All`
   - `Internal Share To Chat`
-  - `Internal Share Funnel Metrics`
-  - `Internal Share Search Funnel Metrics`
-  - `DM by Link`
+  - `internal share funnel metrics`
+  - `internal share search funnel metrics`
+  - `[DM] DM by Link`
 
 ### Repost
 
 - 含义：与私信分享链路相邻、但不等同于私信本身的二次传播或 repost 行为概念。
-- Notes: adjacent redistribution concept; treat it as neighboring context for DM/share analysis rather than a core DM mechanic, and keep concrete repost/share metrics in glossary.
-- 对应指标组：
-  - `Internal Share All`
-  - `Internal Share To Chat`
-  - `Internal Share Funnel Metrics`
-  - `Internal Share Search Funnel Metrics`
+- Notes: adjacent redistribution concept; treat it as neighboring context for DM/share analysis rather than a core DM mechanic. At the moment, no dedicated repost metric group is formalized in the glossary.
+- 当前状态：
+  - use adjacent share groups as context when repost behavior may influence DM/share interpretation
+  - do not relabel broad share groups as repost-specific groups unless the source explicitly does so
 
 ### DM Safety
 
-- 含义：私信里的安全、权限、负反馈、发送失败和负向体验概念。
+- 含义：私信里的安全、权限、负反馈和治理相关概念。
 - Notes: safety / guardrail concept; keep concrete safety metrics in glossary.
 - 定位：跨 DM 场景的安全与护栏层，不等同于 B2C Messaging。
 - 对应指标组：
-  - `DM Permission`
-  - `DM Negative Feedback`
+  - `[DM] DM Permission`
+  - `[DM] DM Negative Feedback`
   - `TnS DM Private Sender Metrics - Conv Level`
   - `TnS DM Private Sender Metrics - Msg Level`
   - `TnS DM Private Receiver Metrics - Msg Level`
@@ -160,20 +165,21 @@ If you need support-documented messaging and adjacent distribution rules that co
 
 ### DM Experience
 
-- 含义：私信体验层概念，包括回复率、时延、加载体验、转化漏斗和感知质量。
+- 含义：私信体验层概念，包括回复率、时延、加载体验和感知质量。
 - Notes: experience concept; keep concrete experience metrics in glossary.
 - 对应指标组：
-  - `DM Quality & Reply Rates`
-  - `DM Quality & Reply Rates New`
-  - `DM Core`
-  - `DM 2-Way`
-  - `DM Message Pairs`
-  - `DM Conversion Funnel`
-  - `DM Send & Load Fail`
-  - `DM Leave Chat`
+  - `[DM] DM Send & Load Fail`
+  - `[DM] DM Leave Chat`
   - `[DM] DM Core Performance - Android`
   - `[DM] DM Core Performance - iOS`
   - `[DM] DM Core Performance - Latency`
+
+### Funnel
+
+- 含义：私信链路里的进入、转化、下游动作衔接等漏斗相关概念。
+- Notes: funnel concept; keep concrete funnel metrics in glossary.
+- 对应指标组：
+  - `[DM] DM Conversion Funnel`
 
 ---
 
