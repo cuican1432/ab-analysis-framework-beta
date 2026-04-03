@@ -26,6 +26,8 @@ This is the entry page for the formal business knowledge layer.
   - TikTok - Social - Core Interaction
 - `references/knowledge/kb/dm.md`
   - TikTok - Social - DM
+- `references/knowledge/kb/messaging_support.md`
+  - TikTok - Social - Messaging and Sharing Support Mechanics
 - `references/knowledge/kb/story.md`
   - TikTok - Social - Story
 - `references/knowledge/kb/ur.md`
@@ -39,3 +41,5 @@ This is the entry page for the formal business knowledge layer.
 - 不需要默认把整个 KB 通读一遍
 - 只拿当前 case 真正需要的知识页
 - Core Interaction holds shared cross-domain concepts; DM / Story / UR hold direction-specific concepts and their group mappings
+- Use `messaging_support.md` when you need stable, support-documented messaging, notification, or adjacent sharing mechanics rather than metric definitions.
+- `messaging_support.md` also covers official support-backed streak mechanics, sticker mechanics, push/inbox notification rules, and share/repost feature links.

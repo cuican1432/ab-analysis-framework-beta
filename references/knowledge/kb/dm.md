@@ -14,6 +14,9 @@ TikTok - Social business KB is split into four sub-domain pages:
 
 This page is the DM layer for reusable DM-specific knowledge.
 
+If you need support-documented messaging and adjacent distribution rules that complement this DM knowledge page, such as DM permissions, request flow, read status, streaks, safety controls, inbox/push notifications, or share/repost behavior, also read:
+- `references/knowledge/kb/messaging_support.md`
+
 ## What Belongs Here
 
 - DM subdomain concepts,
@@ -125,8 +128,8 @@ This page is the DM layer for reusable DM-specific knowledge.
 
 ### Repost
 
-- 含义：内容二次传播、转发或 repost 相关的行为概念。
-- Notes: redistribution concept; keep concrete repost/share metrics in glossary.
+- 含义：与私信分享链路相邻、但不等同于私信本身的二次传播或 repost 行为概念。
+- Notes: adjacent redistribution concept; treat it as neighboring context for DM/share analysis rather than a core DM mechanic, and keep concrete repost/share metrics in glossary.
 - 对应指标组：
   - `Internal Share All`
   - `Internal Share To Chat`
@@ -168,6 +171,35 @@ This page is the DM layer for reusable DM-specific knowledge.
 ---
 
 ## Reusable DM Concepts | 可复用 DM 概念
+
+### Direct-message permissions and request flow
+
+- TikTok direct messages do not behave like a fully open inbox for everyone.
+- Friends (followers you follow back) can message each other directly.
+- Accounts you follow can also message you directly, but for private accounts this behavior is more restricted until there is a follow-back relationship.
+- People outside the direct-message permission scope usually need to send a message request first.
+- Message requests can be accepted, deleted, or reported.
+- Blocked accounts cannot send message requests.
+- Use this concept when a report needs a stable explanation of who can enter the DM channel directly versus who must go through requests.
+
+### Read status
+
+- Read status is a two-sided DM mechanic.
+- A read receipt becomes visible only when both sides have read status turned on.
+- The support article states that for adults this setting is on by default.
+- Use this concept when interpreting reply behavior, read-confirmation expectations, or DM-experience changes that may interact with visibility of message reads.
+
+### DM safety controls
+
+- TikTok exposes multiple DM safety controls, including safe mode, filtered keywords, filtered requests, reporting, muting, and blocking.
+- Safe mode and filtered requests are part of the platform-level protection layer, not experiment-specific behavior.
+- These controls are useful as mechanism context when a DM experiment changes message exposure, risk signals, or negative-feedback behavior.
+
+### Business and organization account DM differences
+
+- The support article states that eligible Business or Organization Accounts may have a broader inbox-style option for receiving messages from potential connections and other people on TikTok.
+- This matters when reading DM results that may mix consumer messaging and business-facing messaging behavior.
+- Use this as account-type context, not as a default assumption for all DM cases.
 
 ### Sticker-related Terms To Keep Separate
 
