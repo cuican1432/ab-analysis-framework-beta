@@ -114,5 +114,5 @@ Metric recall reminder:
 
 - do not narrow the recall set only to the experiment's most obvious business theme
 - any glossary metric group marked as company-core, business-core, or sub-business-core should be recalled by default
-- for the experiment's own subdomain, also recall the related `001`, `110`, and `111` metric groups by default
+- for the experiment's own subdomain, also recall the related `001`, `011`, and `111` metric groups by default
 - if a flagged core group is missing from the source, state that it is unavailable instead of silently dropping it

@@ -77,7 +77,7 @@ Core-flag handling:
 - if a metric group is marked `is_company_core = 1`, `is_business_core = 1`, or `is_sub_business_core = 1`, do not skip it just because the experiment theme looks narrower
 - treat flagged core groups as default recall items and review them as guardrails or decision-relevant context
 - `111` groups should be assumed must-watch unless the source explicitly proves they are out of scope for the current experiment
-- for the experiment's own subdomain, also recall the related `001`, `110`, and `111` metric groups by default
+- for the experiment's own subdomain, also recall the related `001`, `011`, and `111` metric groups by default
 - do not reduce the subdomain recall set to only the most obvious head group when adjacent core groups in the same subdomain are flagged
 - if a flagged core group is unavailable in the source, say it is unavailable; do not silently omit it
 
