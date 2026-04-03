@@ -114,8 +114,8 @@ If you need support-documented messaging and adjacent distribution rules that co
 
 ### Share
 
-- 含义：私信里的分享动作、分享入口、分享类型和分享路径概念。
-- Notes: share-action concept; keep share metrics in glossary.
+- 含义：与私信强相关的分享动作、分享入口、分享类型和分享路径概念，既包括私信内分享，也包括与 DM 收件链路直接相邻的 internal share surfaces。
+- Notes: share-action concept; keep concrete share metrics in glossary, and use `messaging_support.md` for official platform-level sharing mechanics.
 - 对应指标组：
   - `DM Quick Share`
   - `DM_Share_Type | direct message share type`
@@ -180,14 +180,14 @@ If you need support-documented messaging and adjacent distribution rules that co
 - People outside the direct-message permission scope usually need to send a message request first.
 - Message requests can be accepted, deleted, or reported.
 - Blocked accounts cannot send message requests.
-- Use this concept when a report needs a stable explanation of who can enter the DM channel directly versus who must go through requests.
+- Use this concept when a report needs a stable explanation of who can enter the DM channel directly versus who must go through requests. For the full support-documented rule surface, read `references/knowledge/kb/messaging_support.md`.
 
 ### Read status
 
 - Read status is a two-sided DM mechanic.
 - A read receipt becomes visible only when both sides have read status turned on.
 - The support article states that for adults this setting is on by default.
-- Use this concept when interpreting reply behavior, read-confirmation expectations, or DM-experience changes that may interact with visibility of message reads.
+- Use this concept when interpreting reply behavior, read-confirmation expectations, or DM-experience changes that may interact with visibility of message reads. For the support-backed default-setting wording, read `references/knowledge/kb/messaging_support.md`.
 
 ### DM safety controls
 

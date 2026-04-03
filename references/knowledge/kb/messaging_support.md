@@ -163,6 +163,7 @@ Primary external source:
 - For some For You posts, TikTok may prompt users to share directly with people they may know or have interacted with.
 - The support article states that cross-platform sharing can also send the shared post to the same person on TikTok if they open the shared link and allow direct messages from others.
 - Downloading a shared post depends on the original post's download permissions.
+- This is adjacent to DM but broader than DM itself.
 - Use this topic when an experiment touches internal share surfaces, quick-share prompts, profile sharing, sound sharing, or hashtag sharing.
 
 ### Repost
@@ -172,6 +173,7 @@ Primary external source:
 - TikTok allows repost through multiple entry points, including the `Share` menu, long-press actions, and some friend-repost surfaces.
 - Users can remove reposts after the fact.
 - The support article states that repost visibility on profile and feed is more limited for private accounts.
+- Repost can influence message-adjacent sharing behavior, but it should not be treated as a core DM mechanic.
 - Use this topic when an experiment changes redistribution, amplification, or friend-to-friend content propagation rather than direct-message behavior.
 
 ### Related official support topics used by this page
