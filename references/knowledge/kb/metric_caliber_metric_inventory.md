@@ -6,19 +6,19 @@ Use this page as a working inventory, not as a replacement for direct metric def
 
 ## Family Counts
 
-- `custom / other`: 5
-- `custom ratio/rate`: 41
+- `custom / other`: 0
+- `custom ratio/rate`: 44
 - `days/days`: 19
 - `days/user`: 31
-- `intensity / depth`: 75
+- `intensity / depth`: 77
 - `penetration / coverage`: 22
 
 ## Inventory
 
 | Group | Metric | Inferred family | Default observation principle | Reading logic |
 | --- | --- | --- | --- | --- |
-| [B2C] Creator Message Key Metrics | Cr2C DM pv / DAU | custom / other | metric-specific | needs direct metric-definition reading |
-| [B2C] Creator Message Key Metrics | Cr2C MuF DM pv / DAU | custom / other | metric-specific | needs direct metric-definition reading |
+| [B2C] Creator Message Key Metrics | Cr2C DM pv / DAU | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
+| [B2C] Creator Message Key Metrics | Cr2C MuF DM pv / DAU | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
 | [DM] DM 2-Way | Group Send or Like Message 2-Way Days/Days | days/days | multi-day cumulative | behavior-day penetration over active days |
 | [DM] DM 2-Way | Group Send or Like Message 2-Way Days/User | days/user | multi-day cumulative | per-user behavior-day frequency |
 | [DM] DM 2-Way | Group Send or Like Message 2-Way session/User | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
@@ -128,10 +128,10 @@ Use this page as a working inventory, not as a replacement for direct metric def
 | Core-Key Metrics | LoginRate | custom ratio/rate | metric-specific | custom numerator/denominator or rate form |
 | Core-Key Metrics | Play/I | custom ratio/rate | metric-specific | custom numerator/denominator or rate form |
 | Core-Key Metrics | Play/U | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
-| Core-Key Metrics | PlayTime/Play | custom / other | metric-specific | needs direct metric-definition reading |
+| Core-Key Metrics | PlayTime/Play | custom ratio/rate | metric-specific | custom numerator/denominator or rate form |
 | Core-Key Metrics | PlayTime/U | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
-| Core-Key Metrics | Publish/Play | custom / other | metric-specific | needs direct metric-definition reading |
-| Core-Key Metrics | Publish/PubUser | custom / other | metric-specific | needs direct metric-definition reading |
+| Core-Key Metrics | Publish/Play | custom ratio/rate | metric-specific | custom numerator/denominator or rate form |
+| Core-Key Metrics | Publish/PubUser | custom ratio/rate | metric-specific | custom numerator/denominator or rate form |
 | Core-Key Metrics | Publish/U | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
 | Core-Key Metrics | PubUser/U | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
 | Core-Key Metrics | RspLatency | custom ratio/rate | metric-specific | custom numerator/denominator or rate form |
