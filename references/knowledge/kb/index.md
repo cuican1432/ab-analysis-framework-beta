@@ -28,6 +28,10 @@ This is the entry page for the formal business knowledge layer.
   - TikTok - Platform Terms and Common Metrics
 - `references/knowledge/kb/platform_terms_outline.md`
   - TikTok - Platform Terms Outline Source
+- `references/knowledge/kb/metric_caliber_patterns.md`
+  - Common Multi-Day Metric Caliber Patterns
+- `references/knowledge/kb/metric_caliber_metric_inventory.md`
+  - Current Formalized Metric Caliber Classification
 - `references/knowledge/kb/dm.md`
   - TikTok - Social - DM
 - `references/knowledge/kb/messaging_support.md`
@@ -47,5 +51,7 @@ This is the entry page for the formal business knowledge layer.
 - Core Interaction holds shared cross-domain concepts; DM / Story / UR hold direction-specific concepts and their group mappings
 - Use `platform_terms.md` when you need stable meanings for repeated platform-level metrics and product terms such as `DAU`, `MAU`, `Retention`, `VV`, `FYP`, `Internal Share`, or `Search`.
 - Use `platform_terms_outline.md` when you need the source outline for future expansion of platform-wide metric terminology.
+- Use `metric_caliber_patterns.md` when you need to interpret common experiment metric families such as `days/days`, `days/user`, `pv/user`, and `uv/user`.
+- Use `metric_caliber_metric_inventory.md` when you want the current formalized metrics classified by inferred caliber family.
 - Use `messaging_support.md` when you need stable, support-documented messaging, notification, or adjacent sharing mechanics rather than metric definitions.
 - `messaging_support.md` also covers official support-backed streak mechanics, sticker mechanics, push/inbox notification rules, and share/repost feature links.
