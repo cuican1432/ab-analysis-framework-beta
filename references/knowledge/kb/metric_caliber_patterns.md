@@ -97,7 +97,8 @@ Typical grouping:
 
 ## Quick Reading Rule
 
-- if the metric is `uv/au` or `uv/user`, treat it as penetration / coverage and prefer multi-day average when the tooling supports it
+- if the metric is `uv/au` or `uv/user`, treat it as penetration / coverage and prefer multi-day average
+- if the source only exposes a multi-day cumulative view for this family, do not use it as a final judgment metric by default, because the read is too easy to distort
 - if the metric is `pv/au`, `days/days`, `days/user`, `pv/user`, `xxx/user`, or other depth / frequency forms, prefer multi-day cumulative
 - if the metric is a custom ratio such as `Finish/Play`, `LoginRate`, `CTR`, or `_ratio`, read it by its own numerator / denominator definition instead of forcing it into one family
 
