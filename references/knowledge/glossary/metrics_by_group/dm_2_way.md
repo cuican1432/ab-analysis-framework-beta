@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM 2-Way
 
-These entries are confirmed, reusable formal metrics for the [DM] DM 2-Way group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM 2-Way.
 
 ## Metric: Group Send or Like Message 2-Way Days/Days
 

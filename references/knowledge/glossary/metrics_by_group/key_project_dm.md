@@ -1,6 +1,6 @@
 # Metrics By Group | Key Project-DM
 
-These entries are confirmed, reusable formal metrics for the Key Project-DM group.
+Reference entry for These entries are confirmed, reusable formal metrics for the Key Project-DM.
 
 ## Metric: Social MUF Send or Like Message PV/User
 

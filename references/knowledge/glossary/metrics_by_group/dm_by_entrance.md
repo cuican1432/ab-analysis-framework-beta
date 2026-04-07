@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM by Entrance
 
-These entries are confirmed, reusable formal metrics for the [DM] DM by Entrance group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM by Entrance.
 
 ## Metric: Send Msg from Inbox Days/Days
 

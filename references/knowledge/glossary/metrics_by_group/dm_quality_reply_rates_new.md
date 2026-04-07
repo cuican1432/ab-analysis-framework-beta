@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Quality & Reply Rates New
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Quality & Reply Rates New group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Quality & Reply Rates New.
 
 ## Metric: 1h Response Rate（会话粒度）
 

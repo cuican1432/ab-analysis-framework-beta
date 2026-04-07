@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] Muf DM Enter From as Dim
 
-These entries are confirmed, reusable formal metrics for the [DM] Muf DM Enter From as Dim group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] Muf DM Enter From as Dim.
 
 ## Metric: MUF Send or Like Message Days/Days
 

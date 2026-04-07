@@ -1,12 +1,12 @@
 # Metrics By Group | Inbox Element Metrics
 
-Formal storage location for Inbox Element Metrics group.
+Reference entry for Inbox Element Metrics.
 
 description_zh: Inbox 元素正式指标存储位置。
-description_en: Formal storage location for inbox-element metrics.
+description_en: inbox-element metrics.
 
 usage_scope: Inbox / social messaging experiments
-typical_usage: formal storage location for inbox-supporting metrics
+typical_usage: used as the reference entry for inbox-supporting metrics
 priority_hint: P1
 common_dimensions:
   - element_type
@@ -14,4 +14,4 @@ common_dimensions:
 
 notes: Inbox-element bucket; keep it separate from inbox message-level metrics.
 
-Retain as placeholder.
+Keep this entry as a placeholder until concrete metrics are confirmed.

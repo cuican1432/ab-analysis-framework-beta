@@ -1,6 +1,6 @@
 # Metrics By Group | DM Core
 
-These entries are confirmed, reusable formal metrics for the DM Core group.
+Reference entry for These entries are confirmed, reusable formal metrics for the DM Core.
 
 ## Metric: Send Message PV/User
 

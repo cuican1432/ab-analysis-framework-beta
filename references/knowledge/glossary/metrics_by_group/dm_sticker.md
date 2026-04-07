@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Sticker
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Sticker group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Sticker.
 
 ## Metric: Open Sticker Panel pv/au
 

@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Inner Push
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Inner Push group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Inner Push.
 
 ## Metric: Send Msg from Inner Push Days/Days
 

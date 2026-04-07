@@ -1,6 +1,6 @@
 # Metrics By Group | DM Group Chat
 
-These entries are confirmed, reusable formal metrics for the DM Group Chat group.
+Reference entry for These entries are confirmed, reusable formal metrics for the DM Group Chat.
 
 ## Metric: Create GC pv/au
 

@@ -1,6 +1,6 @@
 # Metrics By Group | Active Hours (HLT)
 
-These entries are confirmed, reusable formal metrics for the Active Hours (HLT) group.
+Reference entry for These entries are confirmed, reusable formal metrics for the Active Hours (HLT).
 
 ## Metric: HLT - active hours
 

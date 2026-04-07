@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM by Msg Type
 
-These entries are confirmed, reusable formal metrics for the [DM] DM by Msg Type group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM by Msg Type.
 
 ## Metric: Send Camera Days/Days
 

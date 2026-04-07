@@ -1,6 +1,6 @@
 # Metrics By Group | [B2C] Creator Message Key Metrics
 
-These entries are confirmed, reusable formal metrics for the [B2C] Creator Message Key Metrics group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [B2C] Creator Message Key Metrics.
 
 ## Metric: Cr2C DM pv / DAU
 

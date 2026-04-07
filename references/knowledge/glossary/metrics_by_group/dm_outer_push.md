@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Outer Push
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Outer Push group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Outer Push.
 
 ## Metric: Send Msg from Outer Push Days/Days
 

@@ -1,6 +1,6 @@
 # Metrics By Group | Core-Key Metrics
 
-These entries are confirmed, reusable formal metrics for the Core-Key Metrics group.
+Reference entry for These entries are confirmed, reusable formal metrics for the Core-Key Metrics.
 
 ## Metric: StayDuration/U
 

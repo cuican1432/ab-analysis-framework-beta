@@ -1,6 +1,6 @@
 # Metrics By Group | TnS DM Group Chat Sender Metrics - Conv Level
 
-These entries are confirmed, reusable formal metrics for the TnS DM Group Chat Sender Metrics - Conv Level group.
+Reference entry for These entries are confirmed, reusable formal metrics for the TnS DM Group Chat Sender Metrics - Conv Level.
 
 ## Metric: notice_rate_groupcov
 
@@ -26,7 +26,7 @@ common_dimensions:
 
 notes: Use this group only for sender-side group-chat conversation-level signals; keep it separate from message-level variants.
 
-neighbor_metric_diff: Keep distinct from report appeal success metrics in the same group.
+Reference entry for neighbor_metric_diff: Keep distinct from report appeal success metrics in the same.
 interpretation_notes: TnS support metric for group-chat sender-side conversation level.
 ```
 

@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] Muf DM Msg Type as Dim
 
-These entries are confirmed, reusable formal metrics for the [DM] Muf DM Msg Type as Dim group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] Muf DM Msg Type as Dim.
 
 ## Metric: MUF Send or Like Message Days/User
 

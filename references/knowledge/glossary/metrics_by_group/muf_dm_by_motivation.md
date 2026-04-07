@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] MuF DM by Motivation
 
-These entries are confirmed, reusable formal metrics for the [DM] MuF DM by Motivation group.
+Reference entry for [DM] MuF DM by Motivation.
 
 ## Metric: MuF Active Chat Days/Days
 
@@ -90,6 +90,6 @@ denominator: users
 polarity: higher_is_better
 priority_hint: P1
 
-neighbor_metric_diff: Keep distinct from active-chat metrics in this group.
+Reference entry for neighbor_metric_diff: Keep distinct from active-chat metrics in this.
 interpretation_notes: Motivation-based share intensity signal.
 ```

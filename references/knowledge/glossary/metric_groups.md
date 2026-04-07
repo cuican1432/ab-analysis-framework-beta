@@ -565,7 +565,7 @@ typical_usage: used as a cross-social creation and supply-health layer
 priority_hint: P0
 common_dimensions:
   -
-notes: Confirmed in the shared formal glossary as a mandatory-recall core-health group.
+Reference entry for notes: Confirmed in the shared formal glossary as a mandatory-recall core-health.
 ```
 
 ```yaml
@@ -583,7 +583,7 @@ typical_usage: used as a cross-social core-health baseline layer
 priority_hint: P1
 common_dimensions:
   -
-notes: Confirmed in the shared formal glossary as a reusable core-health group.
+Reference entry for notes: Confirmed in the shared formal glossary as a reusable core-health.
 ```
 
 ```yaml
@@ -817,7 +817,7 @@ typical_usage: used to capture inbox-surface element exposure and interaction be
 priority_hint: P3
 common_dimensions:
   -
-notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface group.
+Reference entry for notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface.
 ```
 
 ```yaml
@@ -835,7 +835,7 @@ typical_usage: used to capture user-level interaction with inbox-surface element
 priority_hint: P3
 common_dimensions:
   -
-notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface group.
+Reference entry for notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface.
 ```
 
 ```yaml
@@ -853,7 +853,7 @@ typical_usage: used to capture user-level inbox message exposure and interaction
 priority_hint: P3
 common_dimensions:
   -
-notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface group.
+Reference entry for notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface.
 ```
 
 ```yaml
@@ -1010,8 +1010,8 @@ notes: Confirmed from the live Libra watched-group list; formal metric entries c
 group_name: [DM] DM Group Chat 3d Retention
 group_aliases:
   - DM Group Chat 3d Retention
-description_zh: 私信群聊 3 日留存正式存储位置。
-description_en: Formal storage location for DM group-chat 3-day retention metrics.
+description_zh: 私信群聊 3 日留存。
+description_en: DM group-chat 3-day retention metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1028,8 +1028,8 @@ notes: Confirmed from the live Libra watched-group list. Surface note: group-cha
 group_name: [DM] DM Group Chat 7d Retention
 group_aliases:
   - DM Group Chat 7d Retention
-description_zh: 私信群聊 7 日留存正式存储位置。
-description_en: Formal storage location for DM group-chat 7-day retention metrics.
+description_zh: 私信群聊 7 日留存。
+description_en: DM group-chat 7-day retention metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1046,8 +1046,8 @@ notes: Confirmed from the live Libra watched-group list. Surface note: group-cha
 group_name: [DM] DM Group Chat 14d Retention
 group_aliases:
   - DM Group Chat 14d Retention
-description_zh: 私信群聊 14 日留存正式存储位置。
-description_en: Formal storage location for DM group-chat 14-day retention metrics.
+description_zh: 私信群聊 14 日留存。
+description_en: DM group-chat 14-day retention metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1064,8 +1064,8 @@ notes: Confirmed from the live Libra watched-group list. Surface note: group-cha
 group_name: [DM] DM Group Chat 28d Retention
 group_aliases:
   - DM Group Chat 28d Retention
-description_zh: 私信群聊 28 日留存正式存储位置。
-description_en: Formal storage location for DM group-chat 28-day retention metrics.
+description_zh: 私信群聊 28 日留存。
+description_en: DM group-chat 28-day retention metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1082,8 +1082,8 @@ notes: Confirmed from the live Libra watched-group list. Surface note: group-cha
 group_name: [DM] DM Group Chat 3d Retention New gt3-users
 group_aliases:
   - DM Group Chat 3d Retention New gt3-users
-description_zh: 私信群聊新口径 3 日留存（gt3-users）正式存储位置。
-description_en: Formal storage location for DM group-chat 3-day retention (gt3-users) metrics.
+description_zh: 私信群聊新口径 3 日留存（gt3-users）。
+description_en: DM group-chat 3-day retention (gt3-users) metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1100,8 +1100,8 @@ notes: Confirmed from the live Libra watched-group list. Surface note: group-cha
 group_name: [DM] DM Group Chat 7d Retention New gt3-users
 group_aliases:
   - DM Group Chat 7d Retention New gt3-users
-description_zh: 私信群聊新口径 7 日留存（gt3-users）正式存储位置。
-description_en: Formal storage location for DM group-chat 7-day retention (gt3-users) metrics.
+description_zh: 私信群聊新口径 7 日留存（gt3-users）。
+description_en: DM group-chat 7-day retention (gt3-users) metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1118,8 +1118,8 @@ notes: Confirmed from the live Libra watched-group list. Surface note: group-cha
 group_name: [DM] DM Group Chat 14d Retention New gt3-users
 group_aliases:
   - DM Group Chat 14d Retention New gt3-users
-description_zh: 私信群聊新口径 14 日留存（gt3-users）正式存储位置。
-description_en: Formal storage location for DM group-chat 14-day retention (gt3-users) metrics.
+description_zh: 私信群聊新口径 14 日留存（gt3-users）。
+description_en: DM group-chat 14-day retention (gt3-users) metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1136,8 +1136,8 @@ notes: Confirmed from the live Libra watched-group list. Surface note: group-cha
 group_name: [DM] DM Group Chat 28d Retention New gt3-users
 group_aliases:
   - DM Group Chat 28d Retention New gt3-users
-description_zh: 私信群聊新口径 28 日留存（gt3-users）正式存储位置。
-description_en: Formal storage location for DM group-chat 28-day retention (gt3-users) metrics.
+description_zh: 私信群聊新口径 28 日留存（gt3-users）。
+description_en: DM group-chat 28-day retention (gt3-users) metrics.
 usage_scope: social / DM / group chat
 business_domain: DM Group Chat
 is_company_core: 0
@@ -1286,14 +1286,14 @@ group_name: [DM] MuF DM by Motivation
 group_aliases:
   - MuF DM by Motivation
   - Muf DM by Motivation
-description_zh: 按 MUF 动机拆分的私信指标组，用于观察动机维度下的活跃、分享与互动表现。
-description_en: A DM metric group split by MUF motivation, used to observe active, share, and interaction behaviors under motivation dimensions.
+description_zh: 按 MUF 动机拆分的私信指标组，用于观察主动聊天、分享和作品互动这几类动机下的行为表现。
+description_en: A DM metric group split by MUF motivation, used to observe behaviors under motivation buckets such as active chat, share, and content interaction.
 usage_scope: social / DM / muf
 business_domain: DM
 is_company_core: 0
 is_business_core: 1
 is_sub_business_core: 1
-typical_usage: used to capture motivation-sliced behavior in MUF-linked DM scenarios
+typical_usage: used to capture motivation-sliced behavior across active-chat, share, and content-interaction buckets in MUF-linked DM scenarios
 priority_hint: P0
 common_dimensions:
   -

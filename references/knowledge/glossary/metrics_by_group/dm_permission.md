@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Permission
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Permission group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Permission.
 
 ## Metric: on_ratio
 

@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Core Performance - Android
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Core Performance - Android group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Core Performance - Android.
 
 ## Metric: chat_list_load_latency_compliance_rate_threshold_ig
 

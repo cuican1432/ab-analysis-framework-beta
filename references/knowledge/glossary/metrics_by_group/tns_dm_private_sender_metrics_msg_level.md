@@ -1,6 +1,6 @@
 # Metrics By Group | TnS DM Private Sender Metrics - Msg Level
 
-These entries are confirmed, reusable formal metrics for the TnS DM Private Sender Metrics - Msg Level group.
+Reference entry for These entries are confirmed, reusable formal metrics for the TnS DM Private Sender Metrics - Msg Level.
 
 ## Metric: feedback_appeal_success_rate_msg
 

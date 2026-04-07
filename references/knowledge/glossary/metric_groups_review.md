@@ -477,7 +477,7 @@
 - Priority: P0
 - Common dimensions: 
 - Aliases: Publish Days
-- Notes: Confirmed in the shared formal glossary as a mandatory-recall core-health group.
+Reference entry for - Notes: Confirmed in the shared formal glossary as a mandatory-recall core-health.
 - Review note: 
 
 ## Core-Key Metrics
@@ -493,7 +493,7 @@
 - Priority: P1
 - Common dimensions: 
 - Aliases: Core metrics
-- Notes: Confirmed in the shared formal glossary as a reusable core-health group.
+Reference entry for - Notes: Confirmed in the shared formal glossary as a reusable core-health.
 - Review note: 
 
 ## Activity Status Metrics
@@ -701,7 +701,7 @@
 - Priority: P3
 - Common dimensions: 
 - Aliases: Inbox Elements
-- Notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface group.
+Reference entry for - Notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface.
 - Review note: 
 
 ## Inbox element metrics uid
@@ -717,7 +717,7 @@
 - Priority: P3
 - Common dimensions: 
 - Aliases: Inbox Element Metrics UID
-- Notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface group.
+Reference entry for - Notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface.
 - Review note: 
 
 ## Inbox message metrics uid
@@ -733,7 +733,7 @@
 - Priority: P3
 - Common dimensions: 
 - Aliases: Inbox Message Metrics UID
-- Notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface group.
+Reference entry for - Notes: Confirmed from the live Libra watched-group list; formal metric entries can be expanded later. Surface note: DM-adjacent inbox context; not a single chat-surface.
 - Review note: 
 
 ## [B2C] Business Message Key Metrics
@@ -866,8 +866,8 @@
 
 ## [DM] DM Group Chat 3d Retention
 - [x] Review
-- Chinese description: 私信群聊 3 日留存正式存储位置。
-- English description: Formal storage location for DM group-chat 3-day retention metrics.
+- Chinese description: 私信群聊 3 日留存。
+- English description: DM group-chat 3-day retention metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -882,8 +882,8 @@
 
 ## [DM] DM Group Chat 7d Retention
 - [x] Review
-- Chinese description: 私信群聊 7 日留存正式存储位置。
-- English description: Formal storage location for DM group-chat 7-day retention metrics.
+- Chinese description: 私信群聊 7 日留存。
+- English description: DM group-chat 7-day retention metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -898,8 +898,8 @@
 
 ## [DM] DM Group Chat 14d Retention
 - [x] Review
-- Chinese description: 私信群聊 14 日留存正式存储位置。
-- English description: Formal storage location for DM group-chat 14-day retention metrics.
+- Chinese description: 私信群聊 14 日留存。
+- English description: DM group-chat 14-day retention metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -914,8 +914,8 @@
 
 ## [DM] DM Group Chat 28d Retention
 - [x] Review
-- Chinese description: 私信群聊 28 日留存正式存储位置。
-- English description: Formal storage location for DM group-chat 28-day retention metrics.
+- Chinese description: 私信群聊 28 日留存。
+- English description: DM group-chat 28-day retention metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -930,8 +930,8 @@
 
 ## [DM] DM Group Chat 3d Retention New gt3-users
 - [x] Review
-- Chinese description: 私信群聊新口径 3 日留存（gt3-users）正式存储位置。
-- English description: Formal storage location for DM group-chat 3-day retention (gt3-users) metrics.
+- Chinese description: 私信群聊新口径 3 日留存（gt3-users）。
+- English description: DM group-chat 3-day retention (gt3-users) metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -946,8 +946,8 @@
 
 ## [DM] DM Group Chat 7d Retention New gt3-users
 - [x] Review
-- Chinese description: 私信群聊新口径 7 日留存（gt3-users）正式存储位置。
-- English description: Formal storage location for DM group-chat 7-day retention (gt3-users) metrics.
+- Chinese description: 私信群聊新口径 7 日留存（gt3-users）。
+- English description: DM group-chat 7-day retention (gt3-users) metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -962,8 +962,8 @@
 
 ## [DM] DM Group Chat 14d Retention New gt3-users
 - [x] Review
-- Chinese description: 私信群聊新口径 14 日留存（gt3-users）正式存储位置。
-- English description: Formal storage location for DM group-chat 14-day retention (gt3-users) metrics.
+- Chinese description: 私信群聊新口径 14 日留存（gt3-users）。
+- English description: DM group-chat 14-day retention (gt3-users) metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -978,8 +978,8 @@
 
 ## [DM] DM Group Chat 28d Retention New gt3-users
 - [x] Review
-- Chinese description: 私信群聊新口径 28 日留存（gt3-users）正式存储位置。
-- English description: Formal storage location for DM group-chat 28-day retention (gt3-users) metrics.
+- Chinese description: 私信群聊新口径 28 日留存（gt3-users）。
+- English description: DM group-chat 28-day retention (gt3-users) metrics.
 - Scope: social / DM / group chat
 - Business domain: DM Group Chat
 - Company core: 0
@@ -1106,14 +1106,14 @@
 
 ## [DM] MuF DM by Motivation
 - [x] Review
-- Chinese description: 按 MUF 动机拆分的私信指标组，用于观察动机维度下的活跃、分享与互动表现。
-- English description: A DM metric group split by MUF motivation, used to observe active, share, and interaction behaviors under motivation dimensions.
+- Chinese description: 按 MUF 动机拆分的私信指标组，用于观察主动聊天、分享和作品互动这几类动机下的行为表现。
+- English description: A DM metric group split by MUF motivation, used to observe behaviors under motivation buckets such as active chat, share, and content interaction.
 - Scope: social / DM / muf
 - Business domain: DM
 - Company core: 0
 - Business core: 1
 - Sub-business core: 1
-- Typical usage: used to capture motivation-sliced behavior in MUF-linked DM scenarios
+- Typical usage: used to capture motivation-sliced behavior across active-chat, share, and content-interaction buckets in MUF-linked DM scenarios
 - Priority: P0
 - Common dimensions: 
 - Aliases: MuF DM by Motivation; Muf DM by Motivation

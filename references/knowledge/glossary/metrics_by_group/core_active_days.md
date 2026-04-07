@@ -1,6 +1,6 @@
 # Metrics By Group | Core-Active Days
 
-These entries are confirmed, reusable formal metrics for the Core-Active Days group.
+Reference entry for These entries are confirmed, reusable formal metrics for the Core-Active Days.
 
 ## Metric: Active Days
 

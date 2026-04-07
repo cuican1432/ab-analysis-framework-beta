@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Negative Feedback
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Negative Feedback group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Negative Feedback.
 
 ## Metric: block/user
 
@@ -22,7 +22,7 @@ denominator: users
 polarity: lower_is_better
 priority_hint: P0
 
-neighbor_metric_diff: Keep distinct from mute/unmute and report metrics in the same group.
+Reference entry for neighbor_metric_diff: Keep distinct from mute/unmute and report metrics in the same.
 interpretation_notes: Core negative-feedback signal; decreases are favorable.
 ```
 

@@ -1,12 +1,12 @@
 # Metrics By Group | Inbox message metrics uid
 
-Formal storage location for Inbox message metrics uid group.
+Reference entry for Inbox message metrics uid.
 
 description_zh: Inbox 消息用户级正式指标存储位置。
-description_en: Formal storage location for user-level inbox-message metrics.
+description_en: user-level inbox-message metrics.
 
 usage_scope: Inbox / social messaging experiments
-typical_usage: formal storage location for inbox-supporting user-level metrics
+typical_usage: used as the reference entry for inbox-supporting user-level metrics
 priority_hint: P1
 common_dimensions:
   - user_id
@@ -14,4 +14,4 @@ common_dimensions:
 
 notes: Inbox message-level bucket; keep it separate from inbox-element groups.
 
-Retain as placeholder.
+Keep this entry as a placeholder until concrete metrics are confirmed.

@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Camera
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Camera group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Camera.
 
 ## Metric: Send Camera Message uv/au
 
@@ -21,7 +21,7 @@ denominator:
 polarity: higher_is_better
 priority_hint: P1
 
-neighbor_metric_diff: Keep distinct from the upload-chain and shoot-page-entry variants in the same group.
+Reference entry for neighbor_metric_diff: Keep distinct from the upload-chain and shoot-page-entry variants in the same.
 interpretation_notes: Useful for understanding whether DM Camera sending is being driven.
 ```
 
@@ -44,7 +44,7 @@ denominator:
 polarity: higher_is_better
 priority_hint: P1
 
-neighbor_metric_diff: Keep distinct from the send and entry variants in the same group.
+Reference entry for neighbor_metric_diff: Keep distinct from the send and entry variants in the same.
 interpretation_notes: Useful for understanding whether DM Camera deep usage is being strengthened.
 ```
 

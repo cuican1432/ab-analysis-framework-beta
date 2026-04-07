@@ -1,12 +1,12 @@
 # Metrics By Group | [DM] MuF DM Lifecycle
 
-Formal storage location for [DM] MuF DM Lifecycle group.
+Reference entry for [DM] MuF DM Lifecycle.
 
-description_zh: 私信 MUF 生命周期正式存储位置。
-description_en: Formal storage location for DM MUF lifecycle metrics.
+description_zh: 私信 MUF 生命周期。
+description_en: DM MUF lifecycle metrics.
 
 usage_scope: DM / direct message experiments
-typical_usage: formal storage location for lifecycle-supporting metrics
+typical_usage: used as the reference entry for lifecycle-supporting metrics
 priority_hint: P1
 common_dimensions:
   - lifecycle_stage
@@ -14,5 +14,5 @@ common_dimensions:
 
 notes: Lifecycle-oriented MUF bucket; keep it separate from the core DM lifecycle groups.
 
-Retain as placeholder.
+Keep this entry as a placeholder until concrete metrics are confirmed.
 

@@ -1,12 +1,12 @@
 # Metrics By Group | [DM] DM Camera Group Chat
 
-Formal storage location for [DM] DM Camera Group Chat group.
+Reference entry for [DM] DM Camera Group Chat.
 
 description_zh: 私信相机群聊场景的正式指标存储位置。
-description_en: Formal storage location for DM camera metrics in group-chat scenarios.
+description_en: DM camera metrics in group-chat scenarios.
 
 usage_scope: DM / direct message experiments
-typical_usage: formal storage location for group-chat camera metrics
+typical_usage: used as the reference entry for group-chat camera metrics
 priority_hint: P1
 common_dimensions:
   - By Entrance

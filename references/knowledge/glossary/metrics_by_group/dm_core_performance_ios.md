@@ -1,6 +1,6 @@
 # Metrics By Group | [DM] DM Core Performance - iOS
 
-These entries are confirmed, reusable formal metrics for the [DM] DM Core Performance - iOS group.
+Reference entry for These entries are confirmed, reusable formal metrics for the [DM] DM Core Performance - iOS.
 
 ## Metric: chat_room_load_latency_compliance_rate_threshold_p90
 

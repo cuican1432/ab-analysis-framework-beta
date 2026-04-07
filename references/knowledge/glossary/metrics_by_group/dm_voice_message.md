@@ -1,6 +1,6 @@
 # Metrics By Group | DM Voice Message
 
-These entries are confirmed, reusable formal metrics for the DM Voice Message group.
+Reference entry for These entries are confirmed, reusable formal metrics for the DM Voice Message.
 
 ## Metric: Voice Message duration/user
 

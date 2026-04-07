@@ -1,6 +1,6 @@
 # Metrics By Group | Core-Publish Days
 
-These entries are confirmed, reusable formal metrics for the Core-Publish Days group.
+Reference entry for These entries are confirmed, reusable formal metrics for the Core-Publish Days.
 
 ## Metric: Publish Days
 
