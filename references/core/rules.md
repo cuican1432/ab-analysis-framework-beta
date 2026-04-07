@@ -180,7 +180,7 @@ For common multi-day cumulative caliber families:
 - `pv/user`
   - usually read as per-user behavior intensity and is often the preferred base for additive drilldown contribution
 - `uv/user`
-  - usually reads as overall-window penetration after cross-day deduplication, so it loses much of the repeated-behavior and retention information
+  - in experiment reading, treat it the same way as `uv/au`: a penetration / coverage metric that should usually be read with a multi-day average view
 
 Default reading preference:
 
@@ -189,7 +189,6 @@ Default reading preference:
 - if the metric is `pv/au`, read it with the intensity / depth family rather than the penetration family
 - if the goal is multi-day penetration judgment and LT is stable, prefer `days/days`
 - if LT changes materially, interpret `days/days` together with `days/user` and LT direction
-- do not over-trust `uv/user` as the final multi-day penetration judgment when a `days/days` read is available
 - if the metric is a custom ratio or rate such as `Finish/Play`, `LoginRate`, `CTR`, or `_ratio`, read it from its explicit numerator / denominator definition rather than forcing it into `uv/au`, `days/days`, or `pv/user`
 
 ### Report Discipline
