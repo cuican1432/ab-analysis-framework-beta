@@ -29,6 +29,7 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - run the doc-first analysis workflow
 - silently prioritize stored metric glossary and business knowledge
 - recall core-flag metric groups by default, especially any group marked as company-core, business-core, or sub-business-core
+- identify the experiment's primary business domain first, then apply domain-first recall before ordering metric groups
 - perform attribution, risk review, and evidence-boundary labeling when needed
 - output a structured experiment report rather than scattered analysis fragments
 
@@ -116,3 +117,9 @@ Metric recall reminder:
 - any glossary metric group marked as company-core, business-core, or sub-business-core should be recalled by default
 - for the experiment's own subdomain, also recall the related `001`, `011`, and `111` metric groups by default
 - if a flagged core group is missing from the source, state that it is unavailable instead of silently dropping it
+- treat glossary `importance` as a base priority
+- identify the experiment's primary business domain first, then order metric groups with a domain-first lens:
+  - same-domain groups first
+  - adjacent-domain groups next
+  - distant-domain groups after that
+- do not assume a group that is `P3` in one domain should stay `P3` when the experiment's primary business domain changes

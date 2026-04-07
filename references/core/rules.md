@@ -63,6 +63,16 @@ Separate these two questions:
 1. what must be recalled into the analysis universe
 2. what deserves to be elevated into the main conclusion
 
+Use a domain-first recall lens before interpreting priority:
+
+1. identify the experiment's primary business domain from the PRD, raw data, title, or explicit user note
+2. treat glossary `importance` as a base priority, not a universal fixed priority across every domain
+3. then adjust recall order by domain relationship:
+   - same-domain groups first
+   - adjacent-domain groups next
+   - distant-domain groups after that
+4. keep flagged core groups in the universe even when their business domain is not the primary one
+
 Default recall universe:
 
 - `Tier A`
@@ -84,6 +94,10 @@ Core-flag handling:
 Priority rules:
 
 - recall does not automatically mean elevation
+- a group's stored `importance` is its base priority, not a domain-blind absolute priority
+- if the experiment's primary business domain matches a metric group's `business_domain`, it is valid to elevate that group above its base priority during recall
+- if the metric group belongs to an adjacent business domain, keep it in the recall universe but usually below same-domain groups unless the PRD or source makes it central
+- if the metric group belongs to a distant business domain, usually keep it as guardrail, monitoring, or appendix material unless the source explicitly makes it a target
 - the main conclusion should usually keep only `1-3` top results
 - ordering should follow the primary PRD objective
 - recalled-but-nonprimary metrics should be downgraded into:
