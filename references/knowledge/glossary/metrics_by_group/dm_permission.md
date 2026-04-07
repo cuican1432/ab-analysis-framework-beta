@@ -195,9 +195,9 @@ metric_aliases:
   - on to off user
 
 meaning_zh: 从开启转为关闭的用户数/用户。
-meaning_en: Average number of users switching from on to off per user.
+meaning_en: Share of users switching from on to off in the analysis window.
 
-caliber_meaning: on-to-off transition intensity per user
+caliber_meaning: on-to-off transition penetration / coverage
 calculation_method: Users switching from on to off divided by users in the window.
 numerator: users switching on to off
 denominator: users
@@ -218,9 +218,9 @@ metric_aliases:
   - unknown to off user
 
 meaning_zh: 从未知转为关闭的用户数/用户。
-meaning_en: Average number of users switching from unknown to off per user.
+meaning_en: Share of users switching from unknown to off in the analysis window.
 
-caliber_meaning: unknown-to-off transition intensity per user
+caliber_meaning: unknown-to-off transition penetration / coverage
 calculation_method: Users switching from unknown to off divided by users in the window.
 numerator: users switching unknown to off
 denominator: users
@@ -241,9 +241,9 @@ metric_aliases:
   - off to on user
 
 meaning_zh: 从关闭转为开启的用户数/用户。
-meaning_en: Average number of users switching from off to on per user.
+meaning_en: Share of users switching from off to on in the analysis window.
 
-caliber_meaning: off-to-on transition intensity per user
+caliber_meaning: off-to-on transition penetration / coverage
 calculation_method: Users switching from off to on divided by users in the window.
 numerator: users switching off to on
 denominator: users
@@ -264,9 +264,9 @@ metric_aliases:
   - unknown to on uv
 
 meaning_zh: 从未知转为开启的去重用户数/用户。
-meaning_en: Average number of unique users switching from unknown to on per user.
+meaning_en: Share of users switching from unknown to on in the analysis window.
 
-caliber_meaning: unknown-to-on unique-user transition intensity
+caliber_meaning: unknown-to-on transition penetration / coverage
 calculation_method: Unique users switching from unknown to on divided by users in the window.
 numerator: unique users switching unknown to on
 denominator: users

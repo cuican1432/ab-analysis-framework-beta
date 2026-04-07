@@ -22,6 +22,7 @@ Typical grouping:
 
 - penetration / coverage
   - common forms: `uv/au`, `uv/user`
+  - manual override examples: some transition or reporter-coverage metrics may still belong here even when the suffix is `/user`, such as `click_report_user/user`, `on_to_off_user/user`, `unknown_to_off_user/user`, and `off_to_on_user/user`
 - intensity / depth
   - common forms: `pv/au`, `xxx/user`, `xxx/u`, `pv/user`, `pair/user`
 - stickiness / frequency

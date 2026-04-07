@@ -132,10 +132,10 @@ metric_aliases:
   - 举报用户/用户数
 
 meaning_zh: 举报用户数/用户。
-meaning_en: Average number of reporting users per user.
+meaning_en: Share of users who triggered report behavior in the analysis window.
 
-caliber_meaning: report-user coverage per user
-calculation_method: Average reporting users per user in the analysis window.
+caliber_meaning: report-user penetration / coverage
+calculation_method: Reporting users divided by users in the analysis window.
 numerator: total reporting users
 denominator: users
 
@@ -145,4 +145,3 @@ priority_hint: P0
 neighbor_metric_diff: Keep distinct from click_report/user; this one is reporter-coverage based.
 interpretation_notes: Core user-risk signal; increases are unfavorable.
 ```
-
