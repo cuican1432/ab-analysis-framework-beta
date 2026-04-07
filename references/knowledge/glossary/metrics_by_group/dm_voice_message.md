@@ -22,7 +22,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Do not confuse with the message-level duration variant below.
-interpretation_notes: Voice usage depth supplement.
+interpretation_notes: Voice usage depth supplement. Use this together with sending-funnel and playing-funnel metrics to judge whether users rely more on voice overall.
 ```
 
 ## Metric: Voice Message duration/message
@@ -45,7 +45,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Do not confuse with the per-user duration variant above.
-interpretation_notes: Voice-message quality supplement.
+interpretation_notes: Voice-message quality supplement. This helps judge whether users prefer shorter or longer voice messages on average.
 ```
 
 ## Metric: Show Voice Message Entrance pv/au
@@ -68,7 +68,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Keep distinct from the uv/au variant.
-interpretation_notes: Entry-side exposure signal for voice messages.
+interpretation_notes: Entry-side exposure signal for voice messages. Treat this as the exposure stage of the voice-message sending funnel.
 ```
 
 ## Metric: Show Voice Message Entrance uv/au
@@ -160,7 +160,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Keep distinct from the pv/au exposure metrics and the send-stage metrics.
-interpretation_notes: Voice-message entry conversion signal on a user basis.
+interpretation_notes: Voice-message entry conversion signal on a user basis. This is the key user-level conversion metric from entrance exposure to recording.
 ```
 
 ## Metric: Cancel Voice Message pv/au
@@ -229,7 +229,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Keep distinct from the uv/au variant and from show/start/cancel metrics.
-interpretation_notes: Voice send-chain result signal.
+interpretation_notes: Voice send-chain result signal. This is the send-side success metric after show, record, and cancel steps.
 ```
 
 ## Metric: Send Voice Message uv/au
@@ -321,7 +321,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Do not confuse with play counts or completion rates.
-interpretation_notes: Voice consumption conversion signal.
+interpretation_notes: Voice consumption conversion signal. This is the key conversion metric from seeing a voice message to starting playback.
 ```
 
 ## Metric: Play Voice Message pv/au
@@ -390,7 +390,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Keep distinct from play or show counts.
-interpretation_notes: Voice completion signal.
+interpretation_notes: Voice completion signal. Use together with Play Voice Message and Finish Playing/Play Proportion to judge play quality.
 ```
 
 ## Metric: Finish Playing Voice Message uv/au
@@ -436,7 +436,7 @@ polarity: higher_is_better
 priority_hint: P2
 
 neighbor_metric_diff: Do not confuse with play counts or play/show CTR.
-interpretation_notes: Voice completion-quality signal.
+interpretation_notes: Voice completion-quality signal. Low values can indicate overly long, low-quality, or low-interest voice content.
 ```
 
 ## Metric: Send Private Voice Message pv/au

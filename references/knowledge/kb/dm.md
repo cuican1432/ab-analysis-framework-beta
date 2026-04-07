@@ -35,6 +35,128 @@ If you need support-documented messaging and adjacent distribution rules that co
 
 ---
 
+## Business Overview | 业务简介
+
+TikTok DM is the in-app direct communication layer for logged-in users. It is used to solve direct user-to-user communication needs through private messaging, media sharing, lightweight interaction, and multi-person conversation.
+
+Typical paths include:
+- `APP -> Inbox -> DM conversation`
+- `Push -> DM conversation`
+
+The DM scope here should be read broadly. It includes, but is not limited to:
+- one-to-one private chat
+- group chat
+- chat bubbles and history
+- voice messages
+- stickers
+- camera messages
+- streaks
+- safety and permission controls
+
+Use this page for stable business understanding of the DM domain. If a PRD introduces updated product details, treat the PRD as the freshest product-layer truth and extend this page conservatively.
+
+## Core Business Goal | 业务目标
+
+- help users communicate directly inside TikTok
+- support content sharing, lightweight social interaction, and deeper conversation
+- sustain DM retention, interaction depth, and relationship development across different user intents
+
+## Core Product Capabilities | 核心产品能力
+
+### Direct Messages
+
+- one-to-one conversation is the core DM surface
+- supports sending TikTok videos, gallery photos or videos, text, emoji, and other basic message types
+- long-press reactions lower interaction friction through lightweight emoji feedback
+- personalized expression includes sticker usage and user-generated sticker-like expression surfaces
+- read status is controlled bilaterally and is visible only when both sides enable it
+
+### Group Chats
+
+- group chat is the multi-person conversation layer
+- current product understanding: group size has an upper bound and invite access is restricted to safer friend-based relationships
+- the business value is shared viewing, multi-person coordination, and recurring group interaction
+
+### Voice Messages
+
+- voice message is a lightweight asynchronous communication format
+- recording is initiated from the microphone entry
+- messages can be canceled before send
+- the format is usually read through both a sending funnel and a playing funnel
+
+### Message Requests
+
+- message requests are a safety and anti-harassment mechanism for non-mutual relationships
+- the first-contact flow is more restricted than mutual-friend chat
+- request settings and receive permissions are part of the DM safety layer
+- use `messaging_support.md` for official support-documented request rules
+
+---
+
+## Core Terms | 核心名词解释
+
+### MUF
+
+- Chinese: 双关
+- English: mutual follow
+- Meaning: A mutual-follow relationship between two users. This is a core relationship foundation for many DM interaction metrics.
+
+### Pair
+
+- Chinese: 私信关系对
+- English: DM pair
+- Meaning: A directional DM relationship pair. `A -> B` and `B -> A` count as two different pairs. Repeated actions in the same direction do not create new pairs.
+
+### By Entrance
+
+- Chinese: 按入口拆分
+- English: by entrance
+- Meaning: A drilldown slice that groups DM behavior by the message-send source or entry path, such as FYP or Inbox.
+
+### By Msg Type
+
+- Chinese: 按消息类型拆分
+- English: by message type
+- Meaning: A drilldown slice that groups DM behavior by message format such as text, emoji, voice message, or camera message.
+
+### By Motivation
+
+- Chinese: 按聊天动机拆分
+- English: by motivation
+- Meaning: A drilldown slice that groups MUF private-chat behavior by business-defined motivation buckets such as active chat, share, and post interaction.
+
+### Sticker
+
+- Chinese: 贴纸消息
+- English: sticker message
+- Meaning: Sticker-based DM expression, including sticker panel exposure, sticker sending, and sticker-type-specific usage.
+
+### Voice Message
+
+- Chinese: 语音消息
+- English: voice message
+- Meaning: A DM voice format that can be analyzed through send, cancel, play, completion, and duration metrics.
+
+### Camera Message
+
+- Chinese: 相机消息
+- English: camera message / DM camera
+- Meaning: A DM camera-based message format that can be split by private chat, group chat, and entry path.
+
+### B2C Message
+
+- Chinese: B2C 消息
+- English: seller / creator message
+- Meaning: Messaging between users and creators or businesses, often analyzed through B2C-specific reply, conversion, and conversation metrics.
+
+### Streak
+
+- Chinese: 火花
+- English: streak
+- Meaning: A DM gameplay layer based on continuous interaction between friends. Because streak growth is often tied to DM tasks, it can influence usage of other DM capabilities too.
+
+---
+
 ## DM Subdomains | DM 子方向
 
 ### Core DM
@@ -63,6 +185,31 @@ If you need support-documented messaging and adjacent distribution rules that co
 - 对应指标组：
   - `[DM] DM Sticker`
 
+### Voice Messages
+
+- 含义：私信里的语音消息概念，包括入口曝光、录制、取消、发送、播放、完播以及时长。
+- Notes: voice-message concept; keep concrete voice metrics in glossary. In practice, this subdomain is usually read as two linked funnels:
+  - sending funnel: show entrance -> record -> cancel / send
+  - playing funnel: show message -> play -> finish
+- 补充说明：
+  - `... pv/au` usually reflects intensity
+  - `... uv/au` usually reflects coverage
+  - `duration/user` and `duration/message` help explain overall depth and per-message quality
+- 对应指标组：
+  - `DM Voice Message`
+
+### Camera Messages
+
+- 含义：私信里的相机消息概念，包括相机入口、发送动作、私聊相机消息和群聊相机消息。
+- Notes: camera-message concept; keep concrete camera metrics in glossary.
+- 对应指标组：
+  - `[DM] DM Camera`
+  - `[DM] DM Camera by Entrance`
+  - `[DM] DM Camera Private Chat`
+  - `[DM] DM Camera Private Chat by Entrance`
+  - `[DM] DM Camera Group Chat`
+  - `[DM] DM Camera Group Chat by Entrance`
+
 ### Group Chat
 
 - 含义：群聊里的创建、进入、发送、接收、留存和消息类型相关概念。
@@ -70,10 +217,7 @@ If you need support-documented messaging and adjacent distribution rules that co
 - 对应指标组：
   - `DM Group Chat`
   - `[DM] DM Group Chat by Msg Type`
-  - `[DM] DM Group Chat 3d Retention`
-  - `[DM] DM Group Chat 7d Retention`
-  - `[DM] DM Group Chat 14d Retention`
-  - `[DM] DM Group Chat 28d Retention`
+  - `DM Group Chat * Retention`
 
 ### Private Chat
 
@@ -103,28 +247,9 @@ If you need support-documented messaging and adjacent distribution rules that co
 
 - 含义：面向创作者或商家的消息体系概念，包括 creator messaging 和 business messaging。
 - Notes: B2C messaging concept; keep concrete B2C metrics in glossary.
-- 对应子方向：
-  - Creators Messaging
-  - Business Messaging
 - 对应指标组：
   - `[B2C] Business Message Key Metrics`
   - `[B2C] Creator Message Key Metrics`
-
-### Creators Messaging
-
-- 含义：面向创作者的消息体系概念。
-- Notes: creator-facing messaging concept; keep concrete creator metrics in glossary.
-- 定位：B2C Messaging 的 creator-facing 分支。
-- 对应指标组：
-  - `[B2C] Creator Message Key Metrics`
-
-### Business Messaging
-
-- 含义：面向商家的消息体系概念。
-- Notes: business-facing messaging concept; keep concrete business metrics in glossary.
-- 定位：B2C Messaging 的 business-facing 分支。
-- 对应指标组：
-  - `[B2C] Business Message Key Metrics`
 
 ### Share
 
@@ -138,7 +263,6 @@ If you need support-documented messaging and adjacent distribution rules that co
   - `Internal Share To Chat`
   - `internal share funnel metrics`
   - `internal share search funnel metrics`
-  - `[DM] DM by Link`
 
 ### Repost
 
@@ -251,6 +375,13 @@ Their detailed definitions can remain in `drafts/` until fully confirmed.
 
 ## DM Reading Hint | 使用提示
 
-- 先看 DM 子方向，再看具体机制概念。
-- 需要具体指标时，去 `references/knowledge/glossary`。
-- 不要把 case-specific 结论写进这里。
+- 先看业务层：
+  - DM 是什么
+  - 主要能力是什么
+  - 属于哪个子方向
+- 再看 glossary：
+  - 指标组定义在 `references/knowledge/glossary/metric_groups.md`
+  - 具体指标定义在 `references/knowledge/glossary/metrics_by_group/*.md`
+- 需要官方产品机制时，看 `references/knowledge/kb/messaging_support.md`
+- 维度只跟 source 走，不要在这里默认补维度清单
+- 不要把 case-specific 结论写进这里

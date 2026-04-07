@@ -5,13 +5,13 @@ group_name: DM Core
 group_aliases:
   - 私信核心指标组
 description_zh: 私信核心使用行为指标组，覆盖私聊和群聊场景，通常用于观察进入会话、停留、发送等主链路行为。
-description_en: A core DM usage metric group covering both private-chat and group-chat scenarios, usually used to observe entering chat, staying, and sending behaviors.
+description_en: A core DM usage metric group covering both private-chat and group-chat scenarios, usually used to observe the main DM chain such as entering chat, staying, sending, liking, and internal sharing.
 usage_scope: social / DM / core
 business_domain: DM
 is_company_core: 0
 is_business_core: 0
 is_sub_business_core: 1
-typical_usage: 
+typical_usage: used as the reusable baseline group for DM send, like, share, stay, and chat-entry reading
 priority_hint: P0
 common_dimensions:
   -
@@ -22,14 +22,14 @@ notes: Use dimensions only when they are explicitly present in the raw data or s
 group_name: DM Voice Message
 group_aliases:
   - 私信语音指标组
-description_zh: 私信语音消息相关指标组，通常用于观察语音录制、取消、发送等行为。
-description_en: A DM voice-message metric group that usually covers recording, canceling, and sending voice messages.
+description_zh: 私信语音消息相关指标组，覆盖语音入口曝光、录制、取消、发送、播放、完播以及时长等指标，通常按发送漏斗和播放漏斗两条链路来阅读。
+description_en: A DM voice-message metric group covering entrance exposure, recording, canceling, sending, playing, completion, and duration metrics, usually read through both the sending funnel and the playing funnel.
 usage_scope: social / DM / voice message
 business_domain: DM Voice Message
 is_company_core: 0
 is_business_core: 0
 is_sub_business_core: 0
-typical_usage: 
+typical_usage: used to read the voice-message sending funnel, playing funnel, and overall voice usage depth
 priority_hint: P2
 common_dimensions:
   - By Msg Type
@@ -441,14 +441,14 @@ group_name: Key Project-DM
 group_aliases:
   - DM core interaction
   - DM business core
-description_zh: 私信核心业务交互指标组，通常覆盖发送、点赞、接收、分享等更宽口径的互动信号。
-description_en: A DM core interaction metric group that usually covers sending, liking, receiving, and sharing signals.
+description_zh: 私信核心业务交互指标组，通常覆盖社交双关私信渗透、关系对互动、整体私信渗透、群聊渗透以及 FYP 站内分享，是 DM 结论层最常被复用的一组指标。
+description_en: A DM core interaction metric group that usually covers social-MUF penetration, pair-based interaction, overall DM penetration, group-chat penetration, and FYP internal sharing, and is one of the most reusable conclusion-layer DM groups.
 usage_scope: social / DM / core
 business_domain: DM
 is_company_core: 0
 is_business_core: 1
 is_sub_business_core: 1
-typical_usage: used as a business-core DM interaction layer
+typical_usage: used as a conclusion-layer DM reading group for penetration, pair strength, and FYP-driven internal sharing
 priority_hint: P0
 common_dimensions:
   -
@@ -536,8 +536,8 @@ group_name: Active Hours (HLT)
 group_aliases:
   - Tiktok core metrics: the average active hours of users
   - HLT
-description_zh: TikTok 核心活跃时长指标组，用来描述用户在给定回看窗口内的人均使用深度。
-description_en: A TikTok core metric group that describes user depth of usage over a lookback window.
+description_zh: TikTok 核心活跃时长指标组，用来描述用户在给定回看窗口内的人均使用深度与有效 session 深度。
+description_en: A TikTok core metric group that describes per-user usage depth and valid-session depth over a lookback window.
 usage_scope: social / core health
 business_domain: company-wise core
 is_company_core: 1
@@ -554,8 +554,8 @@ notes: Confirmed from the live Libra metric-group list and the shared formal glo
 group_name: Core-Publish Days
 group_aliases:
   - Publish Days
-description_zh: TikTok 创作发布相关指标组，用于描述用户在给定回看窗口内的发布覆盖情况。
-description_en: A TikTok creation-related metric group that describes user publish coverage over a lookback window.
+description_zh: TikTok 创作发布相关指标组，用于描述用户在给定回看窗口内的人均发布覆盖情况。
+description_en: A TikTok creation-related metric group that describes per-user publish coverage over a lookback window.
 usage_scope: social / core health
 business_domain: company-wise core
 is_company_core: 1
@@ -565,7 +565,7 @@ typical_usage: used as a cross-social creation and supply-health layer
 priority_hint: P0
 common_dimensions:
   -
-Reference entry for notes: Confirmed in the shared formal glossary as a mandatory-recall core-health.
+notes: Confirmed in the shared formal glossary as a mandatory-recall company-wise core group.
 ```
 
 ```yaml
@@ -583,7 +583,7 @@ typical_usage: used as a cross-social core-health baseline layer
 priority_hint: P1
 common_dimensions:
   -
-Reference entry for notes: Confirmed in the shared formal glossary as a reusable core-health.
+notes: Confirmed in the shared formal glossary as a reusable company-wise core health group.
 ```
 
 ```yaml
@@ -593,7 +593,7 @@ group_aliases:
 description_zh: 私信活跃状态相关指标组，用于观察活跃状态和行为状态的总体变化。
 description_en: A DM activity-status metric group used to observe changes in active-status and behavior-status signals.
 usage_scope: social / DM / activity
-business_domain: Active Status
+business_domain: active status
 is_company_core: 0
 is_business_core: 1
 is_sub_business_core: 1
