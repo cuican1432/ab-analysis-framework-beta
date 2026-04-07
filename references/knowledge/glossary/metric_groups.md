@@ -1287,17 +1287,17 @@ group_aliases:
   - MuF DM by Motivation
   - Muf DM by Motivation
 description_zh: 按 MUF 动机拆分的私信指标组，用于观察主动聊天、分享和作品互动这几类动机下的行为表现。
-description_en: A DM metric group split by MUF motivation, used to observe behaviors under motivation buckets such as active chat, share, and content interaction.
+description_en: A DM metric group split by MUF motivation, used to observe behaviors under motivation buckets such as active chat, share, and post interaction.
 usage_scope: social / DM / muf
 business_domain: DM
 is_company_core: 0
 is_business_core: 1
 is_sub_business_core: 1
-typical_usage: used to capture motivation-sliced behavior across active-chat, share, and content-interaction buckets in MUF-linked DM scenarios
+typical_usage: used to capture motivation-sliced behavior across active-chat, share, and post-interaction buckets in MUF-linked DM scenarios
 priority_hint: P0
 common_dimensions:
   -
-notes: Confirmed from the live Libra watched-group list and extracted report rows. Surface note: private-chat only, because this group is MUF-based.
+notes: Confirmed from the live Libra watched-group list and extracted report rows. Surface note: private-chat only, MUF-only, and session-level motivation is attributed from the first message in the session.
 ```
 
 ```yaml

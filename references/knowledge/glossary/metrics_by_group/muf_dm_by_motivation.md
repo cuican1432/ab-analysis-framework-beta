@@ -2,6 +2,8 @@
 
 Reference entry for [DM] MuF DM by Motivation.
 
+Scope note: MUF-only private chat. Raw motivation is assigned at the message level, then rolled up to the session level by the first message in the session. The main buckets are active chat, share, and post interaction.
+
 ## Metric: MuF Active Chat Days/Days
 
 ```yaml
@@ -56,7 +58,7 @@ metric_name: MuF Active Chat/User
 metric_aliases:
   - MuF Active Chat per User
 
-meaning_zh: MUF 活跃聊天数/用户。
+meaning_zh: MUF 活跃次数/用户。
 meaning_en: Average number of active-chat events per user under the MUF motivation taxonomy.
 
 caliber_meaning: MuF active-chat intensity per user
@@ -90,6 +92,6 @@ denominator: users
 polarity: higher_is_better
 priority_hint: P1
 
-Reference entry for neighbor_metric_diff: Keep distinct from active-chat metrics in this.
+neighbor_metric_diff: Keep distinct from the active-chat metrics in the same motivation bucket.
 interpretation_notes: Motivation-based share intensity signal.
 ```

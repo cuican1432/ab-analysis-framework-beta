@@ -234,8 +234,8 @@ Their detailed definitions can remain in `drafts/` until fully confirmed.
 
 ### DM by Motivation
 
-- 含义：按私信动机切分的行为概念。
-- Notes: slice concept; keep concrete metrics in glossary.
+- 含义：按私信聊天动机切分的行为概念，当前主要包括主动聊天、分享、作品互动这几类动机桶。
+- Notes: motivation-slice concept for MUF-only private chat. In the current setup, raw motivation is assigned at the message level, then rolled up to the session level by the first message in the session. The main buckets are active chat, share, and post interaction. Keep concrete metrics in glossary.
 
 ### DM 2-Way
 
