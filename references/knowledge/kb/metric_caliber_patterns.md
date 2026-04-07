@@ -69,17 +69,16 @@ Typical grouping:
 
 ### `XXX uv/user`
 
-- Meaning: share of cumulative distinct users who had the behavior in the selected experiment window
-- Numerator: cumulative distinct users with the behavior across days
-- Denominator: cumulative distinct users
+- Meaning: in experiment reading, treat this the same way as `uv/au`: a penetration / coverage metric
+- Numerator: users with the behavior
+- Denominator: users
 - Reading rule:
-  - in experiment reading, treat this as a penetration / coverage family member, even though it is window-level rather than day-grain
-  - this is an overall penetration metric over the whole selected window, not a day-grain penetration metric
-  - because the numerator is cross-day deduplicated, it loses much of the day-level retention and repeated-behavior information
-  - for multi-day cumulative experiment judgment, this type is usually weaker than `days/days`
+  - in experiment reading, handle `uv/user` the same way as `uv/au`
+  - default to multi-day average
+  - if the source only exposes a multi-day cumulative view, do not use this family as the final judgment metric by default
 - Example:
   - `send or like msg uv/user`
-  - share of users who had send-or-like behavior in the selected window
+  - penetration-style share of users with send-or-like behavior
 
 ## When To Read `days/days` vs `days/user`
 
@@ -88,13 +87,6 @@ Typical grouping:
 - In that case:
   - `days/days` helps show penetration change
   - `days/user` helps explain whether the change came from user-level behavior days versus denominator movement
-
-## Why `uv/user` Is Usually Weaker For Final Multi-Day Judgment
-
-- Cross-day deduplication removes much of the repeated-behavior and retention information.
-- A multi-day `uv/user` metric describes overall-window penetration, not daily penetration.
-- Because multi-day averages are often not a sound significance-reading target, the safer default is:
-  - prefer `days/days` over `uv/user` for final multi-day experiment judgment when both attempt to describe penetration
 
 ## Quick Reading Rule
 

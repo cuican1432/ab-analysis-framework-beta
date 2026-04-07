@@ -4,7 +4,7 @@
 group_name: DM Core
 group_aliases:
   - 私信核心指标组
-description_zh: 私信核心使用行为指标组，覆盖私聊和群聊场景，通常用于观察进入会话、停留、发送等主链路行为。
+description_zh: 私信核心使用行为指标组，覆盖私聊和群聊场景，通常用于观察进入会话、停留、发送、点赞和站内分享等主链路行为。
 description_en: A core DM usage metric group covering both private-chat and group-chat scenarios, usually used to observe the main DM chain such as entering chat, staying, sending, liking, and internal sharing.
 usage_scope: social / DM / core
 business_domain: DM
