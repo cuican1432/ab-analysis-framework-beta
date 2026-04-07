@@ -118,6 +118,7 @@ Metric recall reminder:
 - for the experiment's own subdomain, also recall the related `001`, `011`, and `111` metric groups by default
 - if a flagged core group is missing from the source, state that it is unavailable instead of silently dropping it
 - treat glossary `importance` as a base priority
+- do not treat one domain's stored priority table as universal; a `DM`-scoped ordering may need to be re-ranked when the experiment's primary business domain is `Share&Repost`, `Sticker`, `Inbox`, or another domain
 - identify the experiment's primary business domain first, then order metric groups with a domain-first lens:
   - same-domain groups first
   - adjacent-domain groups next

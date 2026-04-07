@@ -67,11 +67,13 @@ Use a domain-first recall lens before interpreting priority:
 
 1. identify the experiment's primary business domain from the PRD, raw data, title, or explicit user note
 2. treat glossary `importance` as a base priority, not a universal fixed priority across every domain
-3. then adjust recall order by domain relationship:
+3. if the current stored priority was calibrated under a specific business-domain view such as `DM`, do not blindly reuse it as the final ordering for `Share&Repost`, `Sticker`, `Inbox`, or other primary domains
+4. re-rank by the current experiment's primary business domain before deciding what should count as the effective `P0 / P1 / P2 / P3 / P4` order in the live report
+5. then adjust recall order by domain relationship:
    - same-domain groups first
    - adjacent-domain groups next
    - distant-domain groups after that
-4. keep flagged core groups in the universe even when their business domain is not the primary one
+6. keep flagged core groups in the universe even when their business domain is not the primary one
 
 Default recall universe:
 
@@ -95,6 +97,7 @@ Priority rules:
 
 - recall does not automatically mean elevation
 - a group's stored `importance` is its base priority, not a domain-blind absolute priority
+- the stored priority can reflect a domain-scoped base view; for example, a `DM`-scoped priority table should not be treated as the final ordering for a `Share&Repost` experiment
 - if the experiment's primary business domain matches a metric group's `business_domain`, it is valid to elevate that group above its base priority during recall
 - if the metric group belongs to an adjacent business domain, keep it in the recall universe but usually below same-domain groups unless the PRD or source makes it central
 - if the metric group belongs to a distant business domain, usually keep it as guardrail, monitoring, or appendix material unless the source explicitly makes it a target
