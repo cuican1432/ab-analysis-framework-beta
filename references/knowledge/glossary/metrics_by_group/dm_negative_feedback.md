@@ -11,19 +11,43 @@ metric_aliases:
   - block
   - 拉黑/用户数
 
-meaning_zh: 拉黑用户数/用户。
-meaning_en: Average number of blocks per user.
+meaning_zh: 拉黑次数/用户。
+meaning_en: Average number of block events per user.
 
 caliber_meaning: negative-feedback intensity per user
 calculation_method: Average block events per user in the analysis window.
-numerator: total blocks
+numerator: total block events
 denominator: users
 
 polarity: lower_is_better
 priority_hint: P0
 
-Reference entry for neighbor_metric_diff: Keep distinct from mute/unmute and report metrics in the same.
+neighbor_metric_diff: Keep distinct from mute/unmute and report metrics in the same group.
 interpretation_notes: Core negative-feedback signal; decreases are favorable.
+```
+
+## Metric: block_user/user
+
+```yaml
+group_name: [DM] DM Negative Feedback
+metric_name: block_user/user
+metric_aliases:
+  - block_user
+  - 拉黑用户数/用户
+
+meaning_zh: 拉黑用户数/用户。
+meaning_en: Share of users who triggered block behavior in the analysis window.
+
+caliber_meaning: block-user penetration / coverage
+calculation_method: Blocking users divided by users in the analysis window.
+numerator: total blocking users
+denominator: users
+
+polarity: lower_is_better
+priority_hint: P0
+
+neighbor_metric_diff: Keep distinct from block/user; this one is blocker-coverage based.
+interpretation_notes: Core negative-feedback signal; increases are unfavorable.
 ```
 
 ## Metric: unmute/user
@@ -46,7 +70,7 @@ denominator: users
 polarity: lower_is_better
 priority_hint: P2
 
-neighbor_metric_diff: Keep distinct from block/user and mute_user/user.
+neighbor_metric_diff: Keep distinct from block_user/user and mute_user/user.
 interpretation_notes: Supporting negative-feedback signal.
 ```
 
@@ -70,7 +94,7 @@ denominator: users
 polarity: lower_is_better
 priority_hint: P2
 
-neighbor_metric_diff: Keep distinct from block/user and unmute/user.
+neighbor_metric_diff: Keep distinct from block_user/user and unmute/user.
 interpretation_notes: Supporting negative-feedback signal.
 ```
 

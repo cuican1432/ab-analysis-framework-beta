@@ -60,6 +60,7 @@ Use this page as a working inventory, not as a replacement for direct metric def
 | [DM] DM Inner Push | Send Msg from Inner Push Days/User | days/user | multi-day cumulative | per-user behavior-day frequency |
 | [DM] DM Inner Push | Send Msg from Inner Push/User | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
 | [DM] DM Negative Feedback | block/user | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
+| [DM] DM Negative Feedback | block_user/user | penetration / coverage | multi-day average preferred | penetration-style read; daily or window-level coverage depending on exact denominator |
 | [DM] DM Negative Feedback | click_report/user | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
 | [DM] DM Negative Feedback | click_report_user/user | penetration / coverage | multi-day average preferred | penetration-style read; daily or window-level coverage depending on exact denominator |
 | [DM] DM Negative Feedback | mute_user/user | intensity / depth | multi-day cumulative | per-user or per-active-user depth / intensity |
