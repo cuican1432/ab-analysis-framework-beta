@@ -15,7 +15,6 @@
    - build the candidate metric set
 3. Turn Stage A into Stage B logic.
 4. Write Stage C as a decision-oriented memo.
-5. Evaluate in Stage D when needed.
 
 Practical reminder:
 

@@ -40,10 +40,6 @@ Use this default order for experiment analysis:
 
 7. Write Stage C report.
 
-### Stage D: Evaluation
-
-8. Run Stage D evaluation when required.
-
 ## Live Libra Branch
 
 Use live Libra extraction only when:
@@ -64,7 +60,6 @@ When live Libra extraction is needed:
 - `A`: extract facts from the source, lock setup/config fields, consult glossary/KB, and finish the recall set.
 - `B`: organize logic and decision structure.
 - `C`: write the final report.
-- `D`: evaluate output against an eval set or checklist.
 
 ## Rerun Rule
 
