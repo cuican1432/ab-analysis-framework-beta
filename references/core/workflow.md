@@ -17,6 +17,7 @@ Use this default order for experiment analysis:
      - traffic layer
      - sharding unit / split unit
      - total traffic / rollout info / arm traffic split
+     - per-arm parameter config (arm-level config differences)
      - target metrics / guardrails
      - experiment hypothesis / expected outcome (infer from PRD if Raw Data does not state it explicitly; mark the inferred version as `[inferred from PRD]`)
      - filter / audience conditions

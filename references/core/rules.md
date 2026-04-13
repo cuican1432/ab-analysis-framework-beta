@@ -49,6 +49,13 @@ Multi-dimensional data handling:
 - a single extreme slice → reference it only when it is needed for attribution; do not list it as standalone evidence
 - slice-level summaries from the Raw Data (e.g., "显著指标总结" per dimension) belong in the data appendix, not the main body
 
+When metric group data exists in the source but cannot be fully parsed by the current toolchain (for example, embedded sheet tokens, image-only tables):
+
+- use whatever summary-level information is available (for example, significant-metric summaries at the top of each group)
+- clearly distinguish between "full evidence" (all metrics readable) and "partial evidence" (only summary available)
+- for decision purposes: significant signals extracted from summaries can be used, but the absence of other metrics in that group cannot be treated as "flat / no regression" — label as `完整数据需在原始报告中逐项确认`
+- add partially-available groups to the `to confirm` list
+
 ### Metric Tiering
 
 Use three default tiers:
@@ -64,6 +71,13 @@ Use three default tiers:
   - used for monitoring, risk supplementation, and anomaly logging
 
 Do not let Tier C dominate the main conclusion unless the source explicitly proves it should.
+
+PRD expected regression handling:
+
+- if the PRD explicitly states that a metric is expected to decline as a known tradeoff (for example, "video card click might slightly -"), that metric's observed decline should not be counted as a guardrail regression in the decision
+- label it as `PRD 预期 tradeoff` and evaluate whether the observed decline is within the PRD's stated tolerance
+- if the observed decline is significantly larger than the PRD's expectation, escalate to a risk signal despite the PRD expectation
+- this rule only applies when the PRD explicitly names the metric and the expected direction; do not infer expected regressions that the PRD did not state
 
 Tier / core-flag mapping:
 
@@ -279,3 +293,10 @@ Non-significant handling:
 - `Tier A`: still must appear. Explain what "not significant" implies for the decision (for example: no clear penetration gain, or effect not stable yet).
 - `Tier B`: can be summarized as "guardrail flat / no significant regression" unless the business context requires deeper discussion.
 - `Tier C`: can be omitted unless it is needed for attribution, anomaly tracking, or risk logging.
+
+Significance judgment and effect size description must be separated:
+
+- significance judgment: `正向显著` / `负向显著` / `不显著` — determined solely by p-value threshold (default 0.05)
+- effect size description: `效果量较大` / `效果量较小` — determined by the absolute or relative magnitude of the change
+- do not combine them into hybrid terms such as `微正向显著` or `弱显著`; these are ambiguous and can mislead the reader into thinking the statistical significance is weak
+- correct pattern: `正向显著（效果量较小，+0.016%）` or `正向显著，但绝对变化幅度有限（+0.016%）`

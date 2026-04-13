@@ -31,8 +31,22 @@ If any copied text elsewhere conflicts with this file, this file wins.
 ### Metric Naming | 指标命名
 
 - Metric naming must be strict: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
+- The metric name used in the report MUST be the full name as it appears in the Raw Data source, including the denominator part (for example: `Send or Like Message Days/Days`, not `Send/Like Message Days`). Do not truncate, abbreviate, or replace with the PRD-side shorthand.
 - If bilingual mapping is missing in glossary/PRD/raw, use the raw metric key as the English name and add a `to confirm` item; do not invent a translation.
 - Do NOT output `[数据缺失]` unless the source data is truly missing; if missing, state what is missing and which source should contain it.
+
+### Language Discipline | 语言纪律
+
+- The report is written for decision-makers (PM, leads, stakeholders), not for framework developers or data analysts.
+- Framework-internal terms are forbidden in the report body. Translate or rephrase them:
+  - ✗ `PRD scope 外` → ✓ `不在本次实验改动范围内`
+  - ✗ `artifact` → ✓ `数据口径问题导致的虚假信号` 或 `统计噪声`
+  - ✗ `blocking regression` → ✓ `阻断性回退` 或 `明显恶化`
+  - ✗ `embedded sheets 无法解析` → ✓ `完整数据需在原始报告中逐项确认`
+  - ✗ `归为 [monitoring]` → ✓ `建议持续关注，暂不作为决策阻断项`
+  - ✗ `caliber artifact` → ✓ `指标口径问题导致的虚假显著`
+- Metric names follow their original language in Raw Data (usually English); all other text uses Chinese.
+- Avoid mid-sentence language switching. If an English term must appear (for example, a proper noun), wrap it in parentheses after the Chinese equivalent.
 
 ### Callouts | 高亮块
 
