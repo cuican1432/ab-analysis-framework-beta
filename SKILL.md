@@ -13,6 +13,8 @@ It mainly supports three task types:
 
 You do not need to remember the internal helper skills. In most cases, calling `ab-analysis-framework-beta` directly is enough.
 
+If the main goal is to build or normalize the knowledge store itself rather than run experiment analysis, use `ab-knowledge-builder-beta`.
+
 ## 1) Experiment Report Generation
 
 ### Use this when
@@ -125,3 +127,17 @@ Metric recall reminder:
   - adjacent-domain groups next
   - distant-domain groups after that
 - do not assume a group that is `P3` in one domain should stay `P3` when the experiment's primary business domain changes
+
+## Linkage Rule With `ab-knowledge-builder-beta`
+
+`ab-analysis-framework-beta` reads the live knowledge layer under `userdata/ab-analysis-framework-beta/*`, but it does not own detailed knowledge-content editing.
+
+Update this framework skill when one of these changes:
+
+- the knowledge path changes
+- the knowledge schema changes
+- the read order changes
+- new required indexes or reading categories are introduced
+- analysis rules must adapt to newly stabilized knowledge conventions
+
+Do not update this framework skill for pure knowledge-content growth by default.

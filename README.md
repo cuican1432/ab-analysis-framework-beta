@@ -43,6 +43,8 @@ This package is built so that:
 
 - `SKILL.md`
   - main trigger and routing instructions
+- `skills/ab-knowledge-builder-beta/SKILL.md`
+  - knowledge-only builder skill for glossary / KB / migration / normalization work
 - `references/core/*`
   - workflow, rules, memory, runbook, tooling
 - `references/knowledge/glossary/*`
