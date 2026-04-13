@@ -52,19 +52,16 @@ Install them in this order:
 
 Use this when the main job is:
 - generating an experiment report
-- reading PRD + raw data together
-- doing attribution and decision support
-- applying the stored glossary / KB during one experiment analysis
+- reading PRD + raw data together in order to write the report
+- applying the stored glossary / KB during that report-writing workflow
 
 Typical use cases:
 - A/B 实验观测结束，需要输出实验报告
-- 想知道核心指标为什么变了
-- 想按业务域召回 metric groups 并做归因
+- 已经有 PRD 和 raw data，想直接写实验报告
 
 Example prompts:
 - `Please use ab-analysis-framework-beta to generate an experiment report.`
 - `Please use ab-analysis-framework-beta to analyze this PRD and raw data together.`
-- `Please use ab-analysis-framework-beta to explain the key drivers behind this experiment result.`
 
 ### 2. `ab-knowledge-builder-beta`
 

@@ -1,6 +1,6 @@
 ---
 name: ab-analysis-framework-beta
-description: TT A/B 实验分析框架主入口技能。用于实验报告生成、PRD 与 Raw Data 联合分析、业务知识入库、以及带临时规则的单次实验分析。用户提到 A/B 实验分析、实验复盘、实验报告、metric glossary、knowledge ingestion、业务术语整理、PRD + 数据联合解读时，应优先使用本技能。
+description: TT A/B 实验分析框架主入口技能。主要用于实验报告生成，以及基于 PRD 与 Raw Data 联合解读后输出标准化实验报告。用户提到 A/B 实验分析、实验复盘、实验报告、PRD + 数据联合解读并希望直接写报告时，应优先使用本技能。
 ---
 
 # TT AB Analysis Framework
