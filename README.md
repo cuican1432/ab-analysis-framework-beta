@@ -65,15 +65,7 @@ The simplest validation flow is:
 3. Pass the `PRD` link and `Raw Data` link directly into the skill.
 4. Check whether it can follow the doc-first path and produce a structured experiment report.
 
-You can paste one of these prompts directly:
-
-```text
-Please use ab-analysis-framework-beta to analyze this PRD and raw data together and generate an experiment report.
-Hard rule (smoke test): Always reread the source from the current links. Do not reuse historical files, old reports, or prior intermediate outputs.
-Experiment name (optional): [Personalized Bubble]
-PRD link: https://bytedance.larkoffice.com/wiki/BT70wFcLAi5eh3k2ihJc4LCynWe
-Raw Data link: https://bytedance.larkoffice.com/docx/L2kwdjvt5oLCwsxbB7Wc6uMRnud
-```
+你可以直接复制粘贴下面任意一个 prompt：
 
 ```text
 请使用 ab-analysis-framework-beta 结合这个 PRD 和 Raw Data 一起分析并生成实验报告。
@@ -81,14 +73,6 @@ Raw Data link: https://bytedance.larkoffice.com/docx/L2kwdjvt5oLCwsxbB7Wc6uMRnud
 实验名称（可选）：[Personalized Bubble]
 PRD 链接：https://bytedance.larkoffice.com/wiki/BT70wFcLAi5eh3k2ihJc4LCynWe
 Raw Data 链接：https://bytedance.larkoffice.com/docx/L2kwdjvt5oLCwsxbB7Wc6uMRnud
-```
-
-```text
-Please use ab-analysis-framework-beta to analyze this PRD and raw data together and generate an experiment report.
-Hard rule (smoke test): Always reread the source from the current links. Do not reuse historical files, old reports, or prior intermediate outputs.
-Experiment name (optional): [DM Card UI Optimization]
-PRD link: https://bytedance.sg.larkoffice.com/docx/GNMUdHluloFyw3xeaSklIAaSgee
-Raw Data link: https://bytedance.larkoffice.com/docx/GTtkd0Ixnos3VExjttecsuKEnxp
 ```
 
 ```text
@@ -117,10 +101,8 @@ Typical use cases:
 Example prompts:
 
 ```text
-Please use ab-analysis-framework-beta to generate an experiment report.
 请使用 ab-analysis-framework-beta 生成一份实验报告。
 
-Please use ab-analysis-framework-beta to analyze this PRD and raw data together.
 请使用 ab-analysis-framework-beta 结合这个 PRD 和 Raw Data 一起分析并写实验报告。
 ```
 
@@ -136,16 +118,12 @@ Use this when:
 You can say:
 
 ```text
-Please use ab-analysis-framework-beta to generate an experiment report.
 请使用 ab-analysis-framework-beta 生成一份实验报告。
 
-Experiment name (optional): [example: DM Personalized Bubble]
 实验名称（可选）：[例如：DM Personalized Bubble]
 
-PRD link: [URL]
 PRD 链接：[URL]
 
-Raw Data link: [URL]
 Raw Data 链接：[URL]
 ```
 
@@ -172,16 +150,12 @@ Typical use cases:
 Example prompts:
 
 ```text
-Please use ab-knowledge-builder-beta to ingest these metric definitions into the glossary, including metric meaning, aliases, polarity, and calculation notes.
 请使用 ab-knowledge-builder-beta 将这些指标定义写入 glossary，包括指标含义、别名、极性和计算说明。
 
-Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source and extract reusable product-mechanism knowledge.
 请使用 ab-knowledge-builder-beta 用这个新来源更新 DM knowledge base，并提取可复用的产品机制知识。
 
-Please use ab-knowledge-builder-beta to normalize this metric group, including group meaning, business domain, priority, scope, and typical usage.
 请使用 ab-knowledge-builder-beta 规范这个指标组，包括组含义、业务域、优先级、scope 和 typical usage。
 
-Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags, such as uv/au, days/days, days/user, pv/user, and ratio.
 请使用 ab-knowledge-builder-beta 规范这些指标含义和口径标签，例如 uv/au、days/days、days/user、pv/user 和 ratio。
 ```
 
