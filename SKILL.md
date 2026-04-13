@@ -31,6 +31,9 @@ If the main goal is to build or normalize the knowledge store itself rather than
 
 When generating an experiment report, the output must be a Feishu/Lark doc (not a plain chat message). Return the Feishu doc link.
 
+Single source note:
+- The detailed and maintained output rules live in `references/core/report_output_rules.md`. If any wording conflicts, that file wins.
+
 Doc output fallback (do not block delivery):
 - Prefer: create a Feishu/Lark doc and return the doc link.
 - If doc creation is not available due to permission/tooling limits, output a fully structured "doc body" (with the same tables/callouts/code blocks rules) that the user can paste into a new doc, and clearly state what capability/permission is missing.
@@ -72,7 +75,8 @@ Data appendix hard rules (physical-level evidence):
 - Prefer: fetch and "physically clone" all detail tables from the bottom of the Raw Data doc via API and paste them as-is into the appendix.
 - If API access is not available due to permission/tooling limits, use this fallback chain (do not summarize):
   1. Copy/export the full raw tables into the appendix, and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
-  2. If even copying/exporting is not possible, manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
+  2. Link-type lowest-fidelity fallback: if full-table copy/export is not possible, place direct links to the raw doc tables (or table nodes / screenshots) and list the missing tables and reasons.
+  3. If even link/copy/export is not possible, manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
 
 Hard formatting rules:
 - Tables:

@@ -207,6 +207,8 @@ What to avoid:
 
 When outputting the final experiment report:
 
+- Single source note:
+  - The detailed and maintained output rules live in `references/core/report_output_rules.md`. If any wording conflicts, that file wins.
 - Output must be a Feishu/Lark doc and provide the doc link.
 - If doc creation is not available due to permission/tooling limits, output a fully structured "doc body" that the user can paste into a new doc, and clearly state what capability/permission is missing.
 - Tables must be native Feishu tables, not Markdown code blocks:
@@ -234,6 +236,8 @@ When outputting the final experiment report:
   - If API access is not available due to permission/tooling limits:
     - copy/export the full raw tables into the appendix without summarization,
     - and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
+  - If full-table copy/export is not possible:
+    - place direct links to the raw doc tables (or table nodes / screenshots) and list the missing tables and reasons.
   - If even copying/exporting is not possible:
     - manually create native Feishu tables and fill in all rows/columns as-is from the source,
     - and explicitly state this is a manual fallback and what limitation caused it.
