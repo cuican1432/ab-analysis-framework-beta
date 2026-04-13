@@ -65,9 +65,39 @@ The simplest validation flow is:
 3. Pass the `PRD` link and `Raw Data` link directly into the skill.
 4. Check whether it can follow the doc-first path and produce a structured experiment report.
 
-One hard rule for smoke tests:
-- always reread the source from the current links
-- do not reuse historical files, old reports, or prior intermediate outputs
+You can paste one of these prompts directly:
+
+```text
+Please use ab-analysis-framework-beta to analyze this PRD and raw data together and generate an experiment report.
+Hard rule (smoke test): Always reread the source from the current links. Do not reuse historical files, old reports, or prior intermediate outputs.
+Experiment name (optional): [Personalized Bubble]
+PRD link: https://bytedance.larkoffice.com/wiki/BT70wFcLAi5eh3k2ihJc4LCynWe
+Raw Data link: https://bytedance.larkoffice.com/docx/L2kwdjvt5oLCwsxbB7Wc6uMRnud
+```
+
+```text
+请使用 ab-analysis-framework-beta 结合这个 PRD 和 Raw Data 一起分析并生成实验报告。
+烟测硬规则：每次都必须从当前链接重新读取源文档；不要复用历史文件、旧报告或之前的中间产物。
+实验名称（可选）：[Personalized Bubble]
+PRD 链接：https://bytedance.larkoffice.com/wiki/BT70wFcLAi5eh3k2ihJc4LCynWe
+Raw Data 链接：https://bytedance.larkoffice.com/docx/L2kwdjvt5oLCwsxbB7Wc6uMRnud
+```
+
+```text
+Please use ab-analysis-framework-beta to analyze this PRD and raw data together and generate an experiment report.
+Hard rule (smoke test): Always reread the source from the current links. Do not reuse historical files, old reports, or prior intermediate outputs.
+Experiment name (optional): [DM Card UI Optimization]
+PRD link: https://bytedance.sg.larkoffice.com/docx/GNMUdHluloFyw3xeaSklIAaSgee
+Raw Data link: https://bytedance.larkoffice.com/docx/GTtkd0Ixnos3VExjttecsuKEnxp
+```
+
+```text
+请使用 ab-analysis-framework-beta 结合这个 PRD 和 Raw Data 一起分析并生成实验报告。
+烟测硬规则：每次都必须从当前链接重新读取源文档；不要复用历史文件、旧报告或之前的中间产物。
+实验名称（可选）：[DM Card UI Optimization]
+PRD 链接：https://bytedance.sg.larkoffice.com/docx/GNMUdHluloFyw3xeaSklIAaSgee
+Raw Data 链接：https://bytedance.larkoffice.com/docx/GTtkd0Ixnos3VExjttecsuKEnxp
+```
 
 ---
 
