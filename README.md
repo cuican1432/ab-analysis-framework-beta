@@ -15,30 +15,32 @@ This repo is meant to be used as a paired setup:
 
 ## Quick Start | 快速开始
 
-### Download these two packages
+### Step 1. Download these two packages
 
 - [Download `ab-knowledge-builder-beta.zip`](https://github.com/cuican1432/ab-analysis-framework-beta/raw/main/release/ab-knowledge-builder-beta.zip)
 - [Download `ab-analysis-framework-beta.zip`](https://github.com/cuican1432/ab-analysis-framework-beta/raw/main/release/ab-analysis-framework-beta.zip)
 
 Do not use the GitHub auto-generated source zip from the repo page.
 
-### Recommended install order in Mira
+### Step 2. Install the two packages in Mira
 
 1. Open `Mira`
 2. Open `Skills`
 3. Open `Manage Skills`
-4. Upload `release/ab-knowledge-builder-beta.zip`
-5. Upload `release/ab-analysis-framework-beta.zip`
+4. Upload `ab-knowledge-builder-beta.zip`
+5. Wait until the first upload finishes
+6. Upload `ab-analysis-framework-beta.zip`
+7. Wait until the second upload finishes
 
-Recommended order:
+Install them in this order:
 - upload the knowledge-builder package first
 - then upload the analysis framework package
 
-Why this order:
+### Step 3. Why this order matters
 - the builder package ships seeded social KB / glossary content inside `userdata/ab-analysis-framework-beta/*`
 - the framework package can then read that knowledge layer immediately
 
-After upload, each package should expose:
+### Step 4. What success looks like after upload
 - `SKILL.md` at zip root
 - `references/`, `userdata/`, and package files at the same root level
 
