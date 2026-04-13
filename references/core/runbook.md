@@ -113,7 +113,15 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
 ### Attribution Red Lines (Anti-Hallucination) | 归因推演红线（反幻觉）
 
 - Attribution and logic chains must be grounded in source facts.
-  - For UI/interaction experiments, prioritize PRD "physical interaction facts" to explain movements (for example: click distance, UI layer occlusion, operation steps length, interaction path change).
+  - For UI/interaction experiments, prioritize PRD "physical interaction facts" when applicable to explain movements (for example: click distance, UI layer occlusion, operation steps length, interaction path change).
+  - Other allowed attribution routes (must be evidence-bound):
+    - funnel / path chain (A -> B -> C)
+    - user composition shift
+    - metric formula decomposition
+    - space / cannibalization
+    - time trend / seasonality / regression-to-mean checks
+    - data quality / logging / sampling issues
+    - external or product interference
 - Absolute forbidden language:
   - do not use unsupported psych speculation like "用户觉得花里胡哨", "主观反感", "心理预期下降" unless the source has objective evidence.
 - Anti-survivorship bias:

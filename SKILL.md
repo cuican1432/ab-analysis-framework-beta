@@ -37,7 +37,9 @@ Hard structure rules (strict):
   - Do not dump detail tables before stating the sub-conclusion and its attribution chain.
 
 Attribution hard rules (anti-hallucination):
-- Any attribution / logic chain must be grounded in PRD "physical interaction facts" when applicable (for example: click distance, UI layer occlusion, operation steps length, interaction path changes).
+- Any attribution / logic chain must be grounded in verifiable source facts.
+  - For UI/interaction experiments, prioritize PRD "physical interaction facts" when applicable (for example: click distance, UI layer occlusion, operation steps length, interaction path changes).
+  - For other cases, allowed attribution routes include: funnel/path chain, user composition, metric formula decomposition, space/cannibalization, time trend, data quality checks, external/product interference (must be evidence-bound).
 - Absolute forbidden language: do not use unsupported psych speculation such as "用户觉得花里胡哨", "主观反感", "心理预期下降" unless the source has objective evidence.
 - Anti-survivorship bias: if any core secondary metric (for example: DM sticker/camera/group chat) has significant movement, it must be fully disclosed and given its own dedicated deep-analysis subsection. Do not hide it just because it is not the primary headline metric.
 - Experiment config must be extracted verbatim into `实验背景与设计`, including: traffic stratification, split unit, and filter conditions.
