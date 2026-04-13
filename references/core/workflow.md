@@ -18,12 +18,12 @@ Use this default order for experiment analysis:
      - sharding unit / split unit
      - total traffic / rollout info / arm traffic split
      - target metrics / guardrails
-      - experiment hypothesis / expected outcome (infer from PRD if Raw Data does not state it explicitly; mark the inferred version as `[inferred from PRD]`)
+     - experiment hypothesis / expected outcome (infer from PRD if Raw Data does not state it explicitly; mark the inferred version as `[inferred from PRD]`)
      - filter / audience conditions
      - sample size / DAU scale signals when the source exposes them
-    - Data date cross-check:
-      - the observation start date must equal the experiment start date (launch / rollout timestamp)
-      - if the header-level data date and the per-metric-group data date differ, use the per-metric-group date range as the truth and flag the discrepancy in `to confirm`
+   - Data date cross-check:
+     - the observation start date must equal the experiment start date (launch / rollout timestamp)
+     - if the header-level data date and the per-metric-group data date differ, use the per-metric-group date range as the truth and flag the discrepancy in `to confirm`
    - Missing required fields stay `not found`.
    - If PRD and Raw Data conflict, show both and mark `to confirm`.
 3. Consult the glossary and KB.

@@ -160,6 +160,8 @@ Use evidence from three equal routes:
 - mechanism / transmission-chain evidence,
 - drilldown / slice evidence.
 
+These three routes are the evidence organization frame. The attribution "directions" listed later (path/user/formula/space/time/data-quality/external) are concrete methods under this frame.
+
 When useful, label claims as:
 
 - `[direct evidence]`,
@@ -271,3 +273,9 @@ Default reading preference:
   - what is not confirmed,
   - and what is only directional.
 - Prefer conservative, clear, reviewable writing over polished but weakly supported writing.
+
+Non-significant handling:
+
+- `Tier A`: still must appear. Explain what "not significant" implies for the decision (for example: no clear penetration gain, or effect not stable yet).
+- `Tier B`: can be summarized as "guardrail flat / no significant regression" unless the business context requires deeper discussion.
+- `Tier C`: can be omitted unless it is needed for attribution, anomaly tracking, or risk logging.

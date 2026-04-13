@@ -146,6 +146,7 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
       - 流量分层 (Traffic Layer)
       - 分流单元 (Sharding Unit / Unit)
       - 实验原始配置总流量 / 放量信息 / 各版本流量比例
+      - （完整白名单见 `workflow.md` Stage A step 2）
     - 过滤条件 (Filter) 的特殊保护：
       - 寻找物料中的“生效对象”、“受众”或“过滤条件”
       - 若包含技术流代码（如 `version_code >= 440300`、`app_id in [...]` 等 SQL/Python 片段），必须用代码块包裹并原封不动保留
@@ -183,6 +184,7 @@ Practical writing order:
 
 1. 总结论：直接回答 rollout / decision question（先结论后背景）
 2. 总建议：下一步怎么做（按标准决策分级给出）
+2.5 实验背景与设计：以 Key-Value 属性表格或前置列表展示实验配置底座（完整字段白名单见 `workflow.md` Stage A step 2；表格落地格式见 `report_output_rules.md`，推荐 2 列属性表格 `col-widths="200,620"`）
 3. 分结论（重复多次）：
    - 分结论 judgment（这段想表达的结论）
    - attribution chain（按 `rules.md` 的归因链模板组织，按源材料能支持的程度标注边界）
@@ -220,6 +222,7 @@ Use one of these standard decisions in `总结论` / `总建议`:
    - typical scenarios:
      - Tier A target metrics are negative-significant
      - company-core guardrails show significant regression with no mitigation path
+     - major data-quality / caliber issues make the evidence unreliable and the rollout unsafe
 
 Always explain:
 

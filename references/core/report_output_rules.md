@@ -39,6 +39,12 @@ If any copied text elsewhere conflicts with this file, this file wins.
 - conclusion / core insights: blue background `<callout icon="..." bgc="3" bc="..."> ... </callout>`
 - risk / warning: red background `<callout icon="..." bgc="1" bc="..."> ... </callout>`
 
+### To Confirm | 待确认清单
+
+- Always include a `## 待确认 (To Confirm)` section near the end of the main body (before `## 数据附录 (Data Appendix)`).
+- Each item should include: what is missing/uncertain, where it should come from (PRD / Raw Data / glossary), and the impact on the decision.
+- Prefer a short numbered list (do not bury to-confirm items inside paragraphs).
+
 ### Data Appendix (Physical Clone) | 数据附录（物理级克隆）
 
 - Final report must include `## 数据附录 (Data Appendix)` at the end.
