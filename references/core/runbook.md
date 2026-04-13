@@ -154,3 +154,19 @@ What to avoid:
 - mixing global evidence and slice evidence without saying which is which,
 - sounding more certain than the evidence allows,
 - writing a section that reports numbers but never explains why they matter.
+
+### Feishu Doc Formatting Hard Rules | 飞书文档格式硬规则
+
+When outputting the final experiment report:
+
+- Output must be a Feishu/Lark doc and provide the doc link.
+- Tables must be native Feishu tables, not Markdown code blocks:
+  - use `<table header-row="true" col-widths="300,180,180"> ... </table>` and keep explicit pixel-level widths.
+- Significant movements must be highlighted with colors:
+  - positive significant: `<font color="green">...</font>`
+  - negative significant: `<font color="red">...</font>`
+- Metric naming must be strict: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
+  - do not output `[数据缺失]` unless truly missing in source; if missing, state what is missing and which source should contain it.
+- Use callouts for decision-driving parts:
+  - conclusion / core insights: `<callout icon="..." bgc="3" bc="..."> ... </callout>`
+  - risk / warning: `<callout icon="..." bgc="1" bc="..."> ... </callout>`

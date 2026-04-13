@@ -27,13 +27,29 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - PRD link: [URL]
 - Raw Data link: [URL]
 
+### Report Output Hard Rules (Feishu Doc) | 报告输出硬规则（飞书文档）
+
+When generating an experiment report, the output must be a Feishu/Lark doc (not a plain chat message). Return the Feishu doc link.
+
+Hard formatting rules:
+- Must use native Feishu table tags, and explicitly set pixel-level column widths. Do NOT use Markdown code blocks for tables.
+  - Required format: `<table header-row="true" col-widths="300,180,180"> ... </table>`
+- Significant movements must be color-highlighted:
+  - positive significant: `<font color="green">...</font>`
+  - negative significant: `<font color="red">...</font>`
+- Metric naming must follow: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
+  - Do NOT output `[数据缺失]` unless the source data is truly missing; if missing, state what is missing and where it should come from.
+- Use callouts for key sections:
+  - conclusion / core insights: blue background `<callout icon="..." bgc="3" bc="..."> ... </callout>`
+  - risk / warning: red background `<callout icon="..." bgc="1" bc="..."> ... </callout>`
+
 ### What the system will do
 - run the doc-first analysis workflow
 - silently prioritize stored metric glossary and business knowledge
 - recall core-flag metric groups by default, especially any group marked as company-core, business-core, or sub-business-core
 - identify the experiment's primary business domain first, then apply domain-first recall before ordering metric groups
 - perform attribution, risk review, and evidence-boundary labeling when needed
-- output a structured experiment report rather than scattered analysis fragments
+- output a structured experiment report as a Feishu/Lark doc (with native tables/callouts/colors) rather than scattered analysis fragments
 
 ## 2) Report Generation with Temporary Guidance
 
