@@ -36,6 +36,18 @@ Hard structure rules (strict):
 - Then repeat for each sub-conclusion: `分结论 -> 归因链路 -> 细节表格`.
   - Do not dump detail tables before stating the sub-conclusion and its attribution chain.
 
+Attribution hard rules (anti-hallucination):
+- Any attribution / logic chain must be grounded in PRD "physical interaction facts" when applicable (for example: click distance, UI layer occlusion, operation steps length, interaction path changes).
+- Absolute forbidden language: do not use unsupported psych speculation such as "用户觉得花里胡哨", "主观反感", "心理预期下降" unless the source has objective evidence.
+- Anti-survivorship bias: if any core secondary metric (for example: DM sticker/camera/group chat) has significant movement, it must be fully disclosed and given its own dedicated deep-analysis subsection. Do not hide it just because it is not the primary headline metric.
+- Experiment config must be extracted verbatim into `实验背景与设计`, including: traffic stratification, split unit, and filter conditions.
+
+Data appendix hard rules (physical-level evidence):
+- Final report must include `## 数据附录 (Data Appendix)` at the end.
+- Do not truncate or summarize the underlying detail tables in the appendix.
+- Prefer: fetch and "physically clone" all detail tables from the bottom of the Raw Data doc via API and paste them as-is into the appendix.
+- If API access is not available due to permission/tooling limits, fall back to copying the full raw tables (or exporting and pasting them) without summarization, and clearly state which raw tables could not be cloned.
+
 Hard formatting rules:
 - Must use native Feishu table tags, and explicitly set pixel-level column widths. Do NOT use Markdown code blocks for tables.
   - Required format: `<table header-row="true" col-widths="300,180,180"> ... </table>`

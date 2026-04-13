@@ -110,6 +110,18 @@ When possible, prefer a clean chain such as:
 
 If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are fully proven. Mark the middle link as indirect evidence or a hypothesis to verify.
 
+### Attribution Red Lines (Anti-Hallucination) | 归因推演红线（反幻觉）
+
+- Attribution and logic chains must be grounded in source facts.
+  - For UI/interaction experiments, prioritize PRD "physical interaction facts" to explain movements (for example: click distance, UI layer occlusion, operation steps length, interaction path change).
+- Absolute forbidden language:
+  - do not use unsupported psych speculation like "用户觉得花里胡哨", "主观反感", "心理预期下降" unless the source has objective evidence.
+- Anti-survivorship bias:
+  - core secondary metrics (for example: DM sticker/camera/group chat) are not optional.
+  - if any of them has significant movement, it must be fully disclosed and given a dedicated deep-analysis subsection; do not hide it just because it is not the primary headline metric.
+- Experiment config must be extracted verbatim:
+  - copy "流量分层 / 分流单元 / 过滤条件" from the material header into `实验背景与设计` to lock the measurement baseline.
+
 ## When Writing the Report
 
 - Required report structure (strict):
@@ -178,3 +190,14 @@ When outputting the final experiment report:
 - Use callouts for decision-driving parts:
   - conclusion / core insights: `<callout icon="..." bgc="3" bc="..."> ... </callout>`
   - risk / warning: `<callout icon="..." bgc="1" bc="..."> ... </callout>`
+
+### Data Appendix (Physical Clone) | 数据附录（物理级克隆）
+
+- In the final stage, always add `## 数据附录 (Data Appendix)` to the end of the report.
+- The appendix is the "absolute evidence chain" for review:
+  - do not truncate or summarize the underlying detail tables in the appendix.
+- Preferred path:
+  - fetch all detail tables from the bottom of the Raw Data doc via API and "physically clone" the table nodes into the new doc.
+- If API access is not available due to permission/tooling limits:
+  - fall back to copying/exporting the full raw tables into the appendix without summarization,
+  - and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
