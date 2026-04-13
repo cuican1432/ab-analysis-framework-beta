@@ -27,19 +27,19 @@ This is the entry page for the glossary reading layer.
 ## What Is In The Glossary | 正式字典里有什么
 
 ### 1. Metric Group Index | 指标组索引
-- `references/knowledge/glossary/metric_groups.md`
+- `userdata/ab-analysis-framework-beta/glossary/metric_groups.md`
 - 用来说明一个指标组是什么、通常在哪些实验里出现、常见维度有哪些。
 
 ### 2. Dimension Index | 维度索引
-- `references/knowledge/glossary/dimensions.md`
+- `userdata/ab-analysis-framework-beta/glossary/dimensions.md`
 - 用来说明维度名称、含义、常见取值和解读边界。
 
 ### 3. Dimension Value Index | 维度值索引
-- `references/knowledge/glossary/dimension_values.md`
+- `userdata/ab-analysis-framework-beta/glossary/dimension_values.md`
 - 用来说明维度值本身的业务含义；如果当前没有内容，可以先留空。
 
 ### 4. Metrics By Group | 按指标组拆分的正式指标
-- `references/knowledge/glossary/metrics_by_group/*.md`
+- `userdata/ab-analysis-framework-beta/glossary/metrics_by_group/*.md`
 - 每个文件对应一个正式指标组，存该组下已经确认、可复用的指标条目。
 
 ---
@@ -55,52 +55,8 @@ This is the entry page for the glossary reading layer.
 
 ## Current Files | 当前已拆出的文件
 
-- `references/knowledge/glossary/metric_groups.md`
-- `references/knowledge/glossary/dimensions.md`
-- `references/knowledge/glossary/dimension_values.md`
-- `references/knowledge/glossary/metrics_by_group/dm_core.md`
-- `references/knowledge/glossary/metrics_by_group/dm_group_chat.md`
-- `references/knowledge/glossary/metrics_by_group/dm_voice_message.md`
-- `references/knowledge/glossary/metrics_by_group/dm_camera.md`
-- `references/knowledge/glossary/metrics_by_group/dm_camera_by_entrance.md`
-- `references/knowledge/glossary/metrics_by_group/dm_camera_private_chat.md`
-- `references/knowledge/glossary/metrics_by_group/dm_camera_private_chat_by_entrance.md`
-- `references/knowledge/glossary/metrics_by_group/dm_camera_group_chat.md`
-- `references/knowledge/glossary/metrics_by_group/dm_camera_group_chat_by_entrance.md`
-- `references/knowledge/glossary/metrics_by_group/dm_by_entrance.md`
-- `references/knowledge/glossary/metrics_by_group/dm_by_msg_type.md`
-- `references/knowledge/glossary/metrics_by_group/dm_quality_reply_rates.md`
-- `references/knowledge/glossary/metrics_by_group/dm_quality_reply_rates_new.md`
-- `references/knowledge/glossary/metrics_by_group/dm_receive_new.md`
-- `references/knowledge/glossary/metrics_by_group/dm_receive.md`
-- `references/knowledge/glossary/metrics_by_group/dm_send_load_fail.md`
-- `references/knowledge/glossary/metrics_by_group/dm_leave_chat.md`
-- `references/knowledge/glossary/metrics_by_group/dm_2_way.md`
-- `references/knowledge/glossary/metrics_by_group/muf_dm_by_motivation.md`
-- `references/knowledge/glossary/metrics_by_group/muf_dm_enter_from_as_dim.md`
-- `references/knowledge/glossary/metrics_by_group/muf_dm_msg_type_as_dim.md`
-- `references/knowledge/glossary/metrics_by_group/dm_growth_pairs_key_metrics.md`
-- `references/knowledge/glossary/metrics_by_group/dm_growth_pairs_active_days.md`
-- `references/knowledge/glossary/metrics_by_group/dm_growth_pairs_retention.md`
-- `references/knowledge/glossary/metrics_by_group/muf_growth_dm_pairs_by_time.md`
-- `references/knowledge/glossary/metrics_by_group/dm_quick_share.md`
-- `references/knowledge/glossary/metrics_by_group/dm_share_type.md`
-- `references/knowledge/glossary/metrics_by_group/internal_share_all.md`
-- `references/knowledge/glossary/metrics_by_group/inbox_element_metrics.md`
-- `references/knowledge/glossary/metrics_by_group/inbox_element_metrics_uid.md`
-- `references/knowledge/glossary/metrics_by_group/inbox_message_metrics_uid.md`
-- `references/knowledge/glossary/metrics_by_group/b2c_business_message_key_metrics.md`
-- `references/knowledge/glossary/metrics_by_group/muf_dm_lifecycle.md`
-- `references/knowledge/glossary/metrics_by_group/quick_share_recall.md`
-- `references/knowledge/glossary/metrics_by_group/internal_share_funnel_metrics.md`
-- `references/knowledge/glossary/metrics_by_group/internal_share_search_funnel_metrics.md`
-- `references/knowledge/glossary/metrics_by_group/core_interaction_growth_pairs_active_days.md`
-- `references/knowledge/glossary/metrics_by_group/core_interaction_growth_pairs_retention.md`
-- `references/knowledge/glossary/metrics_by_group/internal_share_to_chat.md`
-- `references/knowledge/glossary/metrics_by_group/activity_status_metrics.md`
-- `references/knowledge/glossary/metrics_by_group/activity_status_user_metrics.md`
-- `references/knowledge/glossary/metrics_by_group/tns_dm_private_receiver_metrics_msg_level.md`
-- `references/knowledge/glossary/metrics_by_group/tns_dm_group_chat_receiver_metrics_msg_level.md`
+- See the live glossary files under:
+  - `userdata/ab-analysis-framework-beta/glossary/*`
 - `references/knowledge/glossary/metrics_by_group/key_project_dm.md`
 - `references/knowledge/glossary/metrics_by_group/dm_permission.md`
 - `references/knowledge/glossary/metrics_by_group/dm_inner_push.md`

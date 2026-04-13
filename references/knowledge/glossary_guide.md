@@ -8,7 +8,7 @@
 
 正式 glossary 内容请看：
 - `references/knowledge/glossary/index.md`
-- `references/knowledge/glossary/`
+- `userdata/ab-analysis-framework-beta/glossary/`
 
 ## Design Principle | 设计原则
 
