@@ -41,7 +41,7 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - recall core-flag metric groups by default, especially any group marked as company-core, business-core, or sub-business-core
 - identify the experiment's primary business domain first, then apply domain-first recall before ordering metric groups
 - perform attribution, risk review, and evidence-boundary labeling when needed
-- output a structured experiment report as a Feishu/Lark doc (with native tables/callouts/colors) rather than scattered analysis fragments
+- output a structured experiment report as a Feishu/Lark doc using standard Markdown (tables, emoji markers, blockquotes, bold) rather than scattered analysis fragments
 
 ## 2) Report Generation with Temporary Guidance
 

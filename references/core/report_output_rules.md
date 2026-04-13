@@ -3,6 +3,40 @@
 This file is the single source of truth for report output requirements.
 If any copied text elsewhere conflicts with this file, this file wins.
 
+## Output Format Layers (CRITICAL) | 输出格式分层（关键）
+
+### Base Layer (Standard Markdown) | 基础层（默认，API 输出时使用）
+
+When using Feishu doc APIs to create/update docs (for example, `upload_to_feishu_tool` / `feishu_update_doc_inplace`), only standard Markdown is reliably rendered.
+Do not output Feishu-native rich-text tags in Stage C. They will show up as raw text or be dropped.
+
+Supported patterns (examples):
+
+| Element | Pattern | Example |
+|---|---|---|
+| Table | Standard Markdown table | `| 指标 | 变化 | 判断 |` |
+| Significant positive | emoji + bold | `**✅ +0.1613%**` |
+| Significant negative | emoji + bold | `**🔻 -0.1484%**` |
+| Not significant | emoji/text | `➖ 不显著` |
+| Conclusion highlight | blockquote + emoji + bold | `> 🤖 **结论：...**` |
+| Risk highlight | blockquote + emoji + bold | `> 🚨 **风险：...**` |
+| To confirm | blockquote + emoji + bold | `> 📝 **To Confirm**：...` |
+| Divider | `---` | `---` |
+
+### Enhanced Layer (Feishu Native) | 增强层（仅手动美化/未来 Block API）
+
+The following tags are NOT reliably supported by the doc create/update APIs today.
+If you output them, they may appear as raw tag text or be silently ignored.
+
+| Element | Tag / Syntax | API Support |
+|---|---|---|
+| Callout | `<callout ...>` | ❌ |
+| Text background | `<text bgcolor="...">` | ❌ |
+| Text color | `<font color="...">` | ❌ |
+| Alignment | `{align=center}` | ❌ |
+| Quote container | `<quote-container>` | ❌ |
+| Table col-widths | `<lark-table ... col-widths=...>` | ❌/partial |
+
 ### Feishu Doc Output | 飞书文档输出
 
 - Preferred: create a Feishu/Lark doc and return the doc link.
@@ -10,29 +44,29 @@ If any copied text elsewhere conflicts with this file, this file wins.
 
 ### Tables | 表格
 
-- Tables must be native Feishu tables, not Markdown tables.
-- `<table ...>` is treated as the intermediate representation for a Feishu table node (not a Markdown table).
-- Explicitly set pixel-level column widths and ensure the number of widths matches the number of columns.
+- Use standard Markdown tables (they may be converted into native tables by Feishu automatically).
 - Do NOT use Markdown code blocks for tables.
-- Example format: `<table header-row="true" col-widths="300,180,180"> ... </table>`
-- Column width guidance:
-  - 3 columns (metric / value / judgment): `col-widths="300,180,180"`
-  - 5 columns (metric / relative Δ / absolute Δ / CI / p-value): `col-widths="280,120,120,200,100"`
-  - 6+ columns: split into sub-tables or use `col-widths` that sum to at least 820px
-  - adjust widths dynamically based on actual content length; the examples above are defaults, not hard limits
+- Avoid too-wide tables; split into sub-tables when columns exceed 6.
 
 ### Coloring | 染色
 
-- Significant movements must be highlighted with colors:
-  - positive significant: `<font color="green">...</font>`
-  - negative significant: `<font color="red">...</font>`
-- Only color-highlight when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, do not color; keep directional wording only.
+- API output uses emoji + bold as the visual cue (do not rely on colors).
+  - positive significant: `**✅ +X%**`
+  - negative significant: `**🔻 -X%**`
+  - not significant: `➖ 不显著`
+- Only mark as significant when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, keep directional wording only.
 
 ### Metric Naming | 指标命名
 
-- Metric naming must be strict: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
+- In the report body (first appearance), use: `中文解释（完整英文指标名）` + change marker.
+  - Example: `发送或点赞消息天数（Send or Like Message Days/Days） **✅ +0.0156%**`
+- Chinese meaning source priority:
+  1. PRD Chinese description
+  2. Raw Data group-name translation
+  3. direct translation of the metric name
+  - If Chinese meaning is uncertain, keep English name only and add to `to confirm`.
 - The metric name used in the report MUST be the full name as it appears in the Raw Data source, including the denominator part (for example: `Send or Like Message Days/Days`, not `Send/Like Message Days`). Do not truncate, abbreviate, or replace with the PRD-side shorthand.
-- If bilingual mapping is missing in glossary/PRD/raw, use the raw metric key as the English name and add a `to confirm` item; do not invent a translation.
+- When Raw Data provides only the English name, use the English name as-is; do not invent a Chinese translation. If a bilingual name is needed and the Chinese mapping is uncertain, add the metric to the `to confirm` list.
 - Do NOT output `[数据缺失]` unless the source data is truly missing; if missing, state what is missing and which source should contain it.
 
 ### Language Discipline | 语言纪律
@@ -50,8 +84,9 @@ If any copied text elsewhere conflicts with this file, this file wins.
 
 ### Callouts | 高亮块
 
-- conclusion / core insights: blue background `<callout icon="..." bgc="3" bc="..."> ... </callout>`
-- risk / warning: red background `<callout icon="..." bgc="1" bc="..."> ... </callout>`
+- Use blockquote + emoji + bold:
+  - conclusion / core insights: `> 🤖 **结论：...**`
+  - risk / warning: `> 🚨 **风险：...**`
 
 ### To Confirm | 待确认清单
 

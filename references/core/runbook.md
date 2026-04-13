@@ -185,7 +185,7 @@ Practical writing order:
 1. 总结论：直接回答 rollout / decision question（先结论后背景）
    - Every metric or signal referenced in `总结论` and `总建议` must include the full metric name as it appears in the Raw Data. Do not summarize as "N items showed significance" without listing the actual metric names. If the list is long (> 5 metrics), either list all of them or list the top 3 by impact and add "等 N 项，详见 §X.X" with a section cross-reference.
 2. 总建议：下一步怎么做（按标准决策分级给出）
-2.5 实验背景与设计：以 Key-Value 属性表格或前置列表展示实验配置底座（完整字段白名单见 `workflow.md` Stage A step 2；表格落地格式见 `report_output_rules.md`，推荐 2 列属性表格 `col-widths="200,620"`）
+2.5 实验背景与设计：以 Key-Value 属性表格或前置列表展示实验配置底座（完整字段白名单见 `workflow.md` Stage A step 2；Stage C API 输出时按 `report_output_rules.md` 基础层使用标准 Markdown 表格）
 3. 分结论（重复多次）：
    - 分结论 judgment（这段想表达的结论）
    - attribution chain（按 `rules.md` 的归因链模板组织，按源材料能支持的程度标注边界）
