@@ -4,8 +4,8 @@
 
 - Prefer local files and structured docs first.
 - If browser work is needed, prefer:
-  - `openclaw`
-  - `browser playwright mcp`
+  - the environment's available browser / Playwright MCP
+  - a scriptable remote browser tool when available
 - Use direct CDP only as a fallback when the browser is already open but the gateway path is unstable.
 
 ## Tooling Principle

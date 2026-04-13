@@ -26,73 +26,14 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - PRD link: [URL]
 - Raw Data link: [URL]
 
-### Report Output Hard Rules (Feishu Doc) | 报告输出硬规则（飞书文档）
-
-When generating an experiment report, the output must be a Feishu/Lark doc (not a plain chat message). Return the Feishu doc link.
-
-Single source note:
-- The detailed and maintained output rules live in `references/core/report_output_rules.md`. If any wording conflicts, that file wins.
-
-Doc output fallback (do not block delivery):
-- Prefer: create a Feishu/Lark doc and return the doc link.
-- If doc creation is not available due to permission/tooling limits, output a fully structured "doc body" (with the same tables/callouts/code blocks rules) that the user can paste into a new doc, and clearly state what capability/permission is missing.
-
-Hard structure rules (strict):
-- Start with `总结论` + `总建议` (decision and rollout suggestion first).
-- Then repeat for each sub-conclusion: `分结论 -> 归因链路 -> 细节表格`.
-  - Do not dump detail tables before stating the sub-conclusion and its attribution chain.
-
-Attribution hard rules (anti-hallucination):
-- Any attribution / logic chain must be grounded in verifiable source facts.
-  - For UI/interaction experiments, prioritize PRD "physical interaction facts" when applicable (for example: click distance, UI layer occlusion, operation steps length, interaction path changes).
-  - For other cases, allowed attribution routes include: funnel/path chain, user composition, metric formula decomposition, space/cannibalization, time trend, data quality checks, external/product interference (must be evidence-bound).
-- Absolute forbidden language: do not use unsupported psych speculation such as "用户觉得花里胡哨", "主观反感", "心理预期下降" unless the source has objective evidence.
-- Anti-survivorship bias: if any core secondary metric (for example: DM sticker/camera/group chat) has significant movement, it must be fully disclosed and given its own dedicated deep-analysis subsection. Do not hide it just because it is not the primary headline metric.
-- Experiment background & config extraction red lines (MUST DO):
-  - Before writing `实验背景与设计`, you must perform node-level full extraction from the header area of the input materials (Raw Data or PRD). Do not trim or rewrite.
-  - Required fields whitelist (extract all, verbatim):
-    - 实验名称与实验链接
-    - 实验周期 / 数据日期
-    - 实验类型 / 实验机房 (Data Center)
-    - 流量分层 (Traffic Layer)
-    - 分流单元 (Sharding Unit / Unit)
-    - 实验原始配置总流量 / 放量信息 / 各版本流量比例
-  - Filter conditions special protection:
-    - find and extract "生效对象 / 受众 / 过滤条件"
-    - if it contains technical code (e.g. `version_code >= 440300`, `app_id in [...]`), keep it verbatim in a code block; do not paraphrase or shorten for formatting.
-  - Presentation requirement:
-    - show these metadata as a structured Key-Value list or an attribute table at the beginning of the report; do not bury them in long paragraphs.
-  - Missing-field handling (anti-hallucination):
-    - if a required field is not found in the source header, mark it as `not found` and add it into a `to confirm` list; do not infer or fill it.
-  - Conflict handling (PRD vs Raw Data):
-    - default priority: Raw Data header > PRD header
-    - if conflicts exist, show both values side-by-side and add a `to confirm` item instead of silently picking one.
-
-Data appendix hard rules (physical-level evidence):
-- Final report must include `## 数据附录 (Data Appendix)` at the end.
-- Do not truncate or summarize the underlying detail tables in the appendix.
-- Prefer: fetch and "physically clone" all detail tables from the bottom of the Raw Data doc via API and paste them as-is into the appendix.
-- If API access is not available due to permission/tooling limits, use this fallback chain (do not summarize):
-  1. Copy/export the full raw tables into the appendix, and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
-  2. Link-type lowest-fidelity fallback: if full-table copy/export is not possible, place direct links to the raw doc tables (or table nodes / screenshots) and list the missing tables and reasons.
-  3. If even link/copy/export is not possible, manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
-
-Hard formatting rules:
-- Tables:
-  - Must use native Feishu tables. The `<table ...>` form is treated as the intermediate representation for a Feishu table node (not a Markdown table).
-  - Explicitly set pixel-level column widths and ensure the number of widths matches the number of columns.
-  - Do NOT use Markdown code blocks for tables.
-  - Example format: `<table header-row="true" col-widths="300,180,180"> ... </table>`
-- Significant movements must be color-highlighted:
-  - positive significant: `<font color="green">...</font>`
-  - negative significant: `<font color="red">...</font>`
-- Only color-highlight when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, do not color; keep directional wording only.
-- Metric naming must follow: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
-  - If one side is missing (no bilingual mapping in glossary/PRD/raw), use the raw metric key as the English name and add a `to confirm` item (do not invent a translation).
-  - Do NOT output `[数据缺失]` unless the source data is truly missing; if missing, state what is missing and where it should come from.
-- Use callouts for key sections:
-  - conclusion / core insights: blue background `<callout icon="..." bgc="3" bc="..."> ... </callout>`
-  - risk / warning: red background `<callout icon="..." bgc="1" bc="..."> ... </callout>`
+### Hard Constraints | 关键硬约束
+- Output the final result as a Feishu/Lark doc when tooling permits; otherwise return a fully structured doc body the user can paste.
+- Follow the strict report structure: `总结论 + 总建议` first, then repeat `分结论 -> 归因链路 -> 细节表格`.
+- Keep attribution evidence-bound. No unsupported psych speculation.
+- Fully disclose significant movements of core secondary metrics; do not hide them because they are not the headline metric.
+- Before writing `实验背景与设计`, extract required setup/config fields from the source header verbatim. Missing fields must be `not found`; PRD/Raw Data conflicts must be shown side-by-side with `to confirm`.
+- Do not truncate the raw detail tables in `## 数据附录 (Data Appendix)`. Follow the fallback chain in `references/core/report_output_rules.md`.
+- For detailed output/formatting/appendix rules, use `references/core/report_output_rules.md` as the single source of truth.
 
 ### What the system will do
 - run the doc-first analysis workflow
@@ -126,6 +67,17 @@ Hard formatting rules:
 
 - Report Generation → `references/core/*`
 - Temporary Guidance Report → `references/core/*`
+
+## Core Read Order
+
+When reading `references/core/*`, use this order:
+
+1. `workflow.md`
+2. `rules.md`
+3. `memory.md`
+4. `runbook.md`
+5. `report_output_rules.md`
+6. `tooling.md`
 
 ## Storage Hint
 

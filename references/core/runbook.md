@@ -169,13 +169,34 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
 Practical writing order:
 
 1. 总结论：直接回答 rollout / decision question（先结论后背景）
-2. 总建议：下一步怎么做（上线/灰度/继续观测/补数据/加监控）
+2. 总建议：下一步怎么做（按标准决策分级给出）
 3. 分结论（重复多次）：
    - 分结论 judgment（这段想表达的结论）
    - attribution chain（最可信的归因链路，按源材料能支持的程度标注边界）
    - detail table（把支撑该结论的关键指标用原生表格列出来）
 4. 如 multi-arm：增加“横向对比”分结论，同样用 结论 -> 归因链路 -> 细节表格
 5. 收口：剩余不确定性 / to confirm / 风险项与补充验证建议
+
+### Decision Taxonomy | 决策分级
+
+Use one of these standard decisions in `总结论` / `总建议`:
+
+1. `全量上线`
+   - evidence is strong, core objective wins, and no blocking guardrail/risk is observed.
+2. `扩大灰度`
+   - overall direction is positive, but more exposure or longer observation is still needed before full rollout.
+3. `继续观测`
+   - evidence is directionally useful but not stable enough yet (for example: short duration, noisy variance, or unresolved caveats).
+4. `补数据后再决策`
+   - key setup / metric / appendix evidence is missing or conflicting; do not force a launch decision.
+5. `回滚 / 不推荐上线`
+   - core objective loses, major guardrails regress, or data quality / setup problems make rollout unsafe.
+
+Always explain:
+
+- why this decision level is chosen,
+- what condition would move it to the next level,
+- what follow-up action is required.
 
 For each major section, try to complete this mini-order:
 

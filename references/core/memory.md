@@ -11,7 +11,9 @@
 
 ## Artifact Convention
 
-- Store outputs under:
+- This convention is currently optional and not operationalized by default workflow/tooling.
+- Do not assume artifacts will always be persisted locally.
+- If the environment supports saving artifacts, store outputs under:
 
 ```text
 experiment/<experiment_id>/version_<yyyymmdd>/
