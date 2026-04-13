@@ -5,7 +5,7 @@ This document explains how the knowledge layer should be organized, separated, w
 
 ## Purpose
 
-Use the `kb/` folder for reusable business knowledge that helps:
+Use the `kb/` folder in `references/knowledge/` as a reading-layer entry that helps with:
 
 - PRD reading
 - report interpretation
@@ -23,15 +23,16 @@ Use this guide not only for `kb/`, but also for:
 - `references/knowledge/kb/index.md`
   - KB 总索引，先看这里再按需读取
 - `references/knowledge/kb/`
-  - stable reusable business knowledge
+  - reading-layer files, stable patterns, indexes, and examples
 - `references/knowledge/glossary/`
-  - formal glossary content
+  - glossary reading-layer files, indexes, and migration-time examples
 - `references/knowledge/glossary_guide.md`
   - glossary organization and update rules
 - `references/knowledge/knowledge_guide.md`
   - knowledge-layer organization and boundary rules
 
 - `userdata/ab-analysis-framework-beta/`
+  - actual knowledge content layer
   - local incremental knowledge
   - local overrides
   - user-specific additions
@@ -54,17 +55,19 @@ Use this guide not only for `kb/`, but also for:
 ## References vs Userdata
 
 Use `references/knowledge/*` when the content is:
-- shared
-- stable
-- reusable across cases
-- ready to be treated as formal knowledge
+- a reading guide
+- an index / navigation page
+- a stable interpretation pattern
+- a reusable example
+- a migration-time reference that helps analysis read the knowledge correctly
 
 Use `userdata/ab-analysis-framework-beta/*` when the content is:
+- actual glossary or KB content
 - local
 - incremental
 - draft
 - user-specific
-- not yet ready to become shared formal knowledge
+- still evolving over time
 
 Recommended local split:
 - `userdata/ab-analysis-framework-beta/glossary/`
@@ -76,6 +79,7 @@ Recommended local split:
 - keep entries topic-based
 - prefer concise reusable notes
 - avoid mixing glossary schema with business explanation
-- move only confirmed content into `kb/`
+- keep `references/knowledge/*` focused on reading, indexing, and interpretation guidance
+- let evolving knowledge accumulate in `userdata/ab-analysis-framework-beta/*`
 - keep `references/knowledge/kb/index.md` as the entry page instead of mixing navigation into every topic file
 - do not use generic roots like `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace

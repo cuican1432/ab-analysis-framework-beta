@@ -80,8 +80,9 @@ You do not need to remember the internal helper skills. In most cases, calling `
 
 ## Storage Hint
 
-- Stable shared glossary → `references/knowledge/glossary/*`
-- Stable shared business knowledge → `references/knowledge/kb/*`
+- Knowledge reading layer → `references/knowledge/*`
+- Long-term live glossary content → `userdata/ab-analysis-framework-beta/glossary/*`
+- Long-term live business knowledge → `userdata/ab-analysis-framework-beta/kb/*`
 - Glossary maintenance rules → `references/knowledge/glossary_guide.md`
 - Business knowledge maintenance rules → `references/knowledge/knowledge_guide.md`
 - Runtime local incremental layer → `userdata/ab-analysis-framework-beta/*`
@@ -97,8 +98,8 @@ When the user wants to inject local knowledge, local data files, or run-specific
 
 Do not casually rewrite packaged shared references during normal ingestion:
 
-- packaged shared knowledge stays in `references/knowledge/glossary/*` and `references/knowledge/kb/*`
-- local evolving knowledge should go to `userdata/ab-analysis-framework-beta/*`
+- packaged knowledge guides and reading indexes stay in `references/knowledge/*`
+- local evolving and long-term live knowledge should go to `userdata/ab-analysis-framework-beta/*`
 
 Default read order:
 

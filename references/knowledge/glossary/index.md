@@ -1,20 +1,26 @@
 # Glossary Index | 指标字典索引
 
-这里是 **formal glossary** 的入口页。  
-This is the entry page for the formal glossary.
+这里是 **glossary reading layer** 的入口页。  
+This is the entry page for the glossary reading layer.
 
 这里放的是：
-- 已确认、可复用的正式指标知识
-- 适合被后续实验直接复用的稳定条目
+- glossary 索引
+- glossary 阅读顺序
+- glossary 维护入口
+- 迁移阶段保留的正式示例条目
 
 这里不放的是：
 - glossary 的维护说明
 - `to confirm`
 - placeholder
 - 某一次实验的结论
+- 长期持续增长的 live glossary 主库
 
 如果你要看“怎么维护 glossary、字段是什么意思、draft 和 formal 怎么流转”，请看：
 - `references/knowledge/glossary_guide.md`
+
+如果你要写入或持续积累实际 glossary 内容，请优先写到：
+- `userdata/ab-analysis-framework-beta/glossary/`
 
 ---
 
@@ -43,6 +49,7 @@ This is the entry page for the formal glossary.
 1. 先看指标组：这组指标大概是什么
 2. 再看具体指标：这个指标是什么意思、怎么解读
 3. 再看维度：可以怎么拆、拆出来代表什么
+4. 把这里优先当成阅读和导航层，而不是长期 live glossary 主库
 
 ---
 

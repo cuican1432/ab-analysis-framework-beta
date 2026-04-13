@@ -46,9 +46,9 @@ This package is built so that:
 - `references/core/*`
   - workflow, rules, memory, runbook, tooling
 - `references/knowledge/glossary/*`
-  - formal glossary content
+  - reading indexes, glossary guidance, and migration-time examples
 - `references/knowledge/kb/*`
-  - formal business knowledge content
+  - reading indexes, caliber patterns, platform-term references, and migration-time examples
 - `references/knowledge/glossary_guide.md`
   - glossary organization and update rules
 - `references/knowledge/knowledge_guide.md`
@@ -88,8 +88,11 @@ userdata/ab-analysis-framework-beta/
 - `references/core/*`
   - hard framework rules and analysis behavior
 - `references/knowledge/*`
-  - stable shared glossary and business knowledge
+  - knowledge reading layer
+  - guide layer
+  - indexes, examples, and interpretation patterns
 - `userdata/ab-analysis-framework-beta/*`
+  - actual knowledge content layer
   - local incremental knowledge
   - local overrides
   - user-specific additions
@@ -98,11 +101,17 @@ userdata/ab-analysis-framework-beta/
 
 - the older flat layout under `references/glossary/*`, `references/kb/*`, and top-level guide files has been retired
 - old layout is deprecated and should not receive new writes
-- all new reads and new writes should go to:
-  - `references/knowledge/glossary/*`
-  - `references/knowledge/kb/*`
+- `references/knowledge/*` now acts as the reading / guide layer rather than the long-term live knowledge store
+- long-term evolving glossary and KB content should be written under:
+  - `userdata/ab-analysis-framework-beta/glossary/*`
+  - `userdata/ab-analysis-framework-beta/kb/*`
+  - `userdata/ab-analysis-framework-beta/custom_rules/*`
+- keep using:
   - `references/knowledge/glossary_guide.md`
   - `references/knowledge/knowledge_guide.md`
+  - `references/knowledge/glossary/index.md`
+  - `references/knowledge/kb/index.md`
+  as the stable reading and navigation layer
 
 ---
 
@@ -190,8 +199,9 @@ Use this default order:
 
 Notes:
 - `references/core/*` is still the hard-rule layer
+- `references/knowledge/*` provides reading guidance, examples, and navigation
 - local custom rules can refine interpretation, but should not override hard framework rules
-- local glossary / KB files supplement the shared layer; they should not casually rewrite shared references
+- long-term glossary / KB knowledge should accumulate in `userdata/ab-analysis-framework-beta/*`
 
 ### Quick Rule | 速记版
 
