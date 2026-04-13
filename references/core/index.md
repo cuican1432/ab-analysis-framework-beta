@@ -14,7 +14,7 @@ Use this file as the entry point into the framework.
 ## File Roles
 
 - `workflow.md`
-  - the default A / B / C / D order
+  - the default A / B / C order
 - `rules.md`
   - hard rules and evidence discipline
 - `memory.md`

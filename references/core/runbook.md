@@ -42,16 +42,16 @@ Recommended collaboration loop:
 3. explicit `to confirm` list,
 4. user review,
 5. partial ingest of stable entries,
-6. keep unfinished parts in `drafts/` or the current run's draft area,
+6. keep unfinished parts in the current run's working context (do not pretend they are stable),
 7. continue in the next round when needed.
 
 Practical split:
 
 - put stable, reusable items into:
-  - `references/knowledge/glossary/`
-  - `references/knowledge/kb/`
+  - `userdata/ab-analysis-framework-beta/glossary/`
+  - `userdata/ab-analysis-framework-beta/kb/`
 - keep still-evolving or partially confirmed content in:
-  - `drafts/` or the current run's draft area
+  - the current run's working context (and keep a clear `to confirm` list)
 
 ## When the Source Looks Wrong
 
@@ -173,7 +173,7 @@ Practical writing order:
 2. 总建议：下一步怎么做（按标准决策分级给出）
 3. 分结论（重复多次）：
    - 分结论 judgment（这段想表达的结论）
-   - attribution chain（最可信的归因链路，按源材料能支持的程度标注边界）
+   - attribution chain（按 `rules.md` 的归因链模板组织，按源材料能支持的程度标注边界）
    - detail table（把支撑该结论的关键指标用原生表格列出来）
 4. 如 multi-arm：增加“横向对比”分结论，同样用 结论 -> 归因链路 -> 细节表格
 5. 收口：剩余不确定性 / to confirm / 风险项与补充验证建议
@@ -225,41 +225,7 @@ What to avoid:
 - sounding more certain than the evidence allows,
 - writing a section that reports numbers but never explains why they matter.
 
-### Feishu Doc Formatting Hard Rules | 飞书文档格式硬规则
+### Output Rules Pointer | 输出规则指针
 
-When outputting the final experiment report:
-
-- Single source note:
-  - The detailed and maintained output rules live in `references/core/report_output_rules.md`. If any wording conflicts, that file wins.
-- Output must be a Feishu/Lark doc and provide the doc link.
-- If doc creation is not available due to permission/tooling limits, output a fully structured "doc body" that the user can paste into a new doc, and clearly state what capability/permission is missing.
-- Tables must be native Feishu tables, not Markdown code blocks:
-  - `<table ...>` here is treated as the intermediate representation for a Feishu table node (not a Markdown table).
-  - use `<table header-row="true" col-widths="300,180,180"> ... </table>` and keep explicit pixel-level widths (width count must match column count).
-- Significant movements must be highlighted with colors:
-  - positive significant: `<font color="green">...</font>`
-  - negative significant: `<font color="red">...</font>`
-- Only color-highlight when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, do not color; keep directional wording only.
-- Metric naming must be strict: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
-  - if bilingual mapping is missing in glossary/PRD/raw, use the raw metric key as the English name and add a `to confirm` item; do not invent a translation.
-  - do not output `[数据缺失]` unless truly missing in source; if missing, state what is missing and which source should contain it.
-- Use callouts for decision-driving parts:
-  - conclusion / core insights: `<callout icon="..." bgc="3" bc="..."> ... </callout>`
-  - risk / warning: `<callout icon="..." bgc="1" bc="..."> ... </callout>`
-
-### Data Appendix (Physical Clone) | 数据附录（物理级克隆）
-
-- In the final stage, always add `## 数据附录 (Data Appendix)` to the end of the report.
-- The appendix is the "absolute evidence chain" for review:
-  - do not truncate or summarize the underlying detail tables in the appendix.
-- Preferred path:
-  - fetch all detail tables from the bottom of the Raw Data doc via API and "physically clone" the table nodes into the new doc.
-- Fallback chain (do not summarize):
-  - If API access is not available due to permission/tooling limits:
-    - copy/export the full raw tables into the appendix without summarization,
-    - and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
-  - If full-table copy/export is not possible:
-    - place direct links to the raw doc tables (or table nodes / screenshots) and list the missing tables and reasons.
-  - If even copying/exporting is not possible:
-    - manually create native Feishu tables and fill in all rows/columns as-is from the source,
-    - and explicitly state this is a manual fallback and what limitation caused it.
+- Report output formatting (Feishu doc, tables, coloring, naming, callouts) is defined canonically in `references/core/report_output_rules.md`.
+- Data appendix (physical clone + fallback chain) is also defined canonically in `references/core/report_output_rules.md`.

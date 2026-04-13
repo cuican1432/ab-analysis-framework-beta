@@ -19,5 +19,5 @@
 experiment/<experiment_id>/version_<yyyymmdd>/
 ```
 
-- Keep A / B / C / D outputs together under the same version directory.
+- Keep A / B / C outputs together under the same version directory.
 - If the same experiment is rerun, create a new version directory instead of overwriting the old one.
