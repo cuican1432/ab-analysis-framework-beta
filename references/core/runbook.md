@@ -112,6 +112,12 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
 
 ## When Writing the Report
 
+- Required report structure (strict):
+  1. 总结论 + 总建议（先给决策结论，再给 rollout/下一步建议）
+  2. 分结论 A：结论 -> 归因链路 -> 细节表格
+  3. 分结论 B：结论 -> 归因链路 -> 细节表格
+  4. （如有）风险/警示：结论 -> 归因链路 -> 细节表格
+
 - Lead with the decision.
 - Then show the strongest evidence.
 - Then surface the most decision-relevant risks.
@@ -122,12 +128,14 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
 
 Practical writing order:
 
-1. answer the rollout / decision question,
-2. show the primary evidence,
-3. show the major guardrail or downside,
-4. if multi-arm, compare the arms directly and state which one wins and why,
-5. explain the most credible attribution path,
-6. close with the remaining uncertainty.
+1. 总结论：直接回答 rollout / decision question（先结论后背景）
+2. 总建议：下一步怎么做（上线/灰度/继续观测/补数据/加监控）
+3. 分结论（重复多次）：
+   - 分结论 judgment（这段想表达的结论）
+   - attribution chain（最可信的归因链路，按源材料能支持的程度标注边界）
+   - detail table（把支撑该结论的关键指标用原生表格列出来）
+4. 如 multi-arm：增加“横向对比”分结论，同样用 结论 -> 归因链路 -> 细节表格
+5. 收口：剩余不确定性 / to confirm / 风险项与补充验证建议
 
 For each major section, try to complete this mini-order:
 

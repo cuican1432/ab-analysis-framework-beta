@@ -31,6 +31,11 @@ If the main goal is to build or normalize the knowledge store itself rather than
 
 When generating an experiment report, the output must be a Feishu/Lark doc (not a plain chat message). Return the Feishu doc link.
 
+Hard structure rules (strict):
+- Start with `总结论` + `总建议` (decision and rollout suggestion first).
+- Then repeat for each sub-conclusion: `分结论 -> 归因链路 -> 细节表格`.
+  - Do not dump detail tables before stating the sub-conclusion and its attribution chain.
+
 Hard formatting rules:
 - Must use native Feishu table tags, and explicitly set pixel-level column widths. Do NOT use Markdown code blocks for tables.
   - Required format: `<table header-row="true" col-widths="300,180,180"> ... </table>`
