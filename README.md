@@ -78,9 +78,10 @@ Typical use cases:
 - 想统一某个 metric group 的含义、priority、caliber
 
 Example prompts:
-- `Please use ab-knowledge-builder-beta to ingest this glossary content.`
-- `Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source.`
-- `Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags.`
+- `Please use ab-knowledge-builder-beta to ingest these metric definitions into the glossary, including metric meaning, aliases, polarity, and calculation notes.`
+- `Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source and extract reusable product-mechanism knowledge.`
+- `Please use ab-knowledge-builder-beta to normalize this metric group, including group meaning, business domain, priority, scope, and typical usage.`
+- `Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags, such as uv/au, days/days, days/user, pv/user, and ratio.`
 
 ---
 
