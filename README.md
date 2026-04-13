@@ -1,212 +1,210 @@
 # ab-analysis-framework-beta
 
-Source repository for the Mira version of `ab-analysis-framework-beta`.
+Source repository for two Mira skills that work together:
 
-This repo is used for:
-- maintaining the source skill package
-- maintaining shared references and local-write conventions
-- building the installable Mira zip
+- `ab-analysis-framework-beta`
+  - analysis skill for experiment reading, attribution, and decision support
+- `ab-knowledge-builder-beta`
+  - knowledge-builder skill for glossary / KB ingestion, normalization, and live knowledge maintenance
+
+This repo is meant to be used as a paired setup:
+- the builder skill seeds and maintains the live knowledge store under `userdata/ab-analysis-framework-beta/*`
+- the framework skill reads that knowledge store and applies the analysis schema
 
 ---
 
-## Quick Start | 快速安装
+## Quick Start | 快速开始
 
-### Mira install path | Mira 安装方式
+### Download these two packages
 
-Recommended install package:
-
+- `release/ab-knowledge-builder-beta.zip`
 - `release/ab-analysis-framework-beta.zip`
 
-Do not install the GitHub auto-generated source zip from the repository page.
-Use the packaged release zip above instead.
+Do not use the GitHub auto-generated source zip from the repo page.
 
-How to install in Mira:
+### Recommended install order in Mira
 
 1. Open `Mira`
 2. Open `Skills`
 3. Open `Manage Skills`
-4. Upload `release/ab-analysis-framework-beta.zip`
+4. Upload `release/ab-knowledge-builder-beta.zip`
+5. Upload `release/ab-analysis-framework-beta.zip`
 
-After upload, Mira should recognize:
-- `SKILL.md` at the zip root
-- `references/`, `userdata/`, and other package files at the same zip root level
+Recommended order:
+- upload the knowledge-builder package first
+- then upload the analysis framework package
 
-### Package requirement | 打包要求
+Why this order:
+- the builder package ships seeded social KB / glossary content inside `userdata/ab-analysis-framework-beta/*`
+- the framework package can then read that knowledge layer immediately
 
-This package is built so that:
-- `SKILL.md` is at the zip root
-- `README.md`, `references/`, and `userdata/` are packaged at the same zip root level
+After upload, each package should expose:
+- `SKILL.md` at zip root
+- `references/`, `userdata/`, and package files at the same root level
 
 ---
 
-## What Is In This Repo | 这个仓库里有什么
+## What Each Skill Is For | 两个 Skill 分别做什么
+
+### 1. `ab-analysis-framework-beta`
+
+Use this when the main job is:
+- generating an experiment report
+- reading PRD + raw data together
+- doing attribution and decision support
+- applying the stored glossary / KB during one experiment analysis
+
+Typical use cases:
+- A/B 实验观测结束，需要输出实验报告
+- 想知道核心指标为什么变了
+- 想按业务域召回 metric groups 并做归因
+
+Example prompts:
+- `Please use ab-analysis-framework-beta to generate an experiment report.`
+- `Please use ab-analysis-framework-beta to analyze this PRD and raw data together.`
+- `Please use ab-analysis-framework-beta to explain the key drivers behind this experiment result.`
+
+### 2. `ab-knowledge-builder-beta`
+
+Use this when the main job is:
+- building or updating the glossary
+- building or updating KB topics
+- migrating knowledge into the live store
+- normalizing metric meaning / polarity / caliber / priority
+- maintaining indexes and reading guides
+
+Typical use cases:
+- 想把新整理的指标定义沉淀到知识库
+- 想把一批 KB 文档整理进 live knowledge store
+- 想统一某个 metric group 的含义、priority、caliber
+
+Example prompts:
+- `Please use ab-knowledge-builder-beta to ingest this glossary content.`
+- `Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source.`
+- `Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags.`
+
+---
+
+## Package Layout | 包结构
+
+Each installable package is built so that:
+- `SKILL.md` is at the zip root
+- `README.md`, `references/`, and `userdata/` are at the same zip-root level
+
+Current packaged files:
+- `release/ab-analysis-framework-beta.zip`
+- `release/ab-knowledge-builder-beta.zip`
+
+---
+
+## Layering Model | 分层模型
+
+### `references/core/*`
+
+Hard analysis layer:
+- workflow
+- rules
+- runbook
+- memory / tooling guidance
+
+### `references/knowledge/*`
+
+Reading layer:
+- indexes
+- guides
+- interpretation patterns
+- stable examples
+- migration-time references
+
+This layer tells the skills:
+- how to read knowledge
+- how to navigate knowledge
+- how to interpret common patterns
+
+### `userdata/ab-analysis-framework-beta/*`
+
+Live knowledge layer:
+- actual glossary content
+- actual KB content
+- custom rules
+- continuously updated local knowledge
+
+This is the layer that should keep growing over time.
+
+---
+
+## Current Live Knowledge Root | 当前 live knowledge 根目录
+
+```text
+userdata/ab-analysis-framework-beta/
+├── glossary/
+│   ├── metric_groups.md
+│   ├── metric_groups_table.md
+│   ├── dimensions.md
+│   ├── dimension_values.md
+│   └── metrics_by_group/*.md
+├── kb/
+│   ├── business_kb.md
+│   ├── dm.md
+│   ├── messaging_support.md
+│   ├── platform_terms.md
+│   ├── story.md
+│   └── ur.md
+└── custom_rules/
+```
+
+The builder package includes this seeded live knowledge so that a new user starts with a usable social KB instead of an empty userdata layer.
+
+---
+
+## Read / Write Responsibility | 读写职责
+
+### `ab-knowledge-builder-beta`
+
+Owns:
+- writing and updating `userdata/ab-analysis-framework-beta/*`
+- normalizing live knowledge content
+- maintaining seeded knowledge quality over time
+
+### `ab-analysis-framework-beta`
+
+Owns:
+- reading the live knowledge layer
+- applying experiment-analysis rules
+- using domain-first recall and metric interpretation logic
+- producing report-ready analysis
+
+---
+
+## Linkage Rule | 联动规则
+
+This repo uses a one-way linkage rule:
+
+- `ab-knowledge-builder-beta` is the source-of-truth editor for live knowledge content
+- `ab-analysis-framework-beta` is the consumer of that knowledge layer
+
+Update the framework skill only when one of these changes:
+- the knowledge path changes
+- the knowledge schema changes
+- the read order changes
+- new required indexes or reading categories are introduced
+- analysis rules must adapt to newly stabilized knowledge conventions
+
+Do not update the framework skill for pure knowledge-content growth by default.
+
+---
+
+## Repo Contents | 仓库主要内容
 
 - `SKILL.md`
-  - main trigger and routing instructions
+  - framework skill entry
 - `skills/ab-knowledge-builder-beta/SKILL.md`
-  - knowledge-only builder skill for glossary / KB / migration / normalization work
+  - knowledge-builder skill entry
 - `references/core/*`
-  - workflow, rules, memory, runbook, tooling
-- `references/knowledge/glossary/*`
-  - reading indexes, glossary guidance, and migration-time examples
-- `references/knowledge/kb/*`
-  - reading indexes, caliber patterns, platform-term references, and migration-time examples
-- `references/knowledge/glossary_guide.md`
-  - glossary organization and update rules
-- `references/knowledge/knowledge_guide.md`
-  - knowledge-layer organization and boundary rules
-- `userdata/ab-analysis-framework-beta/*`
-  - local writable layer for user-provided knowledge, local overrides, and incremental files
-- `release/ab-analysis-framework-beta.zip`
-  - installable Mira package built from this source repo
-
----
-
-## Knowledge Layout | 知识层结构
-
-Stable shared knowledge lives in:
-
-```text
-references/
-├── core/
-└── knowledge/
-    ├── glossary/
-    ├── kb/
-    ├── glossary_guide.md
-    └── knowledge_guide.md
-```
-
-Local incremental knowledge lives in:
-
-```text
-userdata/ab-analysis-framework-beta/
-├── glossary/
-├── kb/
-└── custom_rules/
-```
-
-### Shared vs Local
-
-- `references/core/*`
-  - hard framework rules and analysis behavior
+  - analysis rules and workflow
 - `references/knowledge/*`
-  - knowledge reading layer
-  - guide layer
-  - indexes, examples, and interpretation patterns
+  - reading-layer indexes, guides, and patterns
 - `userdata/ab-analysis-framework-beta/*`
-  - actual knowledge content layer
-  - local incremental knowledge
-  - local overrides
-  - user-specific additions
-
-### Compatibility note | 兼容说明
-
-- the older flat layout under `references/glossary/*`, `references/kb/*`, and top-level guide files has been retired
-- old layout is deprecated and should not receive new writes
-- `references/knowledge/*` now acts as the reading / guide layer rather than the long-term live knowledge store
-- long-term evolving glossary and KB content should be written under:
-  - `userdata/ab-analysis-framework-beta/glossary/*`
-  - `userdata/ab-analysis-framework-beta/kb/*`
-  - `userdata/ab-analysis-framework-beta/custom_rules/*`
-- keep using:
-  - `references/knowledge/glossary_guide.md`
-  - `references/knowledge/knowledge_guide.md`
-  - `references/knowledge/glossary/index.md`
-  - `references/knowledge/kb/index.md`
-  as the stable reading and navigation layer
-
----
-
-## Local Userdata Protocol | 本地用户数据写入协议
-
-Use a skill-scoped userdata root instead of generic folders such as `userdata/glossary/` or `userdata/kb/`.
-
-Recommended writable root:
-
-```text
-userdata/ab-analysis-framework-beta/
-├── glossary/
-├── kb/
-└── custom_rules/
-```
-
-Why keep the `ab-analysis-framework-beta` namespace:
-- avoids collisions with other skills or packages
-- keeps local data easier to audit
-- makes migration and backup less ambiguous
-
-### What each folder is for
-
-- `userdata/ab-analysis-framework-beta/glossary/`
-  - local glossary additions
-  - partial confirmations
-  - local alias mapping
-  - draft polarity notes
-
-- `userdata/ab-analysis-framework-beta/kb/`
-  - local business notes
-  - project-specific context
-  - temporary but reusable background knowledge
-
-- `userdata/ab-analysis-framework-beta/custom_rules/`
-  - user-specific interpretation rules
-  - local reusable overrides
-  - temporary special handling that should not go into shared references
-
-### Minimal file examples
-
-Local glossary note:
-
-```md
-# click_report
-
-- definition: risk-related complaint metric
-- polarity: lower_is_better
-- aliases: complaint_click, click risk report
-- status: local_draft
-- note: use as negative-risk metric unless the current run explicitly says otherwise
-```
-
-Local KB note:
-
-```md
-# DM risk background
-
-- scope: DM / social safety
-- summary: click_report is usually reviewed together with other negative feedback metrics
-- source: local team note
-```
-
-Local custom rule:
-
-```md
-# experiment_123_rule
-
-- applies_to: experiment_123
-- rule: click_report increase means worsening risk
-- priority: local_override
-- duration: temporary
-```
-
-### Read precedence | 读取优先级
-
-Use this default order:
-
-1. `references/core/*`
-2. current-run explicit temporary guidance
-3. `references/knowledge/*`
-4. `userdata/ab-analysis-framework-beta/custom_rules/*`
-5. `userdata/ab-analysis-framework-beta/glossary/*`
-6. `userdata/ab-analysis-framework-beta/kb/*`
-
-Notes:
-- `references/core/*` is still the hard-rule layer
-- `references/knowledge/*` provides reading guidance, examples, and navigation
-- local custom rules can refine interpretation, but should not override hard framework rules
-- long-term glossary / KB knowledge should accumulate in `userdata/ab-analysis-framework-beta/*`
-
-### Quick Rule | 速记版
-
-- 写定义、别名、polarity，放 `userdata/ab-analysis-framework-beta/glossary/`
-- 写背景、场景、业务说明，放 `userdata/ab-analysis-framework-beta/kb/`
-- 写本地特例和临时复用规则，放 `userdata/ab-analysis-framework-beta/custom_rules/`
+  - live glossary / KB / custom rules
+- `release/*.zip`
+  - Mira install packages
