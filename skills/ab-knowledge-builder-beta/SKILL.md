@@ -68,7 +68,7 @@ Do not treat `references/knowledge/*` as the default live knowledge store.
 示例输入：指标定义文档（飞书链接 / 表格粘贴均可）
 
 ```text
-请使用 ab-knowledge-builder-beta 将这些指标定义写入 glossary（指标含义、别名、极性、计算说明），并在缺信息时先推断后向我确认。
+请使用 ab-knowledge-builder-beta 将这些指标定义写入 glossary（指标含义、别名、极性、计算说明）；请先自行判断并补全，遇到不确定点再向我确认。
 指标定义文档链接（或直接粘贴表格）：[URL 或 pasted text]
 ```
 
