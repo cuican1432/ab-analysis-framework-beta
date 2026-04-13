@@ -17,8 +17,8 @@ This repo is meant to be used as a paired setup:
 
 ### Download these two packages
 
-- `release/ab-knowledge-builder-beta.zip`
-- `release/ab-analysis-framework-beta.zip`
+- [Download `ab-knowledge-builder-beta.zip`](https://github.com/cuican1432/ab-analysis-framework-beta/raw/main/release/ab-knowledge-builder-beta.zip)
+- [Download `ab-analysis-framework-beta.zip`](https://github.com/cuican1432/ab-analysis-framework-beta/raw/main/release/ab-analysis-framework-beta.zip)
 
 Do not use the GitHub auto-generated source zip from the repo page.
 
