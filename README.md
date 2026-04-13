@@ -61,7 +61,7 @@ If you want to quickly verify that the framework really works, use one of these 
 The simplest validation flow is:
 
 1. Install the two skills above.
-2. Open `ab-analysis-framework-beta`.
+2. In your Mira conversation, reference `ab-analysis-framework-beta`.
 3. Pass the `PRD` link and `Raw Data` link directly into the skill.
 4. Check whether it can follow the doc-first path and produce a structured experiment report.
 
