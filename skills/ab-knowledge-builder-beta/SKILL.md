@@ -56,10 +56,19 @@ Do not treat `references/knowledge/*` as the default live knowledge store.
 
 ## You can say
 
-- `Please use ab-knowledge-builder-beta to ingest these metric definitions into the glossary, including metric meaning, aliases, polarity, and calculation notes.`
-- `Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source and extract reusable product-mechanism knowledge.`
-- `Please use ab-knowledge-builder-beta to normalize this metric group, including group meaning, business domain, priority, scope, and typical usage.`
-- `Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags, such as uv/au, days/days, days/user, pv/user, and ratio.`
+```text
+Please use ab-knowledge-builder-beta to ingest these metric definitions into the glossary, including metric meaning, aliases, polarity, and calculation notes.
+请使用 ab-knowledge-builder-beta 将这些指标定义写入 glossary，包括指标含义、别名、极性和计算说明。
+
+Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source and extract reusable product-mechanism knowledge.
+请使用 ab-knowledge-builder-beta 用这个新来源更新 DM knowledge base，并提取可复用的产品机制知识。
+
+Please use ab-knowledge-builder-beta to normalize this metric group, including group meaning, business domain, priority, scope, and typical usage.
+请使用 ab-knowledge-builder-beta 规范这个指标组，包括组含义、业务域、优先级、scope 和 typical usage。
+
+Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags, such as uv/au, days/days, days/user, pv/user, and ratio.
+请使用 ab-knowledge-builder-beta 规范这些指标含义和口径标签，例如 uv/au、days/days、days/user、pv/user 和 ratio。
+```
 
 ## Linkage Rule With `ab-analysis-framework-beta`
 

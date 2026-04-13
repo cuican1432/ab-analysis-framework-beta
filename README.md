@@ -85,8 +85,14 @@ Typical use cases:
 - 已经有 PRD 和 raw data，想直接写实验报告
 
 Example prompts:
-- `Please use ab-analysis-framework-beta to generate an experiment report.`
-- `Please use ab-analysis-framework-beta to analyze this PRD and raw data together.`
+
+```text
+Please use ab-analysis-framework-beta to generate an experiment report.
+请使用 ab-analysis-framework-beta 生成一份实验报告。
+
+Please use ab-analysis-framework-beta to analyze this PRD and raw data together.
+请使用 ab-analysis-framework-beta 结合这个 PRD 和 Raw Data 一起分析并写实验报告。
+```
 
 ### Usage Guide | 使用指南
 
@@ -101,9 +107,16 @@ You can say:
 
 ```text
 Please use ab-analysis-framework-beta to generate an experiment report.
+请使用 ab-analysis-framework-beta 生成一份实验报告。
+
 Experiment name (optional): [example: DM Personalized Bubble]
+实验名称（可选）：[例如：DM Personalized Bubble]
+
 PRD link: [URL]
+PRD 链接：[URL]
+
 Raw Data link: [URL]
+Raw Data 链接：[URL]
 ```
 
 What the system will do:
@@ -127,10 +140,20 @@ Typical use cases:
 - 想统一某个 metric group 的含义、priority、caliber
 
 Example prompts:
-- `Please use ab-knowledge-builder-beta to ingest these metric definitions into the glossary, including metric meaning, aliases, polarity, and calculation notes.`
-- `Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source and extract reusable product-mechanism knowledge.`
-- `Please use ab-knowledge-builder-beta to normalize this metric group, including group meaning, business domain, priority, scope, and typical usage.`
-- `Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags, such as uv/au, days/days, days/user, pv/user, and ratio.`
+
+```text
+Please use ab-knowledge-builder-beta to ingest these metric definitions into the glossary, including metric meaning, aliases, polarity, and calculation notes.
+请使用 ab-knowledge-builder-beta 将这些指标定义写入 glossary，包括指标含义、别名、极性和计算说明。
+
+Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source and extract reusable product-mechanism knowledge.
+请使用 ab-knowledge-builder-beta 用这个新来源更新 DM knowledge base，并提取可复用的产品机制知识。
+
+Please use ab-knowledge-builder-beta to normalize this metric group, including group meaning, business domain, priority, scope, and typical usage.
+请使用 ab-knowledge-builder-beta 规范这个指标组，包括组含义、业务域、优先级、scope 和 typical usage。
+
+Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags, such as uv/au, days/days, days/user, pv/user, and ratio.
+请使用 ab-knowledge-builder-beta 规范这些指标含义和口径标签，例如 uv/au、days/days、days/user、pv/user 和 ratio。
+```
 
 ---
 
