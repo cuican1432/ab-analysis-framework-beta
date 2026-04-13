@@ -144,6 +144,11 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
     - 呈现格式要求：
       - 强制以前置列表或属性表格的形式，作为报告开头背景底座展示
       - 必须保持键值对（Key-Value）的结构化呈现，不要揉进长段落
+    - 缺字段处理（反幻觉）：
+      - 若白名单字段在源文档头部找不到，必须标注为 `not found` 并进入 `to confirm` 列表；严禁自行推断补齐。
+    - PRD 与 Raw Data 冲突处理：
+      - 默认优先级：Raw Data 头部 > PRD 头部
+      - 若存在冲突，必须并列展示并标注 `to confirm`，不得静默选择其一。
 
 ## When Writing the Report
 
@@ -203,12 +208,16 @@ What to avoid:
 When outputting the final experiment report:
 
 - Output must be a Feishu/Lark doc and provide the doc link.
+- If doc creation is not available due to permission/tooling limits, output a fully structured "doc body" that the user can paste into a new doc, and clearly state what capability/permission is missing.
 - Tables must be native Feishu tables, not Markdown code blocks:
-  - use `<table header-row="true" col-widths="300,180,180"> ... </table>` and keep explicit pixel-level widths.
+  - `<table ...>` here is treated as the intermediate representation for a Feishu table node (not a Markdown table).
+  - use `<table header-row="true" col-widths="300,180,180"> ... </table>` and keep explicit pixel-level widths (width count must match column count).
 - Significant movements must be highlighted with colors:
   - positive significant: `<font color="green">...</font>`
   - negative significant: `<font color="red">...</font>`
+- Only color-highlight when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, do not color; keep directional wording only.
 - Metric naming must be strict: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
+  - if bilingual mapping is missing in glossary/PRD/raw, use the raw metric key as the English name and add a `to confirm` item; do not invent a translation.
   - do not output `[数据缺失]` unless truly missing in source; if missing, state what is missing and which source should contain it.
 - Use callouts for decision-driving parts:
   - conclusion / core insights: `<callout icon="..." bgc="3" bc="..."> ... </callout>`

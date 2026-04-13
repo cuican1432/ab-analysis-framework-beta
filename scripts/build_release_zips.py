@@ -23,6 +23,10 @@ RELEASE_DIR = REPO / "release"
 def _add_dir(zf: zipfile.ZipFile, src_dir: Path, arc_prefix: str) -> None:
     # Add explicit directory entries so empty dirs survive (e.g. .gitkeep dirs).
     for root, dirs, files in os.walk(src_dir):
+        # Ensure deterministic zip order across machines/filesystems.
+        dirs.sort()
+        files.sort()
+
         root_p = Path(root)
         rel_root = root_p.relative_to(src_dir)
         dir_arc = (Path(arc_prefix) / rel_root).as_posix()
@@ -72,4 +76,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

@@ -31,6 +31,10 @@ If the main goal is to build or normalize the knowledge store itself rather than
 
 When generating an experiment report, the output must be a Feishu/Lark doc (not a plain chat message). Return the Feishu doc link.
 
+Doc output fallback (do not block delivery):
+- Prefer: create a Feishu/Lark doc and return the doc link.
+- If doc creation is not available due to permission/tooling limits, output a fully structured "doc body" (with the same tables/callouts/code blocks rules) that the user can paste into a new doc, and clearly state what capability/permission is missing.
+
 Hard structure rules (strict):
 - Start with `总结论` + `总建议` (decision and rollout suggestion first).
 - Then repeat for each sub-conclusion: `分结论 -> 归因链路 -> 细节表格`.
@@ -56,6 +60,11 @@ Attribution hard rules (anti-hallucination):
     - if it contains technical code (e.g. `version_code >= 440300`, `app_id in [...]`), keep it verbatim in a code block; do not paraphrase or shorten for formatting.
   - Presentation requirement:
     - show these metadata as a structured Key-Value list or an attribute table at the beginning of the report; do not bury them in long paragraphs.
+  - Missing-field handling (anti-hallucination):
+    - if a required field is not found in the source header, mark it as `not found` and add it into a `to confirm` list; do not infer or fill it.
+  - Conflict handling (PRD vs Raw Data):
+    - default priority: Raw Data header > PRD header
+    - if conflicts exist, show both values side-by-side and add a `to confirm` item instead of silently picking one.
 
 Data appendix hard rules (physical-level evidence):
 - Final report must include `## 数据附录 (Data Appendix)` at the end.
@@ -66,12 +75,17 @@ Data appendix hard rules (physical-level evidence):
   2. If even copying/exporting is not possible, manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
 
 Hard formatting rules:
-- Must use native Feishu table tags, and explicitly set pixel-level column widths. Do NOT use Markdown code blocks for tables.
-  - Required format: `<table header-row="true" col-widths="300,180,180"> ... </table>`
+- Tables:
+  - Must use native Feishu tables. The `<table ...>` form is treated as the intermediate representation for a Feishu table node (not a Markdown table).
+  - Explicitly set pixel-level column widths and ensure the number of widths matches the number of columns.
+  - Do NOT use Markdown code blocks for tables.
+  - Example format: `<table header-row="true" col-widths="300,180,180"> ... </table>`
 - Significant movements must be color-highlighted:
   - positive significant: `<font color="green">...</font>`
   - negative significant: `<font color="red">...</font>`
+- Only color-highlight when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, do not color; keep directional wording only.
 - Metric naming must follow: `中文名 (英文名)` (example: `发送消息量 (Send Message PV)`).
+  - If one side is missing (no bilingual mapping in glossary/PRD/raw), use the raw metric key as the English name and add a `to confirm` item (do not invent a translation).
   - Do NOT output `[数据缺失]` unless the source data is truly missing; if missing, state what is missing and where it should come from.
 - Use callouts for key sections:
   - conclusion / core insights: blue background `<callout icon="..." bgc="3" bc="..."> ... </callout>`
