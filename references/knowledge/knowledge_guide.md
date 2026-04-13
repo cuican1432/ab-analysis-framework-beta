@@ -31,7 +31,7 @@ Use this guide not only for `kb/`, but also for:
 - `references/knowledge/knowledge_guide.md`
   - knowledge-layer organization and boundary rules
 
-- `userdata/tt-ab-analysis-framework/`
+- `userdata/ab-analysis-framework-beta/`
   - local incremental knowledge
   - local overrides
   - user-specific additions
@@ -59,7 +59,7 @@ Use `references/knowledge/*` when the content is:
 - reusable across cases
 - ready to be treated as formal knowledge
 
-Use `userdata/tt-ab-analysis-framework/*` when the content is:
+Use `userdata/ab-analysis-framework-beta/*` when the content is:
 - local
 - incremental
 - draft
@@ -67,9 +67,9 @@ Use `userdata/tt-ab-analysis-framework/*` when the content is:
 - not yet ready to become shared formal knowledge
 
 Recommended local split:
-- `userdata/tt-ab-analysis-framework/glossary/`
-- `userdata/tt-ab-analysis-framework/kb/`
-- `userdata/tt-ab-analysis-framework/custom_rules/`
+- `userdata/ab-analysis-framework-beta/glossary/`
+- `userdata/ab-analysis-framework-beta/kb/`
+- `userdata/ab-analysis-framework-beta/custom_rules/`
 
 ## Update Style
 

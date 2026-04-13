@@ -53,7 +53,7 @@ This package is built so that:
   - glossary organization and update rules
 - `references/knowledge/knowledge_guide.md`
   - knowledge-layer organization and boundary rules
-- `userdata/tt-ab-analysis-framework/*`
+- `userdata/ab-analysis-framework-beta/*`
   - local writable layer for user-provided knowledge, local overrides, and incremental files
 - `release/ab-analysis-framework-beta.zip`
   - installable Mira package built from this source repo
@@ -77,7 +77,7 @@ references/
 Local incremental knowledge lives in:
 
 ```text
-userdata/tt-ab-analysis-framework/
+userdata/ab-analysis-framework-beta/
 ├── glossary/
 ├── kb/
 └── custom_rules/
@@ -89,7 +89,7 @@ userdata/tt-ab-analysis-framework/
   - hard framework rules and analysis behavior
 - `references/knowledge/*`
   - stable shared glossary and business knowledge
-- `userdata/tt-ab-analysis-framework/*`
+- `userdata/ab-analysis-framework-beta/*`
   - local incremental knowledge
   - local overrides
   - user-specific additions
@@ -113,31 +113,31 @@ Use a skill-scoped userdata root instead of generic folders such as `userdata/gl
 Recommended writable root:
 
 ```text
-userdata/tt-ab-analysis-framework/
+userdata/ab-analysis-framework-beta/
 ├── glossary/
 ├── kb/
 └── custom_rules/
 ```
 
-Why keep the `tt-ab-analysis-framework` namespace:
+Why keep the `ab-analysis-framework-beta` namespace:
 - avoids collisions with other skills or packages
 - keeps local data easier to audit
 - makes migration and backup less ambiguous
 
 ### What each folder is for
 
-- `userdata/tt-ab-analysis-framework/glossary/`
+- `userdata/ab-analysis-framework-beta/glossary/`
   - local glossary additions
   - partial confirmations
   - local alias mapping
   - draft polarity notes
 
-- `userdata/tt-ab-analysis-framework/kb/`
+- `userdata/ab-analysis-framework-beta/kb/`
   - local business notes
   - project-specific context
   - temporary but reusable background knowledge
 
-- `userdata/tt-ab-analysis-framework/custom_rules/`
+- `userdata/ab-analysis-framework-beta/custom_rules/`
   - user-specific interpretation rules
   - local reusable overrides
   - temporary special handling that should not go into shared references
@@ -184,9 +184,9 @@ Use this default order:
 1. `references/core/*`
 2. current-run explicit temporary guidance
 3. `references/knowledge/*`
-4. `userdata/tt-ab-analysis-framework/custom_rules/*`
-5. `userdata/tt-ab-analysis-framework/glossary/*`
-6. `userdata/tt-ab-analysis-framework/kb/*`
+4. `userdata/ab-analysis-framework-beta/custom_rules/*`
+5. `userdata/ab-analysis-framework-beta/glossary/*`
+6. `userdata/ab-analysis-framework-beta/kb/*`
 
 Notes:
 - `references/core/*` is still the hard-rule layer
@@ -195,6 +195,6 @@ Notes:
 
 ### Quick Rule | 速记版
 
-- 写定义、别名、polarity，放 `userdata/tt-ab-analysis-framework/glossary/`
-- 写背景、场景、业务说明，放 `userdata/tt-ab-analysis-framework/kb/`
-- 写本地特例和临时复用规则，放 `userdata/tt-ab-analysis-framework/custom_rules/`
+- 写定义、别名、polarity，放 `userdata/ab-analysis-framework-beta/glossary/`
+- 写背景、场景、业务说明，放 `userdata/ab-analysis-framework-beta/kb/`
+- 写本地特例和临时复用规则，放 `userdata/ab-analysis-framework-beta/custom_rules/`

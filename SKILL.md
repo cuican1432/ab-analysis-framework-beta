@@ -69,7 +69,7 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - extract reusable mappings such as `<metric name -> meaning / polarity / note>`
 - write stable confirmed content into the right knowledge layer
 - keep unfinished or uncertain parts as `draft` / `to confirm`
-- place user-provided local knowledge files under `userdata/tt-ab-analysis-framework/` by default instead of rewriting packaged references
+- place user-provided local knowledge files under `userdata/ab-analysis-framework-beta/` by default instead of rewriting packaged references
 - return a short confirmation by default instead of a long write-up
 
 ## Internal reference map
@@ -84,30 +84,30 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - Stable shared business knowledge → `references/knowledge/kb/*`
 - Glossary maintenance rules → `references/knowledge/glossary_guide.md`
 - Business knowledge maintenance rules → `references/knowledge/knowledge_guide.md`
-- Runtime local incremental layer → `userdata/tt-ab-analysis-framework/*`
+- Runtime local incremental layer → `userdata/ab-analysis-framework-beta/*`
 - Memory can help recall, but it is not the main glossary store
 
 ## Userdata Boundary
 
-When the user wants to inject local knowledge, local data files, or run-specific reusable notes, use `userdata/tt-ab-analysis-framework/` as the default writable layer.
+When the user wants to inject local knowledge, local data files, or run-specific reusable notes, use `userdata/ab-analysis-framework-beta/` as the default writable layer.
 
-- Local glossary additions / partial confirmations → `userdata/tt-ab-analysis-framework/glossary/`
-- Local business notes / project context → `userdata/tt-ab-analysis-framework/kb/`
-- User-specific interpretation rules / temporary reusable overrides → `userdata/tt-ab-analysis-framework/custom_rules/`
+- Local glossary additions / partial confirmations → `userdata/ab-analysis-framework-beta/glossary/`
+- Local business notes / project context → `userdata/ab-analysis-framework-beta/kb/`
+- User-specific interpretation rules / temporary reusable overrides → `userdata/ab-analysis-framework-beta/custom_rules/`
 
 Do not casually rewrite packaged shared references during normal ingestion:
 
 - packaged shared knowledge stays in `references/knowledge/glossary/*` and `references/knowledge/kb/*`
-- local evolving knowledge should go to `userdata/tt-ab-analysis-framework/*`
+- local evolving knowledge should go to `userdata/ab-analysis-framework-beta/*`
 
 Default read order:
 
 1. `references/core/*`
 2. current-run explicit temporary guidance
 3. `references/knowledge/*`
-4. `userdata/tt-ab-analysis-framework/custom_rules/*`
-5. `userdata/tt-ab-analysis-framework/glossary/*`
-6. `userdata/tt-ab-analysis-framework/kb/*`
+4. `userdata/ab-analysis-framework-beta/custom_rules/*`
+5. `userdata/ab-analysis-framework-beta/glossary/*`
+6. `userdata/ab-analysis-framework-beta/kb/*`
 
 Do not use generic roots such as `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace to avoid collisions with other packages.
 
