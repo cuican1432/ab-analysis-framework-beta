@@ -38,7 +38,16 @@ For significance reading:
 - treat key slice / segment signals more conservatively, defaulting to `p < 0.03`
 - even when a slice passes `p < 0.03`, do not elevate it alone unless direction, adjacent metrics, and business logic also support it
 - if a narrow slice is significant but the global result and nearby slices do not support it, treat it as monitoring or a hypothesis to verify
+- when a metric shows a relative change > 100% but the absolute difference is extremely small (for example, +733% but absolute diff = +0.88%), always report both the relative and absolute values side by side, note the baseline level, and label it as `[small base effect]`; do not use it as primary evidence for the main conclusion
 - when checking heterogeneity, it is valid to note that some local gains may not fully show up at the overall level; if structure information is incomplete, keep this as a cautious heterogeneity note or a hypothesis to verify
+
+Multi-dimensional data handling:
+
+- global significant + slices consistent in direction → include in the main section table; add a brief note that slice support is present
+- global not significant but one or more slices significant → only include when the slice passes `p < 0.03` AND the business logic provides a credible explanation; place it in a risk / anomaly subsection, not the main conclusion
+- when the source has more than 3 dimension × slice combinations that are significant, consolidate them into a summary table in the main section and put the full slice-level detail tables into the data appendix
+- a single extreme slice → reference it only when it is needed for attribution; do not list it as standalone evidence
+- slice-level summaries from the Raw Data (e.g., "显著指标总结" per dimension) belong in the data appendix, not the main body
 
 ### Metric Tiering
 
@@ -80,6 +89,17 @@ If a flagged group also has a low stored `importance` / `priority_hint`, do not 
 
 ### Recall and Priority
 
+Metric group name resolution:
+
+When matching a metric group name from the Raw Data to the glossary, use this order:
+
+1. exact match on `group_name`
+2. match on `aliases`
+3. strip common prefixes such as `[DM]`, `[B2C]`, `TnS`, `Key Project-` and retry steps 1-2
+4. if still unmatched, mark it as `[unregistered group]`, default to `Tier C`, and add it to the `to confirm` list
+
+Do not skip a group just because its Raw Data name does not exactly match a glossary entry.
+
 Separate these two questions:
 
 1. what must be recalled into the analysis universe
@@ -114,6 +134,7 @@ Core-flag handling:
 - for the experiment's own subdomain, also recall the related `001`, `011`, and `111` metric groups by default
 - do not reduce the subdomain recall set to only the most obvious head group when adjacent core groups in the same subdomain are flagged
 - if a flagged core group is unavailable in the source, say it is unavailable; do not silently omit it
+- if a metric group is listed in the Raw Data (for example, in an "APP必看指标" or "实验决策指标" section) but has no metric values at all, mark it as `listed but no data provided` and add it to the `to confirm` list; do not assume all metrics are non-significant, and do not assume the data is missing from the platform
 
 Priority rules:
 
@@ -193,6 +214,16 @@ If caliber is unclear, do not make a strong claim.
 
 Treat `DAU` as a scale / sample-size signal, not as a direct treatment-effect conclusion.
 
+Performance metric polarity quick reference:
+
+- `compliance_rate` / `达标率` → `higher_is_better` (higher means better performance)
+- `frame_drop` / `丢帧率` → `lower_is_better` (lower means better performance)
+- `latency` / `耗时` → `lower_is_better` (lower means faster)
+- `crash_rate` / `崩溃率` → `lower_is_better`
+- `success_rate` / `成功率` → `higher_is_better`
+
+When the glossary does not specify polarity for a performance metric, infer from the metric name using the rules above. If still ambiguous, mark it as `[polarity to confirm]`.
+
 For common multi-day cumulative caliber families:
 
 - `days/days`
@@ -218,6 +249,10 @@ Default reading preference:
 - Write the report as a decision memo, not a data dump.
 - Use business themes, not raw page order, as the main narrative structure.
 - Keep risk and benefit at the same level of visibility.
+- When the same metric group contains both positive-significant and negative-significant metrics (contradictory signals):
+  - analyze them separately; do not use positive signals to mask or offset negative signals
+  - if the negative signal involves safety / compliance metrics (for example: report rate, spam rate, abuse rate), it must get a dedicated risk subsection regardless of the positive signals in the same group
+  - label the contradiction explicitly so the reader does not assume the group is uniformly good or bad
 - Name representative metrics and values when making a business-theme claim.
 - For each major benefit or risk, try to explain not just what moved, but what business theme it represents.
 - When the source is strong enough, push the write-up one layer deeper than metric listing:

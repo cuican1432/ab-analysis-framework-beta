@@ -15,6 +15,11 @@ If any copied text elsewhere conflicts with this file, this file wins.
 - Explicitly set pixel-level column widths and ensure the number of widths matches the number of columns.
 - Do NOT use Markdown code blocks for tables.
 - Example format: `<table header-row="true" col-widths="300,180,180"> ... </table>`
+- Column width guidance:
+  - 3 columns (metric / value / judgment): `col-widths="300,180,180"`
+  - 5 columns (metric / relative Δ / absolute Δ / CI / p-value): `col-widths="280,120,120,200,100"`
+  - 6+ columns: split into sub-tables or use `col-widths` that sum to at least 820px
+  - adjust widths dynamically based on actual content length; the examples above are defaults, not hard limits
 
 ### Coloring | 染色
 
@@ -38,10 +43,12 @@ If any copied text elsewhere conflicts with this file, this file wins.
 
 - Final report must include `## 数据附录 (Data Appendix)` at the end.
 - The appendix is the "absolute evidence chain" for review. Do not truncate or summarize the underlying detail tables.
+- Source format handling:
+  - if the Raw Data contains structured Feishu table nodes, clone them directly
+  - if the Raw Data is in text / list format (for example, `指标名 正向显著 +X% ... p值：Y`), parse the text into a structured native Feishu table before placing it in the appendix; preserve all original values without rounding or truncation
 - Preferred path:
   - fetch all detail tables from the bottom of the Raw Data doc via API and "physically clone" the table nodes into the new doc.
 - Fallback chain (do not summarize):
   1. Copy/export the full raw tables into the appendix without summarization, and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
   2. Link-type lowest-fidelity fallback: if full-table copy/export is not possible, place direct links to the raw doc tables (or table nodes / screenshots) and list the missing tables and reasons. This still enables review to open the original evidence.
   3. Manual fallback (last resort): manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
-

@@ -94,14 +94,22 @@ If the problem is only in step 4, fix B/C without pretending the data changed.
 - Prefer a closed path chain over scattered slice anecdotes when both are available.
 - If attribution is still weak, label it as indirect evidence or a hypothesis to verify.
 
+Unexpected movement screening:
+
+- When a metric shows significant movement but the metric's functional scope is outside the PRD's stated feature scope (for example, Camera send metrics move significantly but the PRD only covers text and voice bubble customization):
+  - first check whether the movement can be explained by an indirect path (for example: overall chat entry frequency ↑ → all message types ↑ proportionally)
+  - then check whether the movement could be a data-quality or caliber artifact
+  - if neither explains it, label the movement as `[hypothesis to verify]` and do not fabricate a direct causal chain linking the feature to that metric
+
 Practical chain template:
 
-1. what changed in the product or exposure,
-2. which mechanism, path, interaction node, or structural factor was most likely affected,
-3. which metrics moved,
-4. what business theme that movement supports,
-5. what uncertainty remains,
-6. what should be checked next.
+Follow the canonical 5-step attribution chain defined in `rules.md` (Attribution Discipline):
+
+1. product / UX delta
+2. most credible mechanism, path, or structural change
+3. metric movement
+4. business implication
+5. remaining uncertainty or next validation step
 
 When possible, prefer a clean chain such as:
 
@@ -109,7 +117,7 @@ When possible, prefer a clean chain such as:
 - setting / permission change -> usage path change -> metric movement
 - button / layout change -> interaction error or friction -> risk metric movement
 
-If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are fully proven. Mark the middle link as indirect evidence or a hypothesis to verify.
+If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are fully proven. Mark the middle link as `[indirect evidence]` or `[hypothesis to verify]`.
 
 ### Attribution Red Lines (Anti-Hallucination) | 归因推演红线（反幻觉）
 
@@ -165,6 +173,10 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
 - Then state the remaining boundary or evidence gap.
 - If the experiment has multiple treatment arms, do not stop at separate arm summaries.
 - In multi-arm cases, add a dedicated comparison section that answers: who is better overall, who is weaker overall, and which differences actually matter for the decision.
+- When different arms have unequal data coverage (for example, one arm has 20 metric groups with data and another arm has only 6):
+  - first, align on the metric groups that both arms have data for and produce a side-by-side comparison on those groups
+  - then separately list the metric groups where only one arm has data, and explain the likely reason (for example, the arm's feature scope does not trigger certain metric groups)
+  - do not force a comparison on metric groups where only one arm has data; instead, note the gap and label it as `[one-arm only]`
 - Only compare fine-grained product-mechanism differences across arms when the source explicitly shows those config or description differences.
 
 Practical writing order:
@@ -184,14 +196,30 @@ Use one of these standard decisions in `总结论` / `总建议`:
 
 1. `全量上线`
    - evidence is strong, core objective wins, and no blocking guardrail/risk is observed.
+   - typical scenario: all Tier A metrics positive-significant, Tier B guardrails flat or positive, no unexplained anomalies.
 2. `扩大灰度`
    - overall direction is positive, but more exposure or longer observation is still needed before full rollout.
+   - typical scenarios:
+     - core metrics positive but observation window is short (< 14 days) and the effect size is still converging
+     - core metrics positive but an important secondary risk signal exists (for example: report rate ↑, performance regression on one platform) that needs a larger sample to confirm whether it converges or persists
+     - multi-arm experiment where the winning arm is clear but a configuration detail needs validation at larger scale
 3. `继续观测`
    - evidence is directionally useful but not stable enough yet (for example: short duration, noisy variance, or unresolved caveats).
+   - typical scenarios:
+     - most Tier A metrics are not significant yet, but directionally positive
+     - experiment has only run for a few days; effect sizes may still be shifting
+     - key dimension-level results contradict the global result and the reason is unclear
 4. `补数据后再决策`
    - key setup / metric / appendix evidence is missing or conflicting; do not force a launch decision.
+   - typical scenarios:
+     - APP-level must-watch metrics are listed but have no data (`listed but no data provided`)
+     - PRD and Raw Data conflict on experiment config and the discrepancy is unresolved
+     - a critical metric group's data is clearly incomplete or shows logging issues
 5. `回滚 / 不推荐上线`
    - core objective loses, major guardrails regress, or data quality / setup problems make rollout unsafe.
+   - typical scenarios:
+     - Tier A target metrics are negative-significant
+     - company-core guardrails show significant regression with no mitigation path
 
 Always explain:
 
