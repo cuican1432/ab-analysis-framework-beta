@@ -128,7 +128,22 @@ If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are
   - core secondary metrics (for example: DM sticker/camera/group chat) are not optional.
   - if any of them has significant movement, it must be fully disclosed and given a dedicated deep-analysis subsection; do not hide it just because it is not the primary headline metric.
 - Experiment config must be extracted verbatim:
-  - copy "流量分层 / 分流单元 / 过滤条件" from the material header into `实验背景与设计` to lock the measurement baseline.
+  - 实验背景与配置抓取红线 (MUST DO):
+    - 在撰写正文 `实验背景与设计` 章节之前，必须从输入物料（Raw Data 或 PRD 的头部）进行“节点级全量提取”，严禁自行精简或舍弃。
+    - 必留字段白名单化（一个不落，必须一字不漏）：
+      - 实验名称与实验链接
+      - 实验周期 / 数据日期
+      - 实验类型 / 实验机房 (Data Center)
+      - 流量分层 (Traffic Layer)
+      - 分流单元 (Sharding Unit / Unit)
+      - 实验原始配置总流量 / 放量信息 / 各版本流量比例
+    - 过滤条件 (Filter) 的特殊保护：
+      - 寻找物料中的“生效对象”、“受众”或“过滤条件”
+      - 若包含技术流代码（如 `version_code >= 440300`、`app_id in [...]` 等 SQL/Python 片段），必须用代码块包裹并原封不动保留
+      - 严禁为了“排版美观”删减或口语化翻译
+    - 呈现格式要求：
+      - 强制以前置列表或属性表格的形式，作为报告开头背景底座展示
+      - 必须保持键值对（Key-Value）的结构化呈现，不要揉进长段落
 
 ## When Writing the Report
 

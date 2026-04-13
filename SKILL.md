@@ -42,7 +42,20 @@ Attribution hard rules (anti-hallucination):
   - For other cases, allowed attribution routes include: funnel/path chain, user composition, metric formula decomposition, space/cannibalization, time trend, data quality checks, external/product interference (must be evidence-bound).
 - Absolute forbidden language: do not use unsupported psych speculation such as "用户觉得花里胡哨", "主观反感", "心理预期下降" unless the source has objective evidence.
 - Anti-survivorship bias: if any core secondary metric (for example: DM sticker/camera/group chat) has significant movement, it must be fully disclosed and given its own dedicated deep-analysis subsection. Do not hide it just because it is not the primary headline metric.
-- Experiment config must be extracted verbatim into `实验背景与设计`, including: traffic stratification, split unit, and filter conditions.
+- Experiment background & config extraction red lines (MUST DO):
+  - Before writing `实验背景与设计`, you must perform node-level full extraction from the header area of the input materials (Raw Data or PRD). Do not trim or rewrite.
+  - Required fields whitelist (extract all, verbatim):
+    - 实验名称与实验链接
+    - 实验周期 / 数据日期
+    - 实验类型 / 实验机房 (Data Center)
+    - 流量分层 (Traffic Layer)
+    - 分流单元 (Sharding Unit / Unit)
+    - 实验原始配置总流量 / 放量信息 / 各版本流量比例
+  - Filter conditions special protection:
+    - find and extract "生效对象 / 受众 / 过滤条件"
+    - if it contains technical code (e.g. `version_code >= 440300`, `app_id in [...]`), keep it verbatim in a code block; do not paraphrase or shorten for formatting.
+  - Presentation requirement:
+    - show these metadata as a structured Key-Value list or an attribute table at the beginning of the report; do not bury them in long paragraphs.
 
 Data appendix hard rules (physical-level evidence):
 - Final report must include `## 数据附录 (Data Appendix)` at the end.
