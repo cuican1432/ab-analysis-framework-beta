@@ -46,6 +46,31 @@ Install them in this order:
 
 ---
 
+## Quick Smoke Test | 快速烟测
+
+If you want to quickly verify that the framework really works, use one of these public smoke test cases first:
+
+- `Personalized Bubble / 个性化气泡`
+  - Raw Data: [Lark Raw Data Doc](https://bytedance.larkoffice.com/docx/L2kwdjvt5oLCwsxbB7Wc6uMRnud)
+  - PRD: [Lark PRD](https://bytedance.larkoffice.com/wiki/BT70wFcLAi5eh3k2ihJc4LCynWe)
+
+- `DM Card UI Optimization / 私信卡片 UI 优化`
+  - Raw Data: [Lark Raw Data Doc](https://bytedance.larkoffice.com/docx/GTtkd0Ixnos3VExjttecsuKEnxp)
+  - PRD: [Lark PRD](https://bytedance.sg.larkoffice.com/docx/GNMUdHluloFyw3xeaSklIAaSgee)
+
+The simplest validation flow is:
+
+1. Install the two skills above.
+2. Open `ab-analysis-framework-beta`.
+3. Pass the `PRD` link and `Raw Data` link directly into the skill.
+4. Check whether it can follow the doc-first path and produce a structured experiment report.
+
+One hard rule for smoke tests:
+- always reread the source from the current links
+- do not reuse historical files, old reports, or prior intermediate outputs
+
+---
+
 ## What Each Skill Is For | 两个 Skill 分别做什么
 
 ### 1. `ab-analysis-framework-beta`
@@ -62,6 +87,30 @@ Typical use cases:
 Example prompts:
 - `Please use ab-analysis-framework-beta to generate an experiment report.`
 - `Please use ab-analysis-framework-beta to analyze this PRD and raw data together.`
+
+### Usage Guide | 使用指南
+
+#### Scenario 1. Write an experiment report
+
+Use this when:
+- the experiment observation window has ended
+- the data is ready
+- you want the skill to read the PRD and raw data together, then write the report
+
+You can say:
+
+```text
+Please use ab-analysis-framework-beta to generate an experiment report.
+Experiment name (optional): [example: DM Personalized Bubble]
+PRD link: [URL]
+Raw Data link: [URL]
+```
+
+What the system will do:
+- run the doc-first analysis flow
+- silently read the stored glossary and KB first
+- use the existing analysis rules and report schema
+- output a structured experiment report instead of scattered notes
 
 ### 2. `ab-knowledge-builder-beta`
 
