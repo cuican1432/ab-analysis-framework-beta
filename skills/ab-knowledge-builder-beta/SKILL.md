@@ -57,17 +57,51 @@ Do not treat `references/knowledge/*` as the default live knowledge store.
 ## You can say
 
 ```text
-Please use ab-knowledge-builder-beta to ingest these metric definitions into the glossary, including metric meaning, aliases, polarity, and calculation notes.
-请使用 ab-knowledge-builder-beta 将这些指标定义写入 glossary，包括指标含义、别名、极性和计算说明。
+（1）指标定义入库：把“指标定义文档”写入 glossary
+你提供的文档里最好包含这些维度：
+- 指标名（metric name）
+- 指标含义（meaning）
+- 别名（aliases，可为空）
+- 极性（polarity：上涨=好/坏/不确定）
+- 计算说明（calculation notes，可为空）
+如果缺字段，我会先 infer 一个草案并把不确定项标出来请你确认。
 
-Please use ab-knowledge-builder-beta to update the DM knowledge base with this new source and extract reusable product-mechanism knowledge.
-请使用 ab-knowledge-builder-beta 用这个新来源更新 DM knowledge base，并提取可复用的产品机制知识。
+请使用 ab-knowledge-builder-beta 将这些指标定义写入 glossary（指标含义、别名、极性、计算说明），并在缺信息时先推断后向我确认。
+指标定义文档链接（或直接粘贴表格）：[URL 或 pasted text]
 
-Please use ab-knowledge-builder-beta to normalize this metric group, including group meaning, business domain, priority, scope, and typical usage.
-请使用 ab-knowledge-builder-beta 规范这个指标组，包括组含义、业务域、优先级、scope 和 typical usage。
+（2）KB 更新：把“新来源”沉淀成可复用的产品机制知识（DM 业务）
+你提供的内容里最好包含：
+- 来源链接/正文（source）
+- 适用范围（默认 DM，可改）
+- 关键机制（用户路径、触发条件、约束、边界）
+如果缺“范围/机制”，我会先按内容推断并列出 3-5 条待确认问题。
 
-Please use ab-knowledge-builder-beta to normalize these metric meanings and caliber tags, such as uv/au, days/days, days/user, pv/user, and ratio.
-请使用 ab-knowledge-builder-beta 规范这些指标含义和口径标签，例如 uv/au、days/days、days/user、pv/user 和 ratio。
+请使用 ab-knowledge-builder-beta 用这个新来源更新 DM knowledge base，并提取可复用的产品机制知识；不确定处请列出待确认问题。
+新来源链接（或直接粘贴正文）：[URL 或 pasted text]
+
+（3）指标组归一化：规范 metric group 的“组含义与使用方式”
+你提供的信息里最好包含：
+- 指标组名（group name）
+- 组含义（group meaning：这组指标想回答什么问题）
+- 业务域（business domain：如 DM/Inbox/Share 等）
+- 优先级（priority：如 P0/P1/P2/P3）
+- scope（这组指标覆盖的人群/场景/口径边界）
+- typical usage（典型使用方式：做什么结论时优先看它）
+如果缺字段，我会 infer 并把关键不确定点请你确认。
+
+请使用 ab-knowledge-builder-beta 规范这个指标组（组含义、业务域、优先级、scope、typical usage），缺信息时先推断后向我确认。
+指标组文档链接（或直接粘贴内容）：[URL 或 pasted text]
+
+（4）口径/标签归一化：规范“指标含义 + 口径标签”
+你提供的信息里最好包含：
+- 指标名
+- 口径标签（如 uv/au、days/days、days/user、pv/user、ratio）
+- 分子/分母定义（如果是 ratio）
+- 时间窗/统计口径（如 1d/7d/14d，是否去重）
+如果缺“分子分母/时间窗”，我会先推断并明确标注为 to-confirm。
+
+请使用 ab-knowledge-builder-beta 规范这些指标含义和口径标签（如 uv/au、days/days、days/user、pv/user、ratio），并把不确定处标注为 to-confirm 让我确认。
+口径说明文档链接（或直接粘贴内容）：[URL 或 pasted text]
 ```
 
 ## Linkage Rule With `ab-analysis-framework-beta`
