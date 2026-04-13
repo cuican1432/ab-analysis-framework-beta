@@ -101,8 +101,6 @@ Typical use cases:
 Example prompts:
 
 ```text
-请使用 ab-analysis-framework-beta 生成一份实验报告。
-
 请使用 ab-analysis-framework-beta 结合这个 PRD 和 Raw Data 一起分析并写实验报告。
 ```
 
@@ -118,7 +116,7 @@ Use this when:
 You can say:
 
 ```text
-请使用 ab-analysis-framework-beta 生成一份实验报告。
+请使用 ab-analysis-framework-beta 基于这个 PRD 和 Raw Data 生成一份实验报告。
 
 实验名称（可选）：[例如：DM Personalized Bubble]
 
