@@ -1,5 +1,5 @@
 ---
-name: tt-ab-analysis-framework
+name: ab-analysis-framework-beta
 description: TT A/B 实验分析框架主入口技能。用于实验报告生成、PRD 与 Raw Data 联合分析、业务知识入库、以及带临时规则的单次实验分析。用户提到 A/B 实验分析、实验复盘、实验报告、metric glossary、knowledge ingestion、业务术语整理、PRD + 数据联合解读时，应优先使用本技能。
 ---
 
@@ -11,7 +11,7 @@ It mainly supports three task types:
 2. Report Generation with Temporary Guidance
 3. Knowledge Ingestion
 
-You do not need to remember the internal helper skills. In most cases, calling `tt-ab-analysis-framework` directly is enough.
+You do not need to remember the internal helper skills. In most cases, calling `ab-analysis-framework-beta` directly is enough.
 
 ## 1) Experiment Report Generation
 
@@ -20,7 +20,7 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - 需要基于 PRD + raw data 文档快速生成标准化实验报告
 
 ### You can say
-- Please use `tt-ab-analysis-framework` to generate an experiment report.
+- Please use `ab-analysis-framework-beta` to generate an experiment report.
 - Experiment name (optional): [xxx]
 - PRD link: [URL]
 - Raw Data link: [URL]
@@ -41,7 +41,7 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - 你不希望把它永久写入知识库
 
 ### You can say
-- Please use `tt-ab-analysis-framework` to generate an experiment report with this temporary metric/rule guidance.
+- Please use `ab-analysis-framework-beta` to generate an experiment report with this temporary metric/rule guidance.
 - Experiment name (optional): [xxx]
 - PRD link: [URL]
 - Raw Data link: [URL]
@@ -61,7 +61,7 @@ You do not need to remember the internal helper skills. In most cases, calling `
 - 想把业务术语、口径说明、召回提示沉淀下来
 
 ### You can say
-- Please use `tt-ab-analysis-framework` to ingest experiment knowledge.
+- Please use `ab-analysis-framework-beta` to ingest experiment knowledge.
 - Metric glossary / knowledge input: [Feishu URL or pasted text]
 
 ### What the system will do

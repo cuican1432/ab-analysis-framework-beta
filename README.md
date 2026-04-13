@@ -1,6 +1,6 @@
-# tt-ab-analysis-framework
+# ab-analysis-framework-beta
 
-Source repository for the Mira version of `tt-ab-analysis-framework`.
+Source repository for the Mira version of `ab-analysis-framework-beta`.
 
 This repo is used for:
 - maintaining the source skill package
@@ -15,7 +15,7 @@ This repo is used for:
 
 Recommended install package:
 
-- `release/tt-ab-analysis-framework-for-mira.zip`
+- `release/ab-analysis-framework-beta.zip`
 
 Do not install the GitHub auto-generated source zip from the repository page.
 Use the packaged release zip above instead.
@@ -25,7 +25,7 @@ How to install in Mira:
 1. Open `Mira`
 2. Open `Skills`
 3. Open `Manage Skills`
-4. Upload `release/tt-ab-analysis-framework-for-mira.zip`
+4. Upload `release/ab-analysis-framework-beta.zip`
 
 After upload, Mira should recognize:
 - `SKILL.md` at the zip root
@@ -55,7 +55,7 @@ This package is built so that:
   - knowledge-layer organization and boundary rules
 - `userdata/tt-ab-analysis-framework/*`
   - local writable layer for user-provided knowledge, local overrides, and incremental files
-- `release/tt-ab-analysis-framework-for-mira.zip`
+- `release/ab-analysis-framework-beta.zip`
   - installable Mira package built from this source repo
 
 ---
