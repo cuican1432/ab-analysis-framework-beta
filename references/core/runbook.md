@@ -206,6 +206,10 @@ When outputting the final experiment report:
   - do not truncate or summarize the underlying detail tables in the appendix.
 - Preferred path:
   - fetch all detail tables from the bottom of the Raw Data doc via API and "physically clone" the table nodes into the new doc.
-- If API access is not available due to permission/tooling limits:
-  - fall back to copying/exporting the full raw tables into the appendix without summarization,
-  - and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
+- Fallback chain (do not summarize):
+  - If API access is not available due to permission/tooling limits:
+    - copy/export the full raw tables into the appendix without summarization,
+    - and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
+  - If even copying/exporting is not possible:
+    - manually create native Feishu tables and fill in all rows/columns as-is from the source,
+    - and explicitly state this is a manual fallback and what limitation caused it.
