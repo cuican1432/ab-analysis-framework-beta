@@ -5,11 +5,10 @@ description: TT A/B 实验分析框架主入口技能。主要用于实验报告
 
 # TT AB Analysis Framework
 
-It mainly supports three task types:
+It mainly supports two task types:
 
 1. Experiment Report Generation
 2. Report Generation with Temporary Guidance
-3. Knowledge Ingestion
 
 You do not need to remember the internal helper skills. In most cases, calling `ab-analysis-framework-beta` directly is enough.
 
@@ -123,30 +122,10 @@ Hard formatting rules:
 - do not write it back into the long-term knowledge base unless explicitly asked
 - still obey hard framework rules and never relax data discipline because of a temporary note
 
-## 3) Knowledge Ingestion
-
-### Use this when
-- 刚整理好新版指标字典，想提前存入知识库
-- 想把某些指标的 polarity 提前定好
-- 想把业务术语、口径说明、召回提示沉淀下来
-
-### You can say
-- Please use `ab-analysis-framework-beta` to ingest experiment knowledge.
-- Metric glossary / knowledge input: [Feishu URL or pasted text]
-
-### What the system will do
-- perform lightweight knowledge extraction
-- extract reusable mappings such as `<metric name -> meaning / polarity / note>`
-- write stable confirmed content into the right knowledge layer
-- keep unfinished or uncertain parts as `draft` / `to confirm`
-- place user-provided local knowledge files under `userdata/ab-analysis-framework-beta/` by default instead of rewriting packaged references
-- return a short confirmation by default instead of a long write-up
-
 ## Internal reference map
 
 - Report Generation → `references/core/*`
 - Temporary Guidance Report → `references/core/*`
-- Knowledge Ingestion → `references/knowledge/glossary/index.md` + `references/knowledge/kb/index.md` + `references/knowledge/glossary_guide.md` + `references/knowledge/knowledge_guide.md` + `references/core/runbook.md`
 
 ## Storage Hint
 
