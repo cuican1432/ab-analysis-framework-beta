@@ -65,8 +65,16 @@ If the main goal is to build or normalize the knowledge store itself rather than
 
 ## Internal reference map
 
-- Report Generation → `references/core/*`
-- Temporary Guidance Report → `references/core/*`
+- Report Generation →
+  - `references/core/*`
+  - `references/knowledge/glossary/index.md`
+  - `references/knowledge/kb/index.md`
+  - then follow default read order steps `3-6` below when the case needs knowledge recall
+- Temporary Guidance Report →
+  - `references/core/*`
+  - `references/knowledge/glossary/index.md`
+  - `references/knowledge/kb/index.md`
+  - current-run temporary guidance first, then follow default read order steps `3-6` below
 
 ## Core Read Order
 

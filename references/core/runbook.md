@@ -7,13 +7,15 @@
    - raw data docs
    - screenshots / tables
    - optional live Libra page
-2. Identify the experiment object.
-3. Identify the main metrics and guardrails.
-4. Build the candidate metric set.
-5. Extract or read facts into Stage A.
-6. Turn Stage A into Stage B logic.
-7. Write Stage C as a decision-oriented memo.
-8. Evaluate in Stage D when needed.
+2. Complete Stage A first.
+   - extract setup / config fields from the source header
+   - identify the experiment object
+   - identify the main metrics and guardrails
+   - consult glossary / KB
+   - build the candidate metric set
+3. Turn Stage A into Stage B logic.
+4. Write Stage C as a decision-oriented memo.
+5. Evaluate in Stage D when needed.
 
 Practical reminder:
 

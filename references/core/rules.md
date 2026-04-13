@@ -56,6 +56,28 @@ Use three default tiers:
 
 Do not let Tier C dominate the main conclusion unless the source explicitly proves it should.
 
+Tier / core-flag mapping:
+
+- `is_company_core = 1`
+  - default to `Tier B`
+  - elevate to `Tier A` only when the PRD or source explicitly names it as a target / success metric
+- `is_business_core = 1`
+  - if it belongs to the same primary business domain, treat it as a strong `Tier A` candidate
+  - if it belongs to a different business domain, default to `Tier B`
+- `is_sub_business_core = 1`
+  - default to `Tier B` when it is same-domain or directly adjacent-domain
+  - otherwise keep it in `Tier C` unless the PRD or source makes it central
+- no core flag
+  - default to `Tier C` unless explicitly targeted, materially significant, or clearly required as a guardrail
+- if a metric group is both flagged and explicitly named in the PRD target / success-metric set
+  - prioritize the PRD and elevate it to `Tier A`
+
+If a flagged group also has a low stored `importance` / `priority_hint`, do not treat this as a contradiction:
+
+- core flags decide baseline recall obligation
+- tier decides analysis role in the current case
+- stored priority helps order peers within the same tier, but does not override PRD targets or hard guardrail obligations
+
 ### Recall and Priority
 
 Separate these two questions:
