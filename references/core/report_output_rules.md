@@ -84,6 +84,16 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - source_location (where it came from in Raw Data)
 - This manifest is used to prevent inconsistent significance labeling across sections.
 
+### Recall Manifest | 召回清单
+
+- Include a `## 召回清单 (Recall Manifest)` section near the end of the main body when the experiment uses domain-first recall logic.
+- Record at least:
+  - recalled groups
+  - recall reason for each recalled group
+  - unmatched Raw Data group names (`[unregistered group]`)
+  - groups considered but downgraded to appendix / monitoring
+- This section is for auditability and new-domain debugging; keep it concise but explicit.
+
 ### Metric Naming | 指标命名
 
 - In the report body (first appearance), use: `中文解释（完整英文指标名）` + change marker.

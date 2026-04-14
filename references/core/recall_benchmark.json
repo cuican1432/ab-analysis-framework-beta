@@ -1,0 +1,38 @@
+[
+  {
+    "case_id": "dm_core_minimal",
+    "primary_business_domain": "DM",
+    "raw_groups": [
+      "DM Core",
+      "Voice Message",
+      "Share&Repost",
+      "Unknown Group X"
+    ],
+    "expected_recall_order": [
+      "DM Core",
+      "Voice Message",
+      "Share&Repost"
+    ],
+    "expected_unmatched": [
+      "Unknown Group X"
+    ],
+    "notes": "Same-domain DM groups should rank ahead of adjacent-domain groups. Unknown groups should be kept as unmatched, not silently dropped."
+  },
+  {
+    "case_id": "share_repost_basic",
+    "primary_business_domain": "Share&Repost",
+    "raw_groups": [
+      "Share&Repost Core",
+      "DM Core",
+      "Inbox Element Metrics"
+    ],
+    "expected_recall_order": [
+      "Share&Repost Core",
+      "DM Core",
+      "Inbox Element Metrics"
+    ],
+    "expected_unmatched": [],
+    "notes": "Primary same-domain group should stay ahead of imported DM priorities."
+  }
+]
+

@@ -223,6 +223,15 @@ Priority rules:
   - stable guardrail lists,
   - or appendices
 
+Recall manifest requirement:
+
+- Every run should output a `Recall Manifest` that records:
+  - recalled groups
+  - recall reason for each group (same-domain / adjacent-domain / core-flag / PRD-target / significant-result / guardrail)
+  - unmatched groups (for example `[unregistered group]`)
+  - non-recalled groups that were considered but intentionally downgraded to appendix / monitoring
+- Use this manifest to make recall decisions reviewable when onboarding a new business domain or debugging alias/domain drift.
+
 ### Attribution Discipline
 
 Use evidence from three equal routes:
