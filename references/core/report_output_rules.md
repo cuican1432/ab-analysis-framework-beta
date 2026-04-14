@@ -80,6 +80,10 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - negative significant: `↓ -X%`
   - marginal positive/negative: `↗ +X%` / `↘ -X%`
   - not significant: `➖ 不显著`
+- Enhanced layer (Lark Block API / L1) uses styled numeric values only:
+  - keep the numeric sign (`+` / `-`)
+  - remove `↑` / `↓` / `↗` / `↘` / `➖`
+  - express significance through color + bold (+ background when applicable), not through arrows
 - L2 direction markers must reflect business meaning, not raw arithmetic direction:
   - `↑` = favorable to the business / experiment goal
   - `↓` = unfavorable to the business / experiment goal
@@ -90,7 +94,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - Example: if `MuF Share/User` is `higher_is_better`, then `-1.27%` should be written as `↓ -1.27%`
 - Coloring granularity: only color the value token, not the metric name or descriptive text.
   - Base Layer: the colored unit is the marker + value token only, e.g. `↑ +0.35%`
-  - Enhanced Layer: apply Block API styling only to the numeric value cell / inline value token
+  - Enhanced Layer: apply Block API styling only to the numeric value cell / inline value token, e.g. `+0.35%` / `-1.27%` without arrows
   - Keep metric names, descriptions, and surrounding narrative in plain text
   - When a bullet or paragraph contains multiple metrics, style each value separately; do not wrap the whole bullet / paragraph in one color
 - Enhanced layer (Block API post-processing) should use colored text styles first (L1), and only fall back to direction markers (L2) or plain labels (L3) when Block API styling fails.

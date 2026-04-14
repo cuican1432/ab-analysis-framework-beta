@@ -85,6 +85,7 @@ MUST DO:
 - ✅ keep "V3 Clean": do not add/remove/reorder chapters
 - ✅ token from env (no hardcode): `LARK_USER_ACCESS_TOKEN` or `MIRA_LARK_USER_ACCESS_TOKEN`
 - ✅ significance marking: L1 (color+bold+bg) > L2 (direction markers: `↑` / `↓` / `↗` / `↘` / `➖`) > L3 (plain labels)
+- ✅ format split: Base Layer Markdown uses `↑` / `↓` / `↗` / `↘` / `➖`; Enhanced Layer L1 removes those markers and keeps only styled `+/-` numeric values
 - ✅ summary tables: 3 columns; appendix tables: 5 columns; row_count <= 8 (split when needed)
 - ✅ experiment info: inline text (bold key + value)
 - ✅ degrade silently when Block API fails
