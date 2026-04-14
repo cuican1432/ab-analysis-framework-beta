@@ -4,7 +4,7 @@ Build Mira upload zips with the required "zip root" layout:
 
 - SKILL.md at zip root
 - README.md, CHANGELOG.md at zip root
-- references/ and userdata/ at zip root
+- references/, userdata/, and scripts/ at zip root
 
 We intentionally keep the packaging logic extremely small and dependency-free.
 """
@@ -106,6 +106,10 @@ def build_zip(
 
         # userdata/ is the writable/live content layer.
         _add_dir(zf, REPO / "userdata", "userdata")
+
+        # scripts/ contains packaged helper tools referenced by SKILL.md/runbook
+        # (for example beautification post-processing and skill-root detection).
+        _add_dir(zf, REPO / "scripts", "scripts")
 
     tmp_path.replace(zip_path)
 

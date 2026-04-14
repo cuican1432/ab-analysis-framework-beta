@@ -42,7 +42,7 @@ Install them in this order:
 
 ### Step 4. What success looks like after upload
 - `SKILL.md` at zip root
-- `references/`, `userdata/`, and package files at the same root level
+- `references/`, `userdata/`, `scripts/`, and package files at the same root level
 
 ---
 
@@ -215,7 +215,7 @@ Example prompts:
 
 Each installable package is built so that:
 - `SKILL.md` is at the zip root
-- `README.md`, `references/`, and `userdata/` are at the same zip-root level
+- `README.md`, `references/`, `userdata/`, and `scripts/` are at the same zip-root level
 
 Current packaged files:
 - `release/ab-analysis-framework-beta.zip`
