@@ -31,7 +31,7 @@ Use this guide not only for `kb/`, but also for:
 - `references/knowledge/knowledge_guide.md`
   - knowledge-layer organization and boundary rules
 
-- `userdata/ab-analysis-framework-beta/`
+- `userdata/ab-knowledge-builder-beta/`
   - actual knowledge content layer
   - local incremental knowledge
   - local overrides
@@ -76,9 +76,9 @@ Fallback for install/runtime environments:
 - When both are present, treat `userdata/` as the source of truth and the snapshot as a safety net only.
 
 Recommended local split:
-- `userdata/ab-analysis-framework-beta/glossary/`
-- `userdata/ab-analysis-framework-beta/kb/`
-- `userdata/ab-analysis-framework-beta/custom_rules/`
+- `userdata/ab-knowledge-builder-beta/glossary/`
+- `userdata/ab-knowledge-builder-beta/kb/`
+- `userdata/ab-knowledge-builder-beta/custom_rules/`
 
 ## Update Style
 
@@ -86,6 +86,6 @@ Recommended local split:
 - prefer concise reusable notes
 - avoid mixing glossary schema with business explanation
 - keep `references/knowledge/*` focused on reading, indexing, and interpretation guidance
-- let evolving knowledge accumulate in `userdata/ab-analysis-framework-beta/*`
+- let evolving knowledge accumulate in `userdata/ab-knowledge-builder-beta/*`
 - keep `references/knowledge/kb/index.md` as the entry page instead of mixing navigation into every topic file
 - do not use generic roots like `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace

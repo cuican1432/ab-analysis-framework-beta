@@ -6,9 +6,10 @@ Use it when the main job is knowledge maintenance (glossary / KB), not writing a
 
 ## What This Skill Owns
 
-- Live glossary content (writable): `userdata/ab-analysis-framework-beta/glossary/*`
-- Live business knowledge (writable): `userdata/ab-analysis-framework-beta/kb/*`
-- Local reusable overrides (writable): `userdata/ab-analysis-framework-beta/custom_rules/*`
+- Live glossary content (writable): `userdata/ab-knowledge-builder-beta/glossary/*`
+- Live business knowledge (writable): `userdata/ab-knowledge-builder-beta/kb/*`
+- Local reusable overrides (writable): `userdata/ab-knowledge-builder-beta/custom_rules/*`
+- For install/runtime environments, the framework skill may fall back to a packaged snapshot under `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*` when userdata is missing.
 
 Reading guides live in `references/knowledge/*`.
 
@@ -23,4 +24,3 @@ Reading guides live in `references/knowledge/*`.
 请使用 ab-knowledge-builder-beta 用这个新来源更新 DM knowledge base，并提取可复用的产品机制知识；不确定处请列出待确认问题。
 新来源链接（或直接粘贴正文）：[URL 或 pasted text]
 ```
-

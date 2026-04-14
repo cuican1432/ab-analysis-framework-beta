@@ -27,6 +27,7 @@ Supported patterns (examples):
 
 This layer is NOT produced by writing Feishu-native tags into the Stage C markdown output.
 It is applied by a separate post-processing step that calls Feishu Doc Block API to add colors/callouts/tables.
+If a valid token is available, this step should run automatically after the base report is written; otherwise it should be skipped silently.
 
 Key constraints (v1.2):
 

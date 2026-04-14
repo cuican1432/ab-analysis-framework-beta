@@ -1,6 +1,6 @@
 ---
 name: ab-knowledge-builder-beta
-description: A/B experiment knowledge-builder skill for glossary, KB, metric-group, caliber, and local knowledge-store maintenance. Use when the goal is to build, ingest, migrate, or normalize knowledge content rather than generate an experiment report. This skill owns the live knowledge content layer under userdata/ab-analysis-framework-beta/*.
+description: A/B experiment knowledge-builder skill for glossary, KB, metric-group, caliber, and local knowledge-store maintenance. Use when the goal is to build, ingest, migrate, or normalize knowledge content rather than generate an experiment report. This skill owns the live knowledge content layer under userdata/ab-knowledge-builder-beta/*.
 ---
 
 # AB Knowledge Builder Beta
@@ -32,9 +32,9 @@ In those cases, use `ab-analysis-framework-beta`.
 
 ## Storage Ownership
 
-- Live glossary content belongs in `userdata/ab-analysis-framework-beta/glossary/*`
-- Live business knowledge belongs in `userdata/ab-analysis-framework-beta/kb/*`
-- Local reusable overrides belong in `userdata/ab-analysis-framework-beta/custom_rules/*`
+- Live glossary content belongs in `userdata/ab-knowledge-builder-beta/glossary/*`
+- Live business knowledge belongs in `userdata/ab-knowledge-builder-beta/kb/*`
+- Local reusable overrides belong in `userdata/ab-knowledge-builder-beta/custom_rules/*`
 
 Treat `references/knowledge/*` as the reading layer:
 
@@ -48,7 +48,7 @@ Do not treat `references/knowledge/*` as the default live knowledge store.
 
 ## Default Builder Behavior
 
-- write new or evolving knowledge to `userdata/ab-analysis-framework-beta/*` by default
+- write new or evolving knowledge to `userdata/ab-knowledge-builder-beta/*` by default
 - keep entries reusable and topic-based
 - prefer stable wording over case-specific writeups
 - keep unresolved content marked as draft or to-confirm when needed

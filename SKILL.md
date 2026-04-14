@@ -184,7 +184,7 @@ Metric recall reminder:
 
 `ab-analysis-framework-beta` reads the live knowledge layer under `userdata/ab-knowledge-builder-beta/*`, but it does not own detailed knowledge-content editing.
 
-Compatibility note: some older installs may still place knowledge under `userdata/ab-analysis-framework-beta/*`. If both paths exist, prefer the `ab-knowledge-builder-beta` namespace.
+Compatibility note: some older installs may still place knowledge under `userdata/ab-knowledge-builder-beta/*`. If both paths exist, prefer the `ab-knowledge-builder-beta` namespace.
 
 Update this framework skill when one of these changes:
 

@@ -31,15 +31,15 @@ This is the entry page for the glossary reading layer.
 - 用来说明一个指标组是什么、通常在哪些实验里出现、常见维度有哪些。
 
 ### 2. Dimension Index | 维度索引
-- `userdata/ab-analysis-framework-beta/glossary/dimensions.md`
+- `userdata/ab-knowledge-builder-beta/glossary/dimensions.md`
 - 用来说明维度名称、含义、常见取值和解读边界。
 
 ### 3. Dimension Value Index | 维度值索引
-- `userdata/ab-analysis-framework-beta/glossary/dimension_values.md`
+- `userdata/ab-knowledge-builder-beta/glossary/dimension_values.md`
 - 用来说明维度值本身的业务含义；如果当前没有内容，可以先留空。
 
 ### 4. Metrics By Group | 按指标组拆分的正式指标
-- `userdata/ab-analysis-framework-beta/glossary/metrics_by_group/*.md`
+- `userdata/ab-knowledge-builder-beta/glossary/metrics_by_group/*.md`
 - 每个文件对应一个正式指标组，存该组下已经确认、可复用的指标条目。
 
 ---
@@ -56,7 +56,7 @@ This is the entry page for the glossary reading layer.
 ## Current Files | 当前已拆出的文件
 
 - See the live glossary files under:
-  - `userdata/ab-analysis-framework-beta/glossary/*`
+  - `userdata/ab-knowledge-builder-beta/glossary/*`
 - `references/knowledge/glossary/metrics_by_group/key_project_dm.md`
 - `references/knowledge/glossary/metrics_by_group/dm_permission.md`
 - `references/knowledge/glossary/metrics_by_group/dm_inner_push.md`

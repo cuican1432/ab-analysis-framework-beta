@@ -247,7 +247,7 @@ This layer tells the skills:
 - how to navigate knowledge
 - how to interpret common patterns
 
-### `userdata/ab-analysis-framework-beta/*`
+### `userdata/ab-knowledge-builder-beta/*`
 
 Live knowledge layer:
 - actual glossary content
@@ -262,7 +262,7 @@ This is the layer that should keep growing over time.
 ## Current Live Knowledge Root | 当前 live knowledge 根目录
 
 ```text
-userdata/ab-analysis-framework-beta/
+userdata/ab-knowledge-builder-beta/
 ├── glossary/
 │   ├── metric_groups.md
 │   ├── metric_groups_table.md
@@ -288,7 +288,7 @@ The builder package includes this seeded live knowledge so that a new user start
 ### `ab-knowledge-builder-beta`
 
 Owns:
-- writing and updating `userdata/ab-analysis-framework-beta/*`
+- writing and updating `userdata/ab-knowledge-builder-beta/*`
 - normalizing live knowledge content
 - maintaining seeded knowledge quality over time
 
@@ -330,7 +330,7 @@ Do not update the framework skill for pure knowledge-content growth by default.
   - analysis rules and workflow
 - `references/knowledge/*`
   - reading-layer indexes, guides, and patterns
-- `userdata/ab-analysis-framework-beta/*`
+- `userdata/ab-knowledge-builder-beta/*`
   - live glossary / KB / custom rules
 - `release/*.zip`
   - Mira install packages

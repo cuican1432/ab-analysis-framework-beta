@@ -33,12 +33,12 @@ This is the entry page for the KB reading layer.
 - `references/knowledge/kb/metric_caliber_metric_inventory.md`
   - Current Formalized Metric Caliber Classification
 Live KB topics (writable, source-of-truth):
-- `userdata/ab-analysis-framework-beta/kb/business_kb.md`
-- `userdata/ab-analysis-framework-beta/kb/dm.md`
-- `userdata/ab-analysis-framework-beta/kb/messaging_support.md`
-- `userdata/ab-analysis-framework-beta/kb/platform_terms.md`
-- `userdata/ab-analysis-framework-beta/kb/story.md`
-- `userdata/ab-analysis-framework-beta/kb/ur.md`
+- `userdata/ab-knowledge-builder-beta/kb/business_kb.md`
+- `userdata/ab-knowledge-builder-beta/kb/dm.md`
+- `userdata/ab-knowledge-builder-beta/kb/messaging_support.md`
+- `userdata/ab-knowledge-builder-beta/kb/platform_terms.md`
+- `userdata/ab-knowledge-builder-beta/kb/story.md`
+- `userdata/ab-knowledge-builder-beta/kb/ur.md`
 
 ---
 
@@ -49,9 +49,9 @@ Live KB topics (writable, source-of-truth):
 - 只拿当前 case 真正需要的知识页
 - 把这里优先当成阅读和导航层，而不是长期 live knowledge 主库
 - Core Interaction holds shared cross-domain concepts; DM / Story / UR hold direction-specific concepts and their group mappings
-- Use `userdata/ab-analysis-framework-beta/kb/platform_terms.md` when you need stable meanings for repeated platform-level metrics and product terms such as `DAU`, `MAU`, `Retention`, `VV`, `FYP`, `Internal Share`, or `Search`.
+- Use `userdata/ab-knowledge-builder-beta/kb/platform_terms.md` when you need stable meanings for repeated platform-level metrics and product terms such as `DAU`, `MAU`, `Retention`, `VV`, `FYP`, `Internal Share`, or `Search`.
 - Use `platform_terms_outline.md` when you need the source outline for future expansion of platform-wide metric terminology (reading/pattern layer).
 - Use `metric_caliber_patterns.md` when you need to interpret common experiment metric families such as `days/days`, `days/user`, `pv/user`, and `uv/user`.
 - Use `metric_caliber_metric_inventory.md` when you want the current formalized metrics classified by inferred caliber family.
-- Use `userdata/ab-analysis-framework-beta/kb/messaging_support.md` when you need stable, support-documented messaging, notification, or adjacent sharing mechanics rather than metric definitions.
-- `userdata/ab-analysis-framework-beta/kb/messaging_support.md` also covers official support-backed streak mechanics, sticker mechanics, push/inbox notification rules, and share/repost feature links.
+- Use `userdata/ab-knowledge-builder-beta/kb/messaging_support.md` when you need stable, support-documented messaging, notification, or adjacent sharing mechanics rather than metric definitions.
+- `userdata/ab-knowledge-builder-beta/kb/messaging_support.md` also covers official support-backed streak mechanics, sticker mechanics, push/inbox notification rules, and share/repost feature links.
