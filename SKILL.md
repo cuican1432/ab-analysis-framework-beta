@@ -48,7 +48,7 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - perform attribution, risk review, and evidence-boundary labeling when needed
 - output a structured experiment report as a Feishu/Lark doc using standard Markdown (tables, emoji markers, blockquotes, bold) rather than scattered analysis fragments
 
-### Beautification Rules (Optional) | 美化规则（可选）
+### Beautification Rules (Auto When Token Available) | 美化规则（有 token 自动执行）
 
 What is the token:
 
@@ -131,9 +131,9 @@ When reading `references/core/*`, use this order:
 ## Storage Hint
 
 - Knowledge reading layer → `references/knowledge/*`
-- Packaged userdata snapshot (read-only fallback) → `references/knowledge/userdata_snapshot/ab-analysis-framework-beta/*`
-- Long-term live glossary content → `userdata/ab-analysis-framework-beta/glossary/*`
-- Long-term live business knowledge → `userdata/ab-analysis-framework-beta/kb/*`
+- Packaged userdata snapshot (read-only fallback) → `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`
+- Long-term live glossary content → `userdata/ab-knowledge-builder-beta/glossary/*`
+- Long-term live business knowledge → `userdata/ab-knowledge-builder-beta/kb/*`
 - Glossary maintenance rules → `references/knowledge/glossary_guide.md`
 - Business knowledge maintenance rules → `references/knowledge/knowledge_guide.md`
 - Runtime local incremental layer → `userdata/ab-analysis-framework-beta/*`
@@ -141,11 +141,11 @@ When reading `references/core/*`, use this order:
 
 ## Userdata Boundary
 
-When the user wants to inject local knowledge, local data files, or run-specific reusable notes, use `userdata/ab-analysis-framework-beta/` as the default writable layer.
+When the user wants to inject local knowledge, local data files, or run-specific reusable notes, use `userdata/ab-knowledge-builder-beta/` as the default writable layer.
 
-- Local glossary additions / partial confirmations → `userdata/ab-analysis-framework-beta/glossary/`
-- Local business notes / project context → `userdata/ab-analysis-framework-beta/kb/`
-- User-specific interpretation rules / temporary reusable overrides → `userdata/ab-analysis-framework-beta/custom_rules/`
+- Local glossary additions / partial confirmations → `userdata/ab-knowledge-builder-beta/glossary/`
+- Local business notes / project context → `userdata/ab-knowledge-builder-beta/kb/`
+- User-specific interpretation rules / temporary reusable overrides → `userdata/ab-knowledge-builder-beta/custom_rules/`
 
 Do not casually rewrite packaged shared references during normal ingestion:
 
@@ -157,10 +157,10 @@ Default read order:
 1. `references/core/*`
 2. current-run explicit temporary guidance
 3. `references/knowledge/*`
-4. `references/knowledge/userdata_snapshot/ab-analysis-framework-beta/*` (read-only fallback when userdata is missing)
-5. `userdata/ab-analysis-framework-beta/custom_rules/*`
-6. `userdata/ab-analysis-framework-beta/glossary/*`
-7. `userdata/ab-analysis-framework-beta/kb/*`
+4. `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*` (read-only fallback when userdata is missing)
+5. `userdata/ab-knowledge-builder-beta/custom_rules/*`
+6. `userdata/ab-knowledge-builder-beta/glossary/*`
+7. `userdata/ab-knowledge-builder-beta/kb/*`
 
 If both snapshot and userdata exist, prefer `userdata/` (writable/live) and treat snapshot as a safety net for install/runtime environments that lose userdata.
 

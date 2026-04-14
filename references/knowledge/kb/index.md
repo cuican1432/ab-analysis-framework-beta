@@ -20,7 +20,7 @@ This is the entry page for the KB reading layer.
 - `references/knowledge/knowledge_guide.md`
 
 如果你要写入或持续积累实际业务知识，请优先写到：
-- `userdata/ab-analysis-framework-beta/kb/`
+- `userdata/ab-knowledge-builder-beta/kb/`
 
 ---
 

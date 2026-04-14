@@ -8,7 +8,7 @@ Source repository for two Mira skills that work together:
   - knowledge-builder skill for glossary / KB ingestion, normalization, and live knowledge maintenance
 
 This repo is meant to be used as a paired setup:
-- the builder skill seeds and maintains the live knowledge store under `userdata/ab-analysis-framework-beta/*`
+- the builder skill seeds and maintains the live knowledge store under `userdata/ab-knowledge-builder-beta/*`
 - the framework skill reads that knowledge store and applies the analysis schema
 
 ---
@@ -37,7 +37,7 @@ Install them in this order:
 - then upload the analysis framework package
 
 ### Step 3. Why this order matters
-- the builder package ships seeded social KB / glossary content inside `userdata/ab-analysis-framework-beta/*`
+- the builder package ships seeded social KB / glossary content inside `userdata/ab-knowledge-builder-beta/*`
 - the framework package can then read that knowledge layer immediately
 
 ### Step 4. What success looks like after upload

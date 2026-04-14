@@ -40,7 +40,7 @@ Use this precedence when instructions conflict:
 1. `Absolute Hard Rules`
 2. the user's current prompt / current-run explicit instruction
 3. current-run temporary guidance
-4. reusable user overrides in `userdata/ab-analysis-framework-beta/custom_rules/*`
+4. reusable user overrides in `userdata/ab-knowledge-builder-beta/custom_rules/*`
 5. framework default rules in this file and `runbook.md`
 6. stored glossary / KB defaults such as base priority, aliases, or interpretation hints
 

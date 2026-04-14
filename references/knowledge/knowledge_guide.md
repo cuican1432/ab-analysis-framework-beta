@@ -61,7 +61,7 @@ Use `references/knowledge/*` when the content is:
 - a reusable example
 - a migration-time reference that helps analysis read the knowledge correctly
 
-Use `userdata/ab-analysis-framework-beta/*` when the content is:
+Use `userdata/ab-knowledge-builder-beta/*` when the content is:
 - actual glossary or KB content
 - local
 - incremental
@@ -72,7 +72,7 @@ Use `userdata/ab-analysis-framework-beta/*` when the content is:
 Fallback for install/runtime environments:
 
 - If the runtime environment cannot persist `userdata/` reliably, use the packaged read-only snapshot:
-  - `references/knowledge/userdata_snapshot/ab-analysis-framework-beta/*`
+  - `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`
 - When both are present, treat `userdata/` as the source of truth and the snapshot as a safety net only.
 
 Recommended local split:

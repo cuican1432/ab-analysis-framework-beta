@@ -20,14 +20,14 @@ This is the entry page for the glossary reading layer.
 - `references/knowledge/glossary_guide.md`
 
 如果你要写入或持续积累实际 glossary 内容，请优先写到：
-- `userdata/ab-analysis-framework-beta/glossary/`
+- `userdata/ab-knowledge-builder-beta/glossary/`
 
 ---
 
 ## What Is In The Glossary | 正式字典里有什么
 
 ### 1. Metric Group Index | 指标组索引
-- `userdata/ab-analysis-framework-beta/glossary/metric_groups.md`
+- `userdata/ab-knowledge-builder-beta/glossary/metric_groups.md`
 - 用来说明一个指标组是什么、通常在哪些实验里出现、常见维度有哪些。
 
 ### 2. Dimension Index | 维度索引
