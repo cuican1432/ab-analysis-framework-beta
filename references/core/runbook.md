@@ -261,3 +261,13 @@ What to avoid:
 
 - Report output formatting (Feishu doc, tables, coloring, naming, callouts) is defined canonically in `references/core/report_output_rules.md`.
 - Data appendix (physical clone + fallback chain) is also defined canonically in `references/core/report_output_rules.md`.
+
+### Stage C+ (Optional): Beautification | 可选后处理：Block API 美化
+
+If the user asks for richer visual styling and a valid Block API token is available, apply an Enhanced Layer post-processing step:
+
+- Keep "V3 Clean": do not add/remove/reorder chapters; only overlay styling.
+- Prefer L1 styling (color+bold+bg via Block API) for significance, and only fall back to emoji/labels when Block API styling is unavailable.
+- Follow hard table limits (row_count <= 8) and inline experiment info rules.
+
+Canonical spec: `references/core/beautification_spec_v1.2.md`

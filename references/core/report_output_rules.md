@@ -23,19 +23,19 @@ Supported patterns (examples):
 | To confirm | blockquote + emoji + bold | `> 📝 **To Confirm**：...` |
 | Divider | `---` | `---` |
 
-### Enhanced Layer (Feishu Native) | 增强层（仅手动美化/未来 Block API）
+### Enhanced Layer (Block API Post-Processing) | 增强层（Block API 后处理）
 
-The following tags are NOT reliably supported by the doc create/update APIs today.
-If you output them, they may appear as raw tag text or be silently ignored.
+This layer is NOT produced by writing Feishu-native tags into the Stage C markdown output.
+It is applied by a separate post-processing step that calls Feishu Doc Block API to add colors/callouts/tables.
 
-| Element | Tag / Syntax | API Support |
-|---|---|---|
-| Callout | `<callout ...>` | ❌ |
-| Text background | `<text bgcolor="...">` | ❌ |
-| Text color | `<font color="...">` | ❌ |
-| Alignment | `{align=center}` | ❌ |
-| Quote container | `<quote-container>` | ❌ |
-| Table col-widths | `<lark-table ... col-widths=...>` | ❌/partial |
+Key constraints (v1.2):
+
+- "V3 Clean": keep original report chapter structure; only overlay visual enhancement.
+- Significant marking degradation: L1 (color+bold+bg via Block API) > L2 (emoji) > L3 (plain text).
+- Table hard limit: row_count <= 8 (including header); over-limit must split or use inline text.
+- Experiment info prefers inline text (bold key + value) to avoid large-table API failures.
+
+Canonical spec: `references/core/beautification_spec_v1.2.md`
 
 ### Feishu Doc Output | 飞书文档输出
 
@@ -50,10 +50,11 @@ If you output them, they may appear as raw tag text or be silently ignored.
 
 ### Coloring | 染色
 
-- API output uses emoji + bold as the visual cue (do not rely on colors).
+- Base layer (Stage C API output) uses emoji + bold as the visual cue (do not rely on colors).
   - positive significant: `**✅ +X%**`
   - negative significant: `**🔻 -X%**`
   - not significant: `➖ 不显著`
+- Enhanced layer (Block API post-processing) should use colored text styles first (L1), and only fall back to emoji (L2) or plain labels (L3) when Block API styling fails.
 - Only mark as significant when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, keep directional wording only.
 
 ### Metric Naming | 指标命名
