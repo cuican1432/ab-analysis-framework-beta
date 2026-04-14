@@ -184,6 +184,10 @@ Practical writing order:
 
 1. 总结论：直接回答 rollout / decision question（先结论后背景）
    - Every metric or signal referenced in `总结论` and `总建议` must include the full metric name as it appears in the Raw Data. Do not summarize as "N items showed significance" without listing the actual metric names. If the list is long (> 5 metrics), either list all of them or list the top 3 by impact and add "等 N 项，详见 §X.X" with a section cross-reference.
+   - Add an explicit `证据完整度 (Evidence Completeness)` rating alongside the decision to avoid over-confident reading:
+     - `High`: key metric groups readable, significant claims backed by p-values/flags, and `to confirm` items are minor
+     - `Medium`: some key groups are summary-only or partial, or multiple `[hypothesis to verify]` remain
+     - `Low`: key evidence missing/conflicting, or significant claims cannot be backed by p-values; mark the report as `初稿 / 待复核`
 2. 总建议：下一步怎么做（按标准决策分级给出）
 2.5 实验背景与设计：以 Key-Value 属性表格或前置列表展示实验配置底座（完整字段白名单见 `workflow.md` Stage A step 2；Stage C API 输出时按 `report_output_rules.md` 基础层使用标准 Markdown 表格）
 3. 分结论（重复多次）：

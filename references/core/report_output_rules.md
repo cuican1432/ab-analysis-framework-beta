@@ -58,7 +58,22 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - negative significant: `**🔻 -X%**`
   - not significant: `➖ 不显著`
 - Enhanced layer (Block API post-processing) should use colored text styles first (L1), and only fall back to emoji (L2) or plain labels (L3) when Block API styling fails.
-- Only mark as significant when significance is supported by the source (p-value or explicit significant flag). If the source does not provide significance evidence, keep directional wording only.
+- Only mark as significant when significance is supported by the source:
+  - preferred: p-value is present
+  - acceptable: the source provides an explicit significant flag plus a traceable source_location
+  - if p-value is missing, the metric can only be described directionally (no ✅/🔻 claim), and it must be added into `to confirm`
+
+### Evidence Manifest | 证据清单
+
+- When the report contains any significant claims (✅/🔻 or Enhanced Layer L1 coloring), include a `## 证据清单 (Evidence Manifest)` section before `## 待确认 (To Confirm)`.
+- Minimum fields per entry:
+  - metric (full Raw Data name)
+  - delta (relative and/or absolute)
+  - p_value (required to claim significance; otherwise the entry is directional only)
+  - CI (when available)
+  - N / sample size signal (when available)
+  - source_location (where it came from in Raw Data)
+- This manifest is used to prevent inconsistent significance labeling across sections.
 
 ### Metric Naming | 指标命名
 

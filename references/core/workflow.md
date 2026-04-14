@@ -27,11 +27,20 @@ Use this default order for experiment analysis:
      - if the header-level data date and the per-metric-group data date differ, use the per-metric-group date range as the truth and flag the discrepancy in `to confirm`
    - Missing required fields stay `not found`.
    - If PRD and Raw Data conflict, show both and mark `to confirm`.
-3. Consult the glossary and KB.
+3. Extract metric-level evidence fields when the source exposes them.
+   - For every metric that will be marked as significant (✅/🔻 or Block API L1 coloring), capture this minimum evidence set:
+     - metric (full name from Raw Data)
+     - delta (relative and/or absolute)
+     - p_value (required to claim significance; if missing, the metric can only be described directionally)
+     - CI (optional when the source provides it)
+     - N / sample size signal (optional when the source provides it)
+     - source_location (where in the Raw Data this evidence came from: table name / section / screenshot reference)
+   - If p_value is missing, do not claim significance even if the source uses words like "显著"; add it into `to confirm`.
+4. Consult the glossary and KB.
    - Disambiguate metric names, metric groups, business-domain terms, and caliber rules.
-4. Read the PRD carefully.
+5. Read the PRD carefully.
    - Identify target metrics, guardrails, mechanism clues, and experiment object details.
-5. Build the recall set.
+6. Build the recall set.
    - Keep explicit targets.
    - Keep mechanism-implied metrics.
    - Keep core guardrails.
@@ -39,11 +48,11 @@ Use this default order for experiment analysis:
 
 ### Stage B: Logic and Attribution
 
-6. Turn Stage A facts into Stage B logic.
+7. Turn Stage A facts into Stage B logic.
 
 ### Stage C: Final Report
 
-7. Write Stage C report.
+8. Write Stage C report.
 
 ## Live Libra Branch
 
