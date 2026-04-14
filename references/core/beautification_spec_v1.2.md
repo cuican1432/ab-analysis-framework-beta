@@ -238,6 +238,8 @@ make_table(doc_id, appendix, [200, 110, 90, 160, 90])
 
 - 不要重写整份报告
 - 不要尝试 `<text bgcolor=...>` 这类 Markdown 内联样式
+- 优先使用 `GET /documents/{doc_id}/blocks` 一次拿全量 blocks，在内存中识别目标 cell
+- 优先使用 `PATCH /documents/{doc_id}/blocks/batch_update` 批量提交 `update_text_elements`
 - 应遍历现有 `BLOCK_TABLE` 的 `cells`
 - 对单元格文本中的 `↑` / `↓` / `↗` / `↘` / `➖` 前缀做识别
 - 先移除 L2 前缀，再对纯数值应用 `sig_tr()` 的 L1 样式

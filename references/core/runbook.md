@@ -291,6 +291,7 @@ Execution note:
    - use `quote_container` (block_type=34) and show the legend using colored text (no emoji).
 3. Beautify top-to-bottom (each step try/except, degrade silently):
    - headings: H2 with blue decoration line
+   - performance: prefer one full-block scan of the document, analyze in memory, then use batch updates instead of N+1 per-cell GET/PATCH loops
    - existing tables: traverse current table cells, detect `↑` / `↓` / `↗` / `↘` / `➖`, remove the L2 marker, then apply L1 styling in-place
    - conclusions/risks: callout (block_type=19), values use L1 styling when possible
    - experiment info: inline text (bold key + value)

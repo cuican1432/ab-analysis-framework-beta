@@ -57,6 +57,7 @@ SIG_STYLES: dict[str, dict[str, Any]] = {
 SIG_EMOJI = {"pos": "↑", "neg": "↓", "ns": "➖"}
 
 MAX_TABLE_ROWS = 8
+BATCH_UPDATE_CHUNK = 30
 API_DELAY = 0.08
 
 logger = logging.getLogger("beautify_report")
@@ -111,6 +112,47 @@ def _get_children(token: str, doc_id: str, block_id: str, page_size: int = 500) 
     return _api(token, "GET", f"{DOCX_BASE}/{doc_id}/blocks/{block_id}/children?page_size={page_size}")
 
 
+def _get_all_blocks(token: str, doc_id: str, page_size: int = 500) -> list[dict[str, Any]]:
+    """
+    Fetch the document block tree in paginated flat form.
+
+    This avoids N+1 reads when we need to inspect many table cells.
+    """
+    all_blocks: list[dict[str, Any]] = []
+    page_token: str | None = None
+    while True:
+        url = f"{DOCX_BASE}/{doc_id}/blocks?page_size={page_size}&document_revision_id=-1"
+        if page_token:
+            url += f"&page_token={page_token}"
+        r = _api(token, "GET", url)
+        if r.get("code") not in (0, "0", None):
+            logger.warning("get_all_blocks failed: %s", str(r.get("msg", ""))[:120])
+            break
+        items = list((r.get("data") or {}).get("items") or [])
+        all_blocks.extend([_unwrap_block(it) for it in items])
+        if not (r.get("data") or {}).get("has_more"):
+            break
+        page_token = (r.get("data") or {}).get("page_token")
+        if not page_token:
+            break
+    return all_blocks
+
+
+def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]) -> int:
+    if not requests:
+        return 0
+    updated = 0
+    url = f"{DOCX_BASE}/{doc_id}/blocks/batch_update"
+    for i in range(0, len(requests), BATCH_UPDATE_CHUNK):
+        chunk = requests[i : i + BATCH_UPDATE_CHUNK]
+        r = _api(token, "PATCH", url, {"requests": chunk})
+        if r.get("code") not in (0, "0", None):
+            logger.warning("batch_update chunk %d-%d failed: %s", i, i + len(chunk), str(r.get("msg", ""))[:120])
+            continue
+        updated += len(chunk)
+    return updated
+
+
 def _batch_delete_children(token: str, doc_id: str, parent_id: str, start_index: int, end_index: int, document_revision_id: int = -1) -> dict[str, Any]:
     """
     Delete a child range under a parent block.
@@ -135,6 +177,16 @@ def _unwrap_block(item: dict[str, Any]) -> dict[str, Any]:
             b["block_type"] = item["block_type"]
         return b
     return item
+
+
+def _build_children_map(all_blocks: list[dict[str, Any]]) -> dict[str, list[dict[str, Any]]]:
+    children_map: dict[str, list[dict[str, Any]]] = {}
+    for b in all_blocks:
+        pid = b.get("parent_id")
+        if not isinstance(pid, str):
+            continue
+        children_map.setdefault(pid, []).append(b)
+    return children_map
 
 
 def _is_empty_placeholder_text_block(b: dict[str, Any]) -> bool:
@@ -236,6 +288,68 @@ def cleanup_empty_blocks(token: str, doc_id: str, root_id: str) -> None:
                 _batch_delete_children(token, doc_id, cell_id, 0, 1, document_revision_id=-1)
         except Exception as e:
             logger.warning("cleanup_empty_blocks: table cell %s failed: %s", cell_id, e)
+
+
+def cleanup_empty_blocks_from_blocks(
+    token: str,
+    doc_id: str,
+    root_id: str,
+    root_children: list[dict[str, Any]],
+    children_map: dict[str, list[dict[str, Any]]],
+) -> None:
+    """
+    Cleanup using an in-memory block snapshot to avoid N+1 GET calls.
+
+    Intended to run before mutating operations. For newly created containers during
+    the current run, use a targeted cleanup helper afterwards if needed.
+    """
+    try:
+        if len(root_children) > 1 and _is_empty_placeholder_text_block(root_children[0]):
+            _batch_delete_children(token, doc_id, root_id, 0, 1, document_revision_id=-1)
+    except Exception as e:
+        logger.warning("cleanup_empty_blocks_from_blocks: root placeholder cleanup failed: %s", e)
+
+    container_ids: list[str] = []
+    table_cell_ids: list[str] = []
+    for b in root_children:
+        bid = b.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        btype = b.get("block_type")
+        if btype in (BLOCK_CALLOUT, BLOCK_QUOTE_CONTAINER):
+            container_ids.append(bid)
+        if btype == BLOCK_TABLE:
+            cells = (b.get("table") or {}).get("cells") or []
+            if isinstance(cells, list):
+                table_cell_ids.extend([c for c in cells if isinstance(c, str)])
+
+    for parent_id in container_ids:
+        try:
+            kids = children_map.get(parent_id, [])
+            if len(kids) > 1 and _is_empty_placeholder_text_block(kids[0]):
+                _batch_delete_children(token, doc_id, parent_id, 0, 1, document_revision_id=-1)
+        except Exception as e:
+            logger.warning("cleanup_empty_blocks_from_blocks: container %s failed: %s", parent_id, e)
+
+    for cell_id in table_cell_ids:
+        try:
+            kids = children_map.get(cell_id, [])
+            if len(kids) > 1 and _is_empty_placeholder_text_block(kids[0]):
+                _batch_delete_children(token, doc_id, cell_id, 0, 1, document_revision_id=-1)
+        except Exception as e:
+            logger.warning("cleanup_empty_blocks_from_blocks: table cell %s failed: %s", cell_id, e)
+
+
+def cleanup_first_placeholder_under_parent(token: str, doc_id: str, parent_id: str) -> None:
+    try:
+        rr = _get_children(token, doc_id, parent_id)
+        if rr.get("code") not in (0, "0", None):
+            return
+        kids = [_unwrap_block(it) for it in list((rr.get("data") or {}).get("items") or [])]
+        if len(kids) > 1 and _is_empty_placeholder_text_block(kids[0]):
+            _batch_delete_children(token, doc_id, parent_id, 0, 1, document_revision_id=-1)
+    except Exception as e:
+        logger.warning("cleanup_first_placeholder_under_parent: %s failed: %s", parent_id, e)
 
 
 # ---- TextRun builders ----
@@ -579,6 +693,25 @@ def _find_existing_legend_indices(
     return found
 
 
+def _find_existing_legend_indices_from_blocks(
+    children: list[dict[str, Any]],
+    children_map: dict[str, list[dict[str, Any]]],
+    top_n: int = 5,
+) -> list[int]:
+    found: list[int] = []
+    for idx, b in enumerate(children[:top_n]):
+        txt = _extract_block_plain_text(b)
+        if _is_legend_title_text(txt):
+            found.append(idx)
+            continue
+        if b.get("block_type") == BLOCK_QUOTE_CONTAINER:
+            for kid in children_map.get(str(b.get("block_id", "")), [])[:2]:
+                if _is_legend_title_text(_extract_block_plain_text(kid)):
+                    found.append(idx)
+                    break
+    return found
+
+
 def replace_color_legend(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> str | None:
     """
     Make legend insertion idempotent:
@@ -586,6 +719,22 @@ def replace_color_legend(token: str, doc_id: str, parent_id: str, children: list
     - then insert exactly one enhanced legend at index 0
     """
     indices = _find_existing_legend_indices(token, doc_id, parent_id, children)
+    for idx in sorted(indices, reverse=True):
+        try:
+            _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
+        except Exception as e:
+            logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
+    return create_color_legend(token, doc_id, parent_id, index=0)
+
+
+def replace_color_legend_from_blocks(
+    token: str,
+    doc_id: str,
+    parent_id: str,
+    children: list[dict[str, Any]],
+    children_map: dict[str, list[dict[str, Any]]],
+) -> str | None:
+    indices = _find_existing_legend_indices_from_blocks(children, children_map)
     for idx in sorted(indices, reverse=True):
         try:
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
@@ -630,6 +779,16 @@ def detect_existing_beautification(
     - multiple top quote_container blocks that usually come from previous beautification
     """
     legend_count = len(_find_existing_legend_indices(token, doc_id, parent_id, children))
+    decorated_h2 = _count_decorated_h2(children)
+    top_quote_containers = _count_top_quote_containers(children)
+    return {"legend_count": legend_count, "decorated_h2": decorated_h2, "top_quote_containers": top_quote_containers}
+
+
+def detect_existing_beautification_from_blocks(
+    children: list[dict[str, Any]],
+    children_map: dict[str, list[dict[str, Any]]],
+) -> dict[str, int]:
+    legend_count = len(_find_existing_legend_indices_from_blocks(children, children_map))
     decorated_h2 = _count_decorated_h2(children)
     top_quote_containers = _count_top_quote_containers(children)
     return {"legend_count": legend_count, "decorated_h2": decorated_h2, "top_quote_containers": top_quote_containers}
@@ -700,6 +859,62 @@ def colorize_existing_table_cells(token: str, doc_id: str, children: list[dict[s
     return patched
 
 
+def collect_h2_patch_requests(children: list[dict[str, Any]], max_headings: int = 80) -> list[dict[str, Any]]:
+    requests: list[dict[str, Any]] = []
+    for blk in children:
+        if len(requests) >= max_headings:
+            break
+        if blk.get("block_type") != BLOCK_H2:
+            continue
+        elements = ((blk.get("heading2") or {}).get("elements")) if isinstance(blk, dict) else None
+        title = _extract_plain_text(elements).lstrip("▎").strip()
+        block_id = blk.get("block_id")
+        if not title or not isinstance(block_id, str):
+            continue
+        requests.append(
+            {
+                "block_id": block_id,
+                "update_text_elements": {"elements": _normalize_elements_for_l1(_decorate_h2_elements(title))},
+            }
+        )
+    return requests
+
+
+def collect_table_colorize_requests_from_blocks(
+    all_blocks: list[dict[str, Any]],
+    children_map: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    requests: list[dict[str, Any]] = []
+    for b in all_blocks:
+        if b.get("block_type") != BLOCK_TABLE:
+            continue
+        cell_ids = ((b.get("table") or {}).get("cells")) or []
+        if not isinstance(cell_ids, list):
+            continue
+        for cell_id in cell_ids:
+            if not isinstance(cell_id, str):
+                continue
+            for child in children_map.get(cell_id, []):
+                block_id = child.get("block_id")
+                if not isinstance(block_id, str):
+                    continue
+                if child.get("block_type") not in (BLOCK_TEXT, BLOCK_BULLET, BLOCK_ORDERED):
+                    continue
+                text = _extract_block_plain_text(child)
+                sig = _infer_sig_from_text(text)
+                if sig is None:
+                    continue
+                clean_value = _strip_sig_marker_prefix(text)
+                requests.append(
+                    {
+                        "block_id": block_id,
+                        "update_text_elements": {"elements": [sig_tr(clean_value, sig)]},
+                    }
+                )
+                break
+    return requests
+
+
 
 def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -725,21 +940,32 @@ def main() -> int:
         return 0
     doc_id = args.doc_id
     parent_id = args.parent_id or doc_id
-    # Stage C+ Step 1: Read doc tree (best-effort). Do not block if it fails.
+    # Stage C+ Step 1: Read doc tree (best-effort). Prefer full blocks to avoid N+1 calls.
+    all_blocks: list[dict[str, Any]] = []
+    children_map: dict[str, list[dict[str, Any]]] = {}
     children: list[dict[str, Any]] = []
     try:
-        r = _get_children(token, doc_id, parent_id)
-        if r.get("code") in (0, "0", None):
-            children = list(r.get("data", {}).get("items", []) or [])
-            logger.info("Fetched children: %d blocks", len(children))
+        all_blocks = _get_all_blocks(token, doc_id)
+        if all_blocks:
+            children_map = _build_children_map(all_blocks)
+            children = list(children_map.get(parent_id, []))
+            logger.info("Fetched all blocks: %d total, %d root children", len(all_blocks), len(children))
         else:
-            logger.warning("Fetch children failed: %s", str(r.get("msg", ""))[:120])
+            r = _get_children(token, doc_id, parent_id)
+            if r.get("code") in (0, "0", None):
+                children = [_unwrap_block(it) for it in list(r.get("data", {}).get("items", []) or [])]
+                logger.info("Fetched children: %d blocks", len(children))
+            else:
+                logger.warning("Fetch children failed: %s", str(r.get("msg", ""))[:120])
     except Exception as e:
         logger.warning("Fetch children exception: %s", e)
 
     existing = {"legend_count": 0, "decorated_h2": 0, "top_quote_containers": 0}
     try:
-        existing = detect_existing_beautification(token, doc_id, parent_id, children)
+        if all_blocks and children_map:
+            existing = detect_existing_beautification_from_blocks(children, children_map)
+        else:
+            existing = detect_existing_beautification(token, doc_id, parent_id, children)
         logger.info(
             "Beautification detection: legend=%d, decorated_h2=%d, top_quote_containers=%d",
             existing["legend_count"],
@@ -758,61 +984,91 @@ def main() -> int:
         logger.info("Document already appears beautified; skip mutating beautification steps. Use --force-reapply to override.")
         if args.cleanup_empty:
             try:
-                cleanup_empty_blocks(token, doc_id, parent_id)
+                if all_blocks and children_map:
+                    cleanup_empty_blocks_from_blocks(token, doc_id, parent_id, children, children_map)
+                else:
+                    cleanup_empty_blocks(token, doc_id, parent_id)
             except Exception as e:
                 logger.warning("Cleanup failed (degrade): %s", e)
         logger.info("Beautification skipped (already beautified). API calls: %d", _call_count)
         return 0
 
+    if args.cleanup_empty:
+        try:
+            if all_blocks and children_map:
+                cleanup_empty_blocks_from_blocks(token, doc_id, parent_id, children, children_map)
+            else:
+                cleanup_empty_blocks(token, doc_id, parent_id)
+        except Exception as e:
+            logger.warning("Pre-cleanup failed (degrade): %s", e)
+
     # Stage C+ Step 2: Replace any existing top legend, then insert exactly one enhanced legend.
+    legend_container_id: str | None = None
     try:
-        create_color_legend_fn = replace_color_legend
-        create_color_legend_fn(token, doc_id, parent_id, children)
+        if all_blocks and children_map:
+            legend_container_id = replace_color_legend_from_blocks(token, doc_id, parent_id, children, children_map)
+        else:
+            legend_container_id = replace_color_legend(token, doc_id, parent_id, children)
     except Exception as e:
         logger.warning("Insert legend failed (degrade): %s", e)
 
     if args.legend_only:
         if args.cleanup_empty:
             try:
-                cleanup_empty_blocks(token, doc_id, parent_id)
+                if legend_container_id:
+                    cleanup_first_placeholder_under_parent(token, doc_id, legend_container_id)
+                elif not (all_blocks and children_map):
+                    cleanup_empty_blocks(token, doc_id, parent_id)
             except Exception as e:
                 logger.warning("Cleanup failed (degrade): %s", e)
         logger.info("Legend-only done. API calls: %d", _call_count)
         return 0
 
     # Stage C+ Step 3: Beautify top-to-bottom (best-effort). Each step must degrade silently.
-    if args.decorate_headings:
-        patched = 0
-        for blk in children:
-            if patched >= args.max_headings:
-                logger.warning("Max headings reached (%d), stop patching", args.max_headings)
-                break
-            if blk.get("block_type") != BLOCK_H2:
-                continue
-            b = blk.get("block", {}) if isinstance(blk.get("block"), dict) else blk
-            h2 = b.get("heading2", {})
-            elements = h2.get("elements")
-            title = _extract_plain_text(elements).lstrip("▎").strip()
-            if not title:
-                continue
-            try:
-                _patch_text_elements(token, doc_id, b["block_id"], _normalize_elements_for_l1(_decorate_h2_elements(title)))
-                patched += 1
-            except Exception as e:
-                logger.warning("Patch heading failed (degrade): %s", e)
-        logger.info("Patched H2 headings: %d", patched)
+    if all_blocks and children_map:
+        patch_requests: list[dict[str, Any]] = []
+        if args.decorate_headings:
+            patch_requests.extend(collect_h2_patch_requests(children, args.max_headings))
+        patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
+        try:
+            updated = _batch_update_blocks(token, doc_id, patch_requests)
+            logger.info("Batch updated blocks (H2 + table cells): %d", updated)
+        except Exception as e:
+            logger.warning("Batch update failed (degrade): %s", e)
+    else:
+        if args.decorate_headings:
+            patched = 0
+            for blk in children:
+                if patched >= args.max_headings:
+                    logger.warning("Max headings reached (%d), stop patching", args.max_headings)
+                    break
+                if blk.get("block_type") != BLOCK_H2:
+                    continue
+                h2 = blk.get("heading2", {})
+                elements = h2.get("elements")
+                title = _extract_plain_text(elements).lstrip("▎").strip()
+                if not title or not blk.get("block_id"):
+                    continue
+                try:
+                    _patch_text_elements(token, doc_id, blk["block_id"], _normalize_elements_for_l1(_decorate_h2_elements(title)))
+                    patched += 1
+                except Exception as e:
+                    logger.warning("Patch heading failed (degrade): %s", e)
+            logger.info("Patched H2 headings: %d", patched)
 
-    # Stage C+ Step 3b: Upgrade existing table-cell L2 markers into L1 styling.
-    try:
-        colored = colorize_existing_table_cells(token, doc_id, children)
-        logger.info("Colorized table cells: %d", colored)
-    except Exception as e:
-        logger.warning("Colorize table cells failed (degrade): %s", e)
+        try:
+            colored = colorize_existing_table_cells(token, doc_id, children)
+            logger.info("Colorized table cells: %d", colored)
+        except Exception as e:
+            logger.warning("Colorize table cells failed (degrade): %s", e)
 
     # Final: cleanup auto-generated empty placeholder blocks (best-effort, conservative).
     if args.cleanup_empty:
         try:
-            cleanup_empty_blocks(token, doc_id, parent_id)
+            if legend_container_id:
+                cleanup_first_placeholder_under_parent(token, doc_id, legend_container_id)
+            elif not (all_blocks and children_map):
+                cleanup_empty_blocks(token, doc_id, parent_id)
         except Exception as e:
             logger.warning("Cleanup failed (degrade): %s", e)
 
