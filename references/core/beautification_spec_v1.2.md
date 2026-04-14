@@ -91,7 +91,7 @@ TOKEN = os.environ.get("LARK_USER_ACCESS_TOKEN") or \
 
 ### 3.3 显著性样式配套规则 (核心规则)
 
-核心: 能用颜色文字标明，就不要用 emoji。emoji 仅是降级手段。
+核心: 能用颜色文字标明，就不要用 L2 前缀。L2 仅是降级手段。
 
 三级降级策略 (Degradation Priority):
 
@@ -134,7 +134,7 @@ def sig_markdown(value, sig):
     label_map = {"pos": "[正向显著]", "neg": "[负向显著]", "marginal": "[边际显著]", "ns": "[不显著]"}
     emoji = emoji_map.get(sig, "")
     if emoji:
-        return f"{emoji} **{value}**"  # L2
+        return f"{emoji} {value}"  # L2
     return f"{label_map.get(sig, '')} {value}"  # L3
 ```
 
@@ -281,7 +281,11 @@ make_table(doc_id, appendix, [200, 110, 90, 160, 90])
 
 ### 7.1 显著性标注降级 (P-26 核心规则)
 
-能用颜色文字标明，就不要用 emoji。emoji 仅是 Block API 颜色不可用时的降级手段。
+能用颜色文字标明，就不要用 L2 前缀。L2 仅是 Block API 颜色不可用时的降级手段。
+
+如果后续还会执行 Enhanced Layer：
+- Base Layer 的 `↑` / `↓` / `⚠️` / `➖` 需要在应用 L1 样式前先移除
+- 同一个数值上不要同时保留 L2 前缀和 L1 颜色/底色
 
 | 优先级 | 方式 | 使用条件 |
 |---|---|---|

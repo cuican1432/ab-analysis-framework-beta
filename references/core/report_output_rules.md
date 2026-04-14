@@ -15,9 +15,9 @@ Supported patterns (examples):
 | Element | Pattern | Example |
 |---|---|---|
 | Table | Standard Markdown table | `| 指标 | 变化 | 判断 |` |
-| Significant positive | emoji + bold | `**✅ +0.1613%**` |
-| Significant negative | emoji + bold | `**🔻 -0.1484%**` |
-| Not significant | emoji/text | `➖ 不显著` |
+| Significant positive | direction marker | `↑ +0.1613%` |
+| Significant negative | direction marker | `↓ -0.1484%` |
+| Not significant | marker/text | `➖ 不显著` |
 | Conclusion highlight | blockquote + emoji + bold | `> 🤖 **结论：...**` |
 | Risk highlight | blockquote + emoji + bold | `> 🚨 **风险：...**` |
 | To confirm | blockquote + emoji + bold | `> 📝 **To Confirm**：...` |
@@ -64,11 +64,12 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 
 ### Coloring | 染色
 
-- Base layer (Stage C API output) uses emoji + bold as the visual cue (do not rely on colors).
-  - positive significant: `**✅ +X%**`
-  - negative significant: `**🔻 -X%**`
+- Base layer (Stage C API output) uses plain direction markers as the visual cue (do not rely on colors).
+  - positive significant: `↑ +X%`
+  - negative significant: `↓ -X%`
   - not significant: `➖ 不显著`
-- Enhanced layer (Block API post-processing) should use colored text styles first (L1), and only fall back to emoji (L2) or plain labels (L3) when Block API styling fails.
+- Enhanced layer (Block API post-processing) should use colored text styles first (L1), and only fall back to direction markers (L2) or plain labels (L3) when Block API styling fails.
+- L1/L2 must not stack on the same value. If Enhanced Layer runs, strip existing Base Layer markers such as `↑` / `↓` / `⚠️` / `➖` before applying L1 styling.
 - Only mark as significant when significance is supported by the source:
   - preferred: p-value is present
   - acceptable: the source provides an explicit significant flag plus a traceable source_location
@@ -76,7 +77,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 
 ### Evidence Manifest | 证据清单
 
-- When the report contains any significant claims (✅/🔻 or Enhanced Layer L1 coloring), include a `## 证据清单 (Evidence Manifest)` section before `## 待确认 (To Confirm)`.
+- When the report contains any significant claims (`↑` / `↓` or Enhanced Layer L1 coloring), include a `## 证据清单 (Evidence Manifest)` section before `## 待确认 (To Confirm)`.
 - Minimum fields per entry:
   - metric (full Raw Data name)
   - delta (relative and/or absolute)
@@ -99,7 +100,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 ### Metric Naming | 指标命名
 
 - In the report body (first appearance), use: `中文解释（完整英文指标名）` + change marker.
-  - Example: `发送或点赞消息天数（Send or Like Message Days/Days） **✅ +0.0156%**`
+  - Example: `发送或点赞消息天数（Send or Like Message Days/Days） ↑ +0.0156%`
 - Chinese meaning source priority:
   1. PRD Chinese description
   2. Raw Data group-name translation
