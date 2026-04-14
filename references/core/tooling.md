@@ -60,7 +60,7 @@ Block type mapping (quick reference, keep in sync with canonical spec):
 | 32 | table_cell | table_cell | read-only, API creates |
 | 34 | quote_container | quote_container | container block |
 
-Pitfalls (P-1 ~ P-26):
+Pitfalls (P-1 ~ P-30):
 
 1. Callout type is 19, not 14.
 2. Bullet list type is 12 (bullet), not 11.
@@ -88,3 +88,7 @@ Pitfalls (P-1 ~ P-26):
 24. env var names: support both `LARK_USER_ACCESS_TOKEN` and `MIRA_LARK_USER_ACCESS_TOKEN`.
 25. appendix tables: summary is 3 columns, appendix is 5 columns.
 26. emoji is only a fallback: L1 color > L2 emoji > L3 plain labels.
+27. batch_delete indices must be in JSON body (start_index/end_index), not query params.
+28. deleting container child blocks directly may 404; use parent's batch_delete instead.
+29. document_revision_id=-1 means "latest" for batch_delete to avoid revision conflicts.
+30. doc root may contain a placeholder text block after base-layer write; cleanup at the end.

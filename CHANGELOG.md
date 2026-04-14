@@ -20,3 +20,11 @@
 
 ### Packaging
 - 当前版本适合直接重新打包并作为 Mira 可发布 skill 包使用。
+
+## [v1.2.0] - 2026-04-14
+
+### Added (Block API Beautification)
+- Added Block API beautification proposal and canonical spec under `references/core/*`.
+- Added optional `Stage C+` beautification pointer (Enhanced Layer post-processing) in `references/core/runbook.md`.
+- Added Block API tooling quick reference + pitfalls in `references/core/tooling.md`.
+- Added empty placeholder cleanup via Block API `batch_delete` (containers/table cells/doc root), enabled by default in `scripts/beautify_report.py` with `--no-cleanup-empty` escape hatch.
