@@ -1,22 +1,13 @@
-# Userdata Layer
+## Deprecated Path (Compatibility)
 
-This directory is the default writable layer for local incremental knowledge.
+This directory is kept as a compatibility pointer only.
 
-Skill-scoped path:
-- `userdata/ab-analysis-framework-beta/`
+Source of truth (live writable knowledge store):
 
-This package may ship seeded social glossary / KB content here so a new user starts with a usable live knowledge layer.
+- `userdata/ab-knowledge-builder-beta/`
+  - glossary: `userdata/ab-knowledge-builder-beta/glossary/`
+  - KB: `userdata/ab-knowledge-builder-beta/kb/`
+  - custom rules: `userdata/ab-knowledge-builder-beta/custom_rules/`
 
-Use it for:
-- local glossary additions
-- partially confirmed polarity or alias mappings
-- local business notes
-- project-specific background knowledge
-- user-specific interpretation rules
+If you still see tooling looking for `userdata/ab-analysis-framework-beta/`, update to the new namespace.
 
-Recommended subdirectories:
-- `glossary/`
-- `kb/`
-- `custom_rules/`
-
-Packaged shared references live in `references/` and should remain the stable shared layer.
