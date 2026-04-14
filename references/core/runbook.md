@@ -276,6 +276,11 @@ What to avoid:
 If a valid Block API token is available, automatically apply an Enhanced Layer post-processing step after the base report is written.
 If token is missing/invalid, skip beautification silently and keep the base output.
 
+Execution note:
+
+- Do not implement a new beautification script during the run.
+- Reuse the packaged `scripts/beautify_report.py` and run it from the skill install root (zip root), not from the sandbox/workspace `pwd`.
+
 1. Document preparation:
    - do not loop DELETE to clear a large doc; use a new doc or overwrite with a blank base layer first.
 2. Insert color legend:

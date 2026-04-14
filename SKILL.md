@@ -66,6 +66,14 @@ How to provide the token:
   - `LARK_USER_ACCESS_TOKEN="Bearer <token>"`
   - `MIRA_LARK_USER_ACCESS_TOKEN="Bearer <token>"`
 
+Execution rule (make it automatic, do not rewrite scripts):
+
+- After `upload_to_feishu_tool` returns a doc link, ALWAYS run the built-in post-processing step to beautify the same doc when token is available.
+- Do not write a new "beautification script" in the report run. Reuse the packaged script:
+  - `python3 scripts/beautify_report.py --doc-id <doc_id> --decorate-headings`
+  - If running from a sandbox/workspace where relative paths do not point to the skill root, locate the skill root first:
+    - `SKILL_ROOT=$(python3 scripts/find_skill_root.py) && cd "$SKILL_ROOT"`
+
 MUST DO:
 
 - ✅ use Block API only as post-processing (Enhanced Layer); Base Layer stays standard Markdown
