@@ -25,6 +25,6 @@
 
 ### Added (Block API Beautification)
 - Added Block API beautification proposal and canonical spec under `references/core/*`.
-- Added optional `Stage C+` beautification pointer (Enhanced Layer post-processing) in `references/core/runbook.md`.
+- Added `Stage C+` beautification pointer (Enhanced Layer post-processing) in `references/core/runbook.md`.
 - Added Block API tooling quick reference + pitfalls in `references/core/tooling.md`.
 - Added empty placeholder cleanup via Block API `batch_delete` (containers/table cells/doc root), enabled by default in `scripts/beautify_report.py` with `--no-cleanup-empty` escape hatch.

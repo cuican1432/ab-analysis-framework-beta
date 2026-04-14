@@ -43,7 +43,11 @@ def _add_dir(
         files.sort()
 
         # Drop excluded subdirectories early so os.walk won't traverse them.
-        dirs[:] = [d for d in dirs if d not in exclude_names]
+        # IMPORTANT: apply this filter only at the src_dir root level.
+        # Otherwise a basename filter like {"glossary","kb"} would also drop
+        # nested subtrees such as references/knowledge/userdata_snapshot/**/glossary.
+        if Path(root) == src_dir:
+            dirs[:] = [d for d in dirs if d not in exclude_names]
 
         root_p = Path(root)
         rel_root = root_p.relative_to(src_dir)
