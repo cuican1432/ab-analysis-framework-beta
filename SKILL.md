@@ -139,6 +139,10 @@ When reading `references/core/*`, use this order:
 - Runtime local incremental layer → `userdata/ab-knowledge-builder-beta/*`
 - Memory can help recall, but it is not the main glossary store
 
+Path note:
+
+- Paths like `userdata/...` and `references/...` are relative to the skill install root (zip root), not the sandbox/workspace `pwd`.
+
 ## Userdata Boundary
 
 When the user wants to inject local knowledge, local data files, or run-specific reusable notes, use `userdata/ab-knowledge-builder-beta/` as the default writable layer.

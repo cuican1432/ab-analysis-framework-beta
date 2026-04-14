@@ -255,6 +255,10 @@ Live knowledge layer:
 - custom rules
 - continuously updated local knowledge
 
+Path note:
+
+- Paths like `userdata/...` and `references/...` are relative to the installed skill root (zip root), not the sandbox/workspace `pwd`.
+
 This is the layer that should keep growing over time.
 
 ---
