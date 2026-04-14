@@ -89,6 +89,7 @@ MUST DO:
 - ✅ summary tables: 3 columns; appendix tables: 5 columns; row_count <= 8 (split when needed)
 - ✅ experiment info: inline text (bold key + value)
 - ✅ degrade silently when Block API fails
+- ✅ emit at most one legend / reading-guide block in Base Layer; let the packaged beautification script own legend replacement/deduplication
 
 MUST NOT:
 

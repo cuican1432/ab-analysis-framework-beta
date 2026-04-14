@@ -687,15 +687,14 @@ def _find_existing_legend_indices(
     doc_id: str,
     parent_id: str,
     children: list[dict[str, Any]],
-    top_n: int = 5,
+    top_n: int | None = None,
 ) -> list[int]:
     """
-    Find existing legend-like blocks near the top of the doc.
-
-    We only scan the first few top-level blocks to avoid touching unrelated content.
+    Find existing legend-like blocks in the current document scope.
     """
     found: list[int] = []
-    for idx, raw in enumerate(children[:top_n]):
+    scan_children = children if top_n is None else children[:top_n]
+    for idx, raw in enumerate(scan_children):
         b = _unwrap_block(raw)
         txt = _extract_block_plain_text(b)
         if _is_legend_title_text(txt):
@@ -722,10 +721,11 @@ def _find_existing_legend_indices(
 def _find_existing_legend_indices_from_blocks(
     children: list[dict[str, Any]],
     children_map: dict[str, list[dict[str, Any]]],
-    top_n: int = 5,
+    top_n: int | None = None,
 ) -> list[int]:
     found: list[int] = []
-    for idx, b in enumerate(children[:top_n]):
+    scan_children = children if top_n is None else children[:top_n]
+    for idx, b in enumerate(scan_children):
         txt = _extract_block_plain_text(b)
         if _is_legend_title_text(txt):
             found.append(idx)

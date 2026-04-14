@@ -58,6 +58,12 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - optional: data date range / generation time / source_hash
 - Keep the wording professional and concise. Do not expose framework-internal terms in this block.
 
+### Legend Discipline | 图例纪律
+
+- Base Layer should emit at most one legend / reading guide block in the whole document.
+- Do not output multiple legend variants (for example both an inline blockquote version and a later H2+table version).
+- If Enhanced Layer runs, the packaged beautification script owns legend replacement and deduplication.
+
 ### Run Signature | 运行签名（防上下文污染）
 
 - Always include a short `Run Signature` block near the beginning of the report (after `总结论/总建议`).
