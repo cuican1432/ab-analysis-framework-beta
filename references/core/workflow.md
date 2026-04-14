@@ -7,7 +7,9 @@ Use this default order for experiment analysis:
 ### Stage A: Source Extraction
 
 1. Read the experiment inputs first.
-   - Prefer PRD, raw-data docs, screenshots, and tables.
+   - Prefer Feishu/Lark doc links (PRD + Raw Data docx) as the primary inputs.
+   - If links are missing, ask the user to provide the PRD and Raw Data doc links before doing interpretation.
+   - Screenshots / exported tables are only fallbacks when doc links are unavailable.
 2. Generate a Run Signature (anti-contamination).
    - Record the source URLs (PRD + Raw Data) and a `source_hash` for this run.
    - The `source_hash` should be computed from:

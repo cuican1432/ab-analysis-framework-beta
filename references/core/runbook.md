@@ -3,8 +3,8 @@
 ## When Starting a New Case
 
 1. Confirm the source materials.
-   - PRD
-   - raw data docs
+   - PRD doc link (Feishu/Lark docx preferred)
+   - Raw Data doc link (Feishu/Lark docx preferred)
    - screenshots / tables
    - optional live Libra page
 2. Complete Stage A first.

@@ -23,11 +23,12 @@ If the main goal is to build or normalize the knowledge store itself rather than
 ### You can say
 - Please use `ab-analysis-framework-beta` to generate an experiment report.
 - Experiment name (optional): [xxx]
-- PRD link: [URL]
-- Raw Data link: [URL]
+- PRD link (Feishu/Lark docx preferred): [URL]
+- Raw Data link (Feishu/Lark docx preferred): [URL]
 
 ### Hard Constraints | 关键硬约束
 - Output the final result as a Feishu/Lark doc when tooling permits; otherwise return a fully structured doc body the user can paste.
+- Input priority: treat Feishu/Lark doc links (PRD + Raw Data docx) as the primary inputs. If the user did not provide links, ask for them before making interpretation claims.
 - Follow the strict report structure: `总结论 + 总建议` first, then repeat `分结论 -> 归因链路 -> 细节表格`.
 - Keep attribution evidence-bound. No unsupported psych speculation.
 - Fully disclose significant movements of core secondary metrics; do not hide them because they are not the headline metric.
