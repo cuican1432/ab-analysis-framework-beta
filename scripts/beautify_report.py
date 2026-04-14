@@ -331,29 +331,95 @@ def insert_attribution_chain(token: str, doc_id: str, parent_id: str, steps: lis
     _post_children(token, doc_id, parent_id, blocks)
 
 
+def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
+    if not elements:
+        return ""
+    out: list[str] = []
+    for el in elements:
+        trn = el.get("text_run")
+        if isinstance(trn, dict):
+            out.append(str(trn.get("content", "")))
+    return "".join(out)
+
+
+def _patch_text_elements(token: str, doc_id: str, block_id: str, elements: list[dict[str, Any]]) -> dict[str, Any]:
+    """
+    Generic text patch for text-like blocks (text / heading / list).
+    If the API rejects it for a specific block_type, the caller must degrade silently.
+    """
+    return _patch_block(token, doc_id, block_id, {"update_text_elements": {"elements": elements}})
+
+
+def _decorate_h2_elements(title: str) -> list[dict[str, Any]]:
+    # Keep it minimal: prefix + bold title.
+    return [tr("▎", color=COLOR_BLUE), tr(f" {title}".rstrip(), bold=True)]
+
+
+
 def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
     ap = argparse.ArgumentParser()
     ap.add_argument("--doc-id", required=True, help="Target docx document_id")
     ap.add_argument("--parent-id", default=None, help="Parent block_id to insert legend (default: doc root)")
     ap.add_argument("--dry-run", action="store_true", help="Do not call API; only validate inputs")
+    ap.add_argument("--decorate-headings", action="store_true", help="Decorate H2 headings with a blue prefix (V3 Clean)")
+    ap.add_argument("--max-headings", type=int, default=80, help="Max H2 headings to patch (safety guard)")
     ap.add_argument("--legend-only", action="store_true", help="Only insert the color legend")
     args = ap.parse_args()
 
-    if args.dry_run:
+        # Validate arg parsing only. No network calls.
+        return 0
         return 0
 
     token = _get_token()
     doc_id = args.doc_id
     parent_id = args.parent_id or doc_id
+    # Stage C+ Step 1: Read doc tree (best-effort). Do not block if it fails.
+    children: list[dict[str, Any]] = []
+    try:
+        r = _get_children(token, doc_id, parent_id)
+        if r.get("code") in (0, "0", None):
+            children = list(r.get("data", {}).get("items", []) or [])
+            logger.info("Fetched children: %d blocks", len(children))
+        else:
+            logger.warning("Fetch children failed: %s", str(r.get("msg", ""))[:120])
+    except Exception as e:
+        logger.warning("Fetch children exception: %s", e)
+
+    # Stage C+ Step 2: Insert color legend at the top (best-effort).
+    try:
+        create_color_legend(token, doc_id, parent_id, index=0)
+    except Exception as e:
+        logger.warning("Insert legend failed (degrade): %s", e)
 
     if args.legend_only:
-        create_color_legend(token, doc_id, parent_id, index=0)
-        logger.info("Legend inserted. API calls: %d", _call_count)
+        logger.info("Legend-only done. API calls: %d", _call_count)
         return 0
 
+    # Stage C+ Step 3: Beautify top-to-bottom (best-effort). Each step must degrade silently.
+    if args.decorate_headings:
+        patched = 0
+        for blk in children:
+            if patched >= args.max_headings:
+                logger.warning("Max headings reached (%d), stop patching", args.max_headings)
+                break
+            if blk.get("block_type") != BLOCK_H2:
+                continue
+            b = blk.get("block", {}) if isinstance(blk.get("block"), dict) else blk
+            h2 = b.get("heading2", {})
+            elements = h2.get("elements")
+            title = _extract_plain_text(elements).lstrip("▎").strip()
+            if not title:
+                continue
+            try:
+                _patch_text_elements(token, doc_id, b["block_id"], _decorate_h2_elements(title))
+                patched += 1
+            except Exception as e:
+                logger.warning("Patch heading failed (degrade): %s", e)
+        logger.info("Patched H2 headings: %d", patched)
+        return 0
+    logger.info("Beautification done (best-effort). API calls: %d", _call_count)
     logger.info("Full pipeline: import as library. Calls: %d", _call_count)
-    return 0
 
 
 if __name__ == "__main__":
