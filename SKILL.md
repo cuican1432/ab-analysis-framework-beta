@@ -131,6 +131,7 @@ When reading `references/core/*`, use this order:
 ## Storage Hint
 
 - Knowledge reading layer → `references/knowledge/*`
+- Packaged userdata snapshot (read-only fallback) → `references/knowledge/userdata_snapshot/ab-analysis-framework-beta/*`
 - Long-term live glossary content → `userdata/ab-analysis-framework-beta/glossary/*`
 - Long-term live business knowledge → `userdata/ab-analysis-framework-beta/kb/*`
 - Glossary maintenance rules → `references/knowledge/glossary_guide.md`
@@ -156,9 +157,12 @@ Default read order:
 1. `references/core/*`
 2. current-run explicit temporary guidance
 3. `references/knowledge/*`
-4. `userdata/ab-analysis-framework-beta/custom_rules/*`
-5. `userdata/ab-analysis-framework-beta/glossary/*`
-6. `userdata/ab-analysis-framework-beta/kb/*`
+4. `references/knowledge/userdata_snapshot/ab-analysis-framework-beta/*` (read-only fallback when userdata is missing)
+5. `userdata/ab-analysis-framework-beta/custom_rules/*`
+6. `userdata/ab-analysis-framework-beta/glossary/*`
+7. `userdata/ab-analysis-framework-beta/kb/*`
+
+If both snapshot and userdata exist, prefer `userdata/` (writable/live) and treat snapshot as a safety net for install/runtime environments that lose userdata.
 
 Do not use generic roots such as `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace to avoid collisions with other packages.
 

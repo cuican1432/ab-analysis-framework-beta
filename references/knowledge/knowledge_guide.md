@@ -69,6 +69,12 @@ Use `userdata/ab-analysis-framework-beta/*` when the content is:
 - user-specific
 - still evolving over time
 
+Fallback for install/runtime environments:
+
+- If the runtime environment cannot persist `userdata/` reliably, use the packaged read-only snapshot:
+  - `references/knowledge/userdata_snapshot/ab-analysis-framework-beta/*`
+- When both are present, treat `userdata/` as the source of truth and the snapshot as a safety net only.
+
 Recommended local split:
 - `userdata/ab-analysis-framework-beta/glossary/`
 - `userdata/ab-analysis-framework-beta/kb/`
