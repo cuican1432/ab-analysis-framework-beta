@@ -53,8 +53,8 @@ SIG_STYLES: dict[str, dict[str, Any]] = {
     "marginal": {"bold": True, "text_color": COLOR_ORANGE},
     "ns": {"text_color": COLOR_GRAY},
 }
-# L2 fallback markers (Markdown/Base Layer). Use plain arrows instead of "pass/fail" emojis.
-SIG_EMOJI = {"pos": "↑", "neg": "↓", "marginal": "⚠️", "ns": "➖"}
+# L2 fallback markers (Markdown/Base Layer). Use plain directional markers.
+SIG_EMOJI = {"pos": "↑", "neg": "↓", "ns": "➖"}
 
 MAX_TABLE_ROWS = 8
 API_DELAY = 0.08
@@ -261,6 +261,8 @@ def sig_tr(value: str, sig: str) -> dict[str, Any]:
 
 
 def sig_markdown(value: str, sig: str) -> str:
+    if sig == "marginal":
+        return f"{'↘' if '-' in value else '↗'} {value}"
     e = SIG_EMOJI.get(sig, "")
     if e:
         return f"{e} {value}"

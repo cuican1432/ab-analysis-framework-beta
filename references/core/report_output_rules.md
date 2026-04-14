@@ -17,6 +17,7 @@ Supported patterns (examples):
 | Table | Standard Markdown table | `| 指标 | 变化 | 判断 |` |
 | Significant positive | direction marker | `↑ +0.1613%` |
 | Significant negative | direction marker | `↓ -0.1484%` |
+| Marginal result | direction marker | `↗ +0.0613%` / `↘ -0.0584%` |
 | Not significant | marker/text | `➖ 不显著` |
 | Conclusion highlight | blockquote + emoji + bold | `> 🤖 **结论：...**` |
 | Risk highlight | blockquote + emoji + bold | `> 🚨 **风险：...**` |
@@ -32,7 +33,7 @@ If a valid token is available, this step should run automatically after the base
 Key constraints (v1.2):
 
 - "V3 Clean": keep original report chapter structure; only overlay visual enhancement.
-- Significant marking degradation: L1 (color+bold+bg via Block API) > L2 (emoji) > L3 (plain text).
+- Significant marking degradation: L1 (color+bold+bg via Block API) > L2 (direction markers) > L3 (plain text).
 - Table hard limit: row_count <= 8 (including header); over-limit must split or use inline text.
 - Experiment info prefers inline text (bold key + value) to avoid large-table API failures.
 - Table modes:
@@ -67,9 +68,10 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - Base layer (Stage C API output) uses plain direction markers as the visual cue (do not rely on colors).
   - positive significant: `↑ +X%`
   - negative significant: `↓ -X%`
+  - marginal positive/negative: `↗ +X%` / `↘ -X%`
   - not significant: `➖ 不显著`
 - Enhanced layer (Block API post-processing) should use colored text styles first (L1), and only fall back to direction markers (L2) or plain labels (L3) when Block API styling fails.
-- L1/L2 must not stack on the same value. If Enhanced Layer runs, strip existing Base Layer markers such as `↑` / `↓` / `⚠️` / `➖` before applying L1 styling.
+- L1/L2 must not stack on the same value. If Enhanced Layer runs, strip existing Base Layer markers such as `↑` / `↓` / `↗` / `↘` / `➖` before applying L1 styling.
 - Only mark as significant when significance is supported by the source:
   - preferred: p-value is present
   - acceptable: the source provides an explicit significant flag plus a traceable source_location

@@ -79,14 +79,14 @@ MUST DO:
 - ✅ use Block API only as post-processing (Enhanced Layer); Base Layer stays standard Markdown
 - ✅ keep "V3 Clean": do not add/remove/reorder chapters
 - ✅ token from env (no hardcode): `LARK_USER_ACCESS_TOKEN` or `MIRA_LARK_USER_ACCESS_TOKEN`
-- ✅ significance marking: L1 (color+bold+bg) > L2 (direction markers) > L3 (plain labels)
+- ✅ significance marking: L1 (color+bold+bg) > L2 (direction markers: `↑` / `↓` / `↗` / `↘` / `➖`) > L3 (plain labels)
 - ✅ summary tables: 3 columns; appendix tables: 5 columns; row_count <= 8 (split when needed)
 - ✅ experiment info: inline text (bold key + value)
 - ✅ degrade silently when Block API fails
 
 MUST NOT:
 
-- ❌ stack L2 markers (`↑` / `↓` / `⚠️` / `➖`) on top of L1 color styling
+- ❌ stack L2 markers (`↑` / `↓` / `↗` / `↘` / `➖`) on top of L1 color styling
 - ❌ add a "judgment" column to summary tables
 - ❌ restructure original chapters
 - ❌ create tables > 8 rows

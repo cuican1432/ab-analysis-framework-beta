@@ -98,7 +98,7 @@ TOKEN = os.environ.get("LARK_USER_ACCESS_TOKEN") or \
 | 优先级 | 方式 | 何时使用 | 示例 |
 |---|---|---|---|
 | L1 首选 | 颜色+粗体+底色 (Block API) | Block API 可用时 | bold=True, color=4, bg_color=4 |
-| L2 降级 | 方向箭头/提示前缀 | 仅 Block API 颜色不可用时 | ↑ +0.16%、↓ -0.15% |
+| L2 降级 | 方向箭头前缀 | 仅 Block API 颜色不可用时 | ↑ +0.16%、↓ -0.15%、↗ +0.06%、↘ -0.05% |
 | L3 兜底 | 纯文字标注 | emoji 也不支持时 | [正向显著] +0.16% |
 
 L1 首选: Block API 颜色配套
@@ -110,7 +110,7 @@ L1 首选: Block API 颜色配套
 | 边际显著 | bold=True, color=2 | 橙色粗体，无底色 |
 | 不显著 | color=7 | 灰色，非粗体 |
 
-L2 降级标记 (仅在 L1 不可用时): ↑正向 / ↓负向 / ⚠️边际 / ➖不显著
+L2 降级标记 (仅在 L1 不可用时): ↑正向 / ↓负向 / ↗边际正向 / ↘边际负向 / ➖不显著
 
 L3 兜底纯文字 (仅在 L1+L2 都不可用时): [正向显著] / [负向显著] / [边际显著] / [不显著]
 
@@ -130,8 +130,10 @@ def sig_tr(value, sig):
 
 def sig_markdown(value, sig):
     """L2/L3 降级: Markdown fallback"""
-    emoji_map = {"pos": "↑", "neg": "↓", "marginal": "⚠️", "ns": "➖"}
+    emoji_map = {"pos": "↑", "neg": "↓", "ns": "➖"}
     label_map = {"pos": "[正向显著]", "neg": "[负向显著]", "marginal": "[边际显著]", "ns": "[不显著]"}
+    if sig == "marginal":
+        return f"{'↘' if '-' in value else '↗'} {value}"  # L2
     emoji = emoji_map.get(sig, "")
     if emoji:
         return f"{emoji} {value}"  # L2
@@ -284,13 +286,13 @@ make_table(doc_id, appendix, [200, 110, 90, 160, 90])
 能用颜色文字标明，就不要用 L2 前缀。L2 仅是 Block API 颜色不可用时的降级手段。
 
 如果后续还会执行 Enhanced Layer：
-- Base Layer 的 `↑` / `↓` / `⚠️` / `➖` 需要在应用 L1 样式前先移除
+- Base Layer 的 `↑` / `↓` / `↗` / `↘` / `➖` 需要在应用 L1 样式前先移除
 - 同一个数值上不要同时保留 L2 前缀和 L1 颜色/底色
 
 | 优先级 | 方式 | 使用条件 |
 |---|---|---|
 | L1 首选 | 颜色+粗体+底色 | Block API 可用 |
-| L2 降级 | ↑ ↓ ⚠️ ➖ | 仅 L1 不可用时 |
+| L2 降级 | ↑ ↓ ↗ ↘ ➖ | 仅 L1 不可用时 |
 | L3 兜底 | [正向显著] 等文字 | L1+L2 都不可用时 |
 
 ### 7.2 功能降级
