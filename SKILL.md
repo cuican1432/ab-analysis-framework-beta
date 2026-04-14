@@ -34,7 +34,8 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - Before writing `实验背景与设计`, extract required setup/config fields from the source header verbatim. Missing fields must be `not found`; PRD/Raw Data conflicts must be shown side-by-side with `to confirm`.
 - Do not truncate the raw detail tables in `## 数据附录 (Data Appendix)`. Follow the fallback chain in `references/core/report_output_rules.md`.
 - For detailed output/formatting/appendix rules, use `references/core/report_output_rules.md` as the single source of truth.
-- User prompt precedence: if the user's current prompt specifies structure, emphasis, writing style, or temporary interpretation preferences, follow the user's prompt by default as long as it does not violate `Hard Rules`. Current-run user instructions override reusable `custom_rules` and framework default preferences.
+- User prompt precedence: if the user's current prompt specifies structure, emphasis, writing style, or temporary interpretation preferences, follow the user's prompt by default as long as it does not violate `Absolute Hard Rules`. Current-run user instructions override reusable `custom_rules` and framework default preferences.
+- Override handling: if a user instruction or `custom_rules` only conflicts with default guardrails, warn about the consequence and confirm whether they still want to proceed. If it conflicts with `Absolute Hard Rules`, do not follow it; explain the reason and offer the closest safe alternative.
 
 ### What the system will do
 - run the doc-first analysis workflow

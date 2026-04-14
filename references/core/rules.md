@@ -1,26 +1,43 @@
 # Rules
 
-## Hard Rules
+## Absolute Hard Rules
 
 Maintainer-owned. Do not casually change this section.
 
 - Never fabricate metrics, setup fields, or conclusions.
 - Keep missing data missing.
 - Keep non-significant results directional, not overstated.
-- Treat PRD facts as the source of truth for experiment object and metric priority.
 - If the PRD includes product images, screenshots, or visual comparison tables, treat them as part of the source evidence when the runtime can read images.
 - Finished outputs from one experiment belong to that experiment only.
 - Never reuse an old experiment's finished tables, conclusions, or report as evidence for a new experiment.
 
+## Escalatable Guardrails
+
+Default guardrails should be followed in normal runs, but they may be overridden for the current run if:
+
+1. the user gives an explicit instruction,
+2. the agent clearly warns about the consequence,
+3. the user confirms they still want the override,
+4. the override does not violate `Absolute Hard Rules` or explicit source facts.
+
+Typical examples:
+
+- report structure order,
+- section emphasis,
+- how much detail stays in main body vs appendix,
+- temporary interpretation preference,
+- temporary narrowing / widening of recall scope,
+- wording style or presentation style.
+
 ## Default Rules
 
-Framework defaults live here. These rules are stable and should be changed carefully, but they are not as absolute as the hard rules above.
+Framework defaults live here. These rules are stable and should be changed carefully, but they are not as absolute as the rules above.
 
 ### Instruction Precedence
 
 Use this precedence when instructions conflict:
 
-1. `Hard Rules`
+1. `Absolute Hard Rules`
 2. the user's current prompt / current-run explicit instruction
 3. current-run temporary guidance
 4. reusable user overrides in `userdata/ab-analysis-framework-beta/custom_rules/*`
@@ -30,16 +47,39 @@ Use this precedence when instructions conflict:
 Practical reading:
 
 - if the user asks for a different report structure, emphasis, wording style, or temporary interpretation preference, follow it by default
-- unless it violates `Hard Rules`, causes fabrication, or conflicts with explicit source facts
+- unless it violates `Absolute Hard Rules`, causes fabrication, or conflicts with explicit source facts
 - reusable `custom_rules` are long-term defaults, but the current prompt still wins for the current run
+
+### Override Protocol
+
+When the user's current prompt or `custom_rules` conflicts with framework defaults:
+
+- if the conflict is only with `Escalatable Guardrails` or `Default Rules`:
+  - warn the user about the likely consequence,
+  - ask whether they still want to keep their override,
+  - if they confirm, follow the user's instruction for the current run.
+- if the conflict is with `Absolute Hard Rules`:
+  - do not follow the conflicting instruction,
+  - explain why it cannot be honored,
+  - offer the closest safe alternative.
 
 ### Priority of Truth
 
 Use this default priority:
 
 1. prevent fabrication and copying mistakes
-2. stay aligned with the PRD
-3. optimize interpretation quality only after the first two are secure
+2. keep experiment object and target intent aligned with the PRD
+3. keep observed setup / rollout / data-date facts aligned with Raw Data when the source exposes them
+4. optimize interpretation quality only after the first three are secure
+
+Source priority by fact type:
+
+- experiment object / target intent / stated tradeoff expectation:
+  - PRD first
+- observed setup / rollout facts / traffic split / data date / arm config:
+  - Raw Data header first when exposed
+- if PRD and Raw Data conflict on the same field:
+  - show both side-by-side and mark `to confirm`
 
 ### Evidence Discipline
 
