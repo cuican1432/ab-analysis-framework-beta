@@ -85,7 +85,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - Only mark as significant when significance is supported by the source:
   - preferred: p-value is present
   - acceptable: the source provides an explicit significant flag plus a traceable source_location
-  - if p-value is missing, the metric can only be described directionally (no ✅/🔻 claim), and it must be added into `to confirm`
+  - if p-value is missing, the metric can only be described directionally (no significance claim), and it must be added into `to confirm`
 
 ### Evidence Manifest | 证据清单
 
