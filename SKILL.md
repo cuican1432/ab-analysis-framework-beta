@@ -37,6 +37,7 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - Enhanced Layer (optional): if the user requests post-processing beautification and a valid Block API token is available, apply the Enhanced Layer rules in `references/core/beautification_spec_v1.2.md` without changing report structure ("V3 Clean"). If Block API is not available, keep Base Layer Markdown output only.
 - User prompt precedence: if the user's current prompt specifies structure, emphasis, writing style, or temporary interpretation preferences, follow the user's prompt by default as long as it does not violate `Absolute Hard Rules`. Current-run user instructions override reusable `custom_rules` and framework default preferences.
 - Override handling: if a user instruction or `custom_rules` only conflicts with default guardrails, warn about the consequence and confirm whether they still want to proceed. If it conflicts with `Absolute Hard Rules`, do not follow it; explain the reason and offer the closest safe alternative.
+- Framework-only mode note: if knowledge files are not available/installed, do not guess caliber/polarity/domain mapping. Use Raw Data names as-is; push unresolved items into `to confirm`. Significant claims require verifiable evidence (p-value or explicit significant flag + source_location); otherwise keep directional wording only.
 
 ### What the system will do
 - run the doc-first analysis workflow
