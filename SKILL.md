@@ -70,6 +70,8 @@ Execution rule (make it automatic, do not rewrite scripts):
 
 - After `upload_to_feishu_tool` returns a doc link, ALWAYS run the built-in post-processing step to beautify the same doc when token is available.
 - Extract `<doc_id>` from the returned doc link `https://.../docx/<doc_id>` before calling the beautification script.
+- CRITICAL: You MUST call the packaged script for beautification. Do NOT write custom Block API code during the run.
+- CRITICAL: Do NOT attempt Markdown-only inline styling such as `<text bgcolor=...>` for Feishu doc beautification.
 - Do not write a new "beautification script" in the report run. Reuse the packaged script:
   - `python3 scripts/beautify_report.py --doc-id <doc_id> --decorate-headings`
   - If running from a sandbox/workspace where relative paths do not point to the skill root, locate the skill root first:

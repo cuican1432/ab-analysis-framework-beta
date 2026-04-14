@@ -279,6 +279,8 @@ If token is missing/invalid, skip beautification silently and keep the base outp
 Execution note:
 
 - Do not implement a new beautification script during the run.
+- Never write custom Block API code for ad-hoc beautification during the run.
+- Do not use Markdown-only inline styling such as `<text bgcolor=...>` as a substitute for Block API styling.
 - Reuse the packaged `scripts/beautify_report.py` and run it from the skill install root (zip root), not from the sandbox/workspace `pwd`.
 - Treat beautification as idempotent by default: if the doc already appears beautified, skip mutating steps.
 - Use `--force-reapply` only when you intentionally want to re-run beautification on an already beautified doc.
@@ -289,6 +291,7 @@ Execution note:
    - use `quote_container` (block_type=34) and show the legend using colored text (no emoji).
 3. Beautify top-to-bottom (each step try/except, degrade silently):
    - headings: H2 with blue decoration line
+   - existing tables: traverse current table cells, detect `↑` / `↓` / `↗` / `↘` / `➖`, remove the L2 marker, then apply L1 styling in-place
    - conclusions/risks: callout (block_type=19), values use L1 styling when possible
    - experiment info: inline text (bold key + value)
    - summary tables: 3 columns, row_count <= 8

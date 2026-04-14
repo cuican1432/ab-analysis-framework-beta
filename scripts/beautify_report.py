@@ -509,6 +509,19 @@ def _normalize_elements_for_l1(elements: list[dict[str, Any]] | None) -> list[di
     return [_normalize_text_run_for_l1(el) for el in (elements or [])]
 
 
+def _infer_sig_from_text(text: str) -> str | None:
+    s = (text or "").strip()
+    if s.startswith("↑ "):
+        return "pos"
+    if s.startswith("↓ "):
+        return "neg"
+    if s.startswith("↗ ") or s.startswith("↘ "):
+        return "marginal"
+    if s.startswith("➖ "):
+        return "ns"
+    return None
+
+
 def _extract_block_plain_text(block: dict[str, Any]) -> str:
     btype = block.get("block_type")
     if btype == BLOCK_TEXT:
@@ -635,6 +648,58 @@ def _decorate_h2_elements(title: str) -> list[dict[str, Any]]:
     return [tr("▎", color=COLOR_BLUE), tr(f" {title}".rstrip(), bold=True)]
 
 
+def colorize_existing_table_cells(token: str, doc_id: str, children: list[dict[str, Any]]) -> int:
+    """
+    Traverse existing top-level tables and upgrade L2 significance markers inside
+    table cells into L1 styles.
+
+    Expected Base Layer patterns:
+    - ↑ +0.12%
+    - ↓ -0.08%
+    - ↗ +0.05%
+    - ↘ -0.04%
+    - ➖ 不显著
+    """
+    patched = 0
+    for raw in children:
+        table_block = _unwrap_block(raw)
+        if table_block.get("block_type") != BLOCK_TABLE:
+            continue
+
+        cell_ids = ((table_block.get("table") or {}).get("cells")) or []
+        if not isinstance(cell_ids, list):
+            continue
+
+        for cell_id in cell_ids:
+            if not isinstance(cell_id, str):
+                continue
+            try:
+                rr = _get_children(token, doc_id, cell_id)
+                if rr.get("code") not in (0, "0", None):
+                    continue
+                kids = list(rr.get("data", {}).get("items", []) or [])
+                for kid_raw in kids:
+                    kid = _unwrap_block(kid_raw)
+                    kid_id = kid.get("block_id")
+                    if not kid_id:
+                        continue
+                    if kid.get("block_type") not in (BLOCK_TEXT, BLOCK_BULLET, BLOCK_ORDERED):
+                        continue
+
+                    text = _extract_block_plain_text(kid)
+                    sig = _infer_sig_from_text(text)
+                    if sig is None:
+                        continue
+
+                    clean_value = _strip_sig_marker_prefix(text)
+                    _patch_text_elements(token, doc_id, kid_id, [sig_tr(clean_value, sig)])
+                    patched += 1
+                    break
+            except Exception as e:
+                logger.warning("Colorize cell %s failed (degrade): %s", cell_id, e)
+    return patched
+
+
 
 def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -736,6 +801,13 @@ def main() -> int:
             except Exception as e:
                 logger.warning("Patch heading failed (degrade): %s", e)
         logger.info("Patched H2 headings: %d", patched)
+
+    # Stage C+ Step 3b: Upgrade existing table-cell L2 markers into L1 styling.
+    try:
+        colored = colorize_existing_table_cells(token, doc_id, children)
+        logger.info("Colorized table cells: %d", colored)
+    except Exception as e:
+        logger.warning("Colorize table cells failed (degrade): %s", e)
 
     # Final: cleanup auto-generated empty placeholder blocks (best-effort, conservative).
     if args.cleanup_empty:
