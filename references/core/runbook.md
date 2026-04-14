@@ -49,8 +49,8 @@ Recommended collaboration loop:
 Practical split:
 
 - put stable, reusable items into:
-  - `userdata/ab-analysis-framework-beta/glossary/`
-  - `userdata/ab-analysis-framework-beta/kb/`
+  - `userdata/ab-knowledge-builder-beta/glossary/`
+  - `userdata/ab-knowledge-builder-beta/kb/`
 - keep still-evolving or partially confirmed content in:
   - the current run's working context (and keep a clear `to confirm` list)
 
@@ -271,9 +271,10 @@ What to avoid:
 - Report output formatting (Feishu doc, tables, coloring, naming, callouts) is defined canonically in `references/core/report_output_rules.md`.
 - Data appendix (physical clone + fallback chain) is also defined canonically in `references/core/report_output_rules.md`.
 
-### Stage C+ (Optional): Beautification | 可选后处理：Block API 美化
+### Stage C+: Beautification (Auto When Token Available) | 美化（有 token 自动执行）
 
-If the user asks for richer visual styling and a valid Block API token is available, apply an Enhanced Layer post-processing step:
+If a valid Block API token is available, automatically apply an Enhanced Layer post-processing step after the base report is written.
+If token is missing/invalid, skip beautification silently and keep the base output.
 
 1. Document preparation:
    - do not loop DELETE to clear a large doc; use a new doc or overwrite with a blank base layer first.

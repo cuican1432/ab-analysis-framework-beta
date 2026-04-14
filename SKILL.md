@@ -136,7 +136,7 @@ When reading `references/core/*`, use this order:
 - Long-term live business knowledge → `userdata/ab-knowledge-builder-beta/kb/*`
 - Glossary maintenance rules → `references/knowledge/glossary_guide.md`
 - Business knowledge maintenance rules → `references/knowledge/knowledge_guide.md`
-- Runtime local incremental layer → `userdata/ab-analysis-framework-beta/*`
+- Runtime local incremental layer → `userdata/ab-knowledge-builder-beta/*`
 - Memory can help recall, but it is not the main glossary store
 
 ## Userdata Boundary
@@ -150,7 +150,7 @@ When the user wants to inject local knowledge, local data files, or run-specific
 Do not casually rewrite packaged shared references during normal ingestion:
 
 - packaged knowledge guides and reading indexes stay in `references/knowledge/*`
-- local evolving and long-term live knowledge should go to `userdata/ab-analysis-framework-beta/*`
+- local evolving and long-term live knowledge should go to `userdata/ab-knowledge-builder-beta/*`
 
 Default read order:
 
@@ -182,7 +182,9 @@ Metric recall reminder:
 
 ## Linkage Rule With `ab-knowledge-builder-beta`
 
-`ab-analysis-framework-beta` reads the live knowledge layer under `userdata/ab-analysis-framework-beta/*`, but it does not own detailed knowledge-content editing.
+`ab-analysis-framework-beta` reads the live knowledge layer under `userdata/ab-knowledge-builder-beta/*`, but it does not own detailed knowledge-content editing.
+
+Compatibility note: some older installs may still place knowledge under `userdata/ab-analysis-framework-beta/*`. If both paths exist, prefer the `ab-knowledge-builder-beta` namespace.
 
 Update this framework skill when one of these changes:
 
