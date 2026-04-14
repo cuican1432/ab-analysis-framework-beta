@@ -18,6 +18,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import time
 import urllib.error
 import urllib.request
@@ -604,6 +605,7 @@ def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
 
 
 SIG_MARKER_PREFIXES = ("↑ ", "↓ ", "↗ ", "↘ ", "➖ ")
+SIG_INLINE_RE = re.compile(r"(↑|↓|↗|↘|➖)\s*((?:[+-]\d[\d,]*(?:\.\d+)?%?)|不显著)")
 
 
 def _strip_sig_marker_prefix(text: str) -> str:
@@ -638,6 +640,59 @@ def _normalize_text_run_for_l1(el: dict[str, Any]) -> dict[str, Any]:
 
 def _normalize_elements_for_l1(elements: list[dict[str, Any]] | None) -> list[dict[str, Any]]:
     return [_normalize_text_run_for_l1(el) for el in (elements or [])]
+
+
+def _sig_from_marker(marker: str) -> str:
+    return {
+        "↑": "pos",
+        "↓": "neg",
+        "↗": "marginal",
+        "↘": "marginal",
+        "➖": "ns",
+    }.get(marker, "ns")
+
+
+def _clone_text_run_with_content(el: dict[str, Any], content: str) -> dict[str, Any]:
+    out = json.loads(json.dumps(el))
+    out.setdefault("text_run", {})
+    out["text_run"]["content"] = content
+    return out
+
+
+def _colorize_inline_elements(elements: list[dict[str, Any]] | None) -> tuple[list[dict[str, Any]], bool]:
+    """
+    Convert inline L2 markers inside a text-like block into L1-styled numeric values.
+
+    Example:
+    - `发送消息量 ↑ +0.35%（p<0.001）`
+    becomes
+    - `发送消息量 ` + green `+0.35%` + `（p<0.001）`
+    """
+    out: list[dict[str, Any]] = []
+    changed = False
+    for el in (elements or []):
+        trn = el.get("text_run")
+        if not isinstance(trn, dict):
+            out.append(el)
+            continue
+        content = str(trn.get("content", ""))
+        last = 0
+        local_changed = False
+        for m in SIG_INLINE_RE.finditer(content):
+            start, end = m.span()
+            if start > last:
+                out.append(_clone_text_run_with_content(el, content[last:start]))
+            marker, value = m.group(1), m.group(2)
+            out.append(sig_tr(value, _sig_from_marker(marker)))
+            last = end
+            local_changed = True
+        if local_changed:
+            if last < len(content):
+                out.append(_clone_text_run_with_content(el, content[last:]))
+            changed = True
+        else:
+            out.append(el)
+    return out, changed
 
 
 def _infer_sig_from_text(text: str) -> str | None:
@@ -943,6 +998,38 @@ def collect_table_colorize_requests_from_blocks(
     return requests
 
 
+def _get_text_elements_for_block(block: dict[str, Any]) -> list[dict[str, Any]] | None:
+    btype = block.get("block_type")
+    if btype == BLOCK_TEXT:
+        return (block.get("text") or {}).get("elements")
+    if btype == BLOCK_BULLET:
+        return (block.get("bullet") or {}).get("elements")
+    if btype == BLOCK_ORDERED:
+        return (block.get("ordered") or {}).get("elements")
+    return None
+
+
+def collect_inline_value_colorize_requests_from_blocks(
+    all_blocks: list[dict[str, Any]],
+    table_cell_ids: set[str],
+) -> list[dict[str, Any]]:
+    requests: list[dict[str, Any]] = []
+    for block in all_blocks:
+        bid = block.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        if block.get("parent_id") in table_cell_ids:
+            continue
+        elements = _get_text_elements_for_block(block)
+        if not elements:
+            continue
+        new_elements, changed = _colorize_inline_elements(elements)
+        if not changed:
+            continue
+        requests.append({"block_id": bid, "update_text_elements": {"elements": new_elements}})
+    return requests
+
+
 
 def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -1003,11 +1090,7 @@ def main() -> int:
     except Exception as e:
         logger.warning("Beautification detection failed (degrade): %s", e)
 
-    already_beautified = (
-        (existing["legend_count"] > 0)
-        or (existing["decorated_h2"] > 0)
-        or (existing["top_quote_containers"] >= 2)
-    )
+    already_beautified = existing["decorated_h2"] > 0
     if already_beautified and not args.force_reapply:
         logger.info("Document already appears beautified; skip mutating beautification steps. Use --force-reapply to override.")
         if args.cleanup_empty:
@@ -1055,12 +1138,20 @@ def main() -> int:
     # Stage C+ Step 3: Beautify top-to-bottom (best-effort). Each step must degrade silently.
     if all_blocks and children_map:
         patch_requests: list[dict[str, Any]] = []
+        table_cell_ids: set[str] = set()
+        for b in all_blocks:
+            if b.get("block_type") != BLOCK_TABLE:
+                continue
+            cells = ((b.get("table") or {}).get("cells")) or []
+            if isinstance(cells, list):
+                table_cell_ids.update([c for c in cells if isinstance(c, str)])
         if args.decorate_headings:
             patch_requests.extend(collect_h2_patch_requests(children, args.max_headings))
         patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
+        patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
         try:
             updated = _batch_update_blocks(token, doc_id, patch_requests)
-            logger.info("Batch updated blocks (H2 + table cells): %d", updated)
+            logger.info("Batch updated blocks (H2 + table cells + inline values): %d", updated)
         except Exception as e:
             logger.warning("Batch update failed (degrade): %s", e)
     else:

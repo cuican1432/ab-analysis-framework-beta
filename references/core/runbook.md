@@ -293,7 +293,7 @@ Execution note:
    - headings: H2 with blue decoration line
    - performance: prefer one full-block scan of the document, analyze in memory, then use batch updates instead of N+1 per-cell GET/PATCH loops
    - existing tables: traverse current table cells, detect `↑` / `↓` / `↗` / `↘` / `➖`, remove the L2 marker, then apply L1 styling in-place
-   - conclusions/risks: callout (block_type=19), values use L1 styling when possible
+   - conclusions/risks: preserve structure, but enhance inline values with L1 styling when possible; use callout only when the structure already supports it
    - experiment info: inline text (bold key + value)
    - summary tables: 3 columns, row_count <= 8
    - appendix tables: 5 columns, row_count <= 8 (split when needed)
