@@ -8,6 +8,7 @@
    - screenshots / tables
    - optional live Libra page
 2. Complete Stage A first.
+   - generate a Run Signature (source URLs + source_hash) to prevent cross-run contamination
    - extract setup / config fields from the source header
    - identify the experiment object
    - identify the main metrics and guardrails

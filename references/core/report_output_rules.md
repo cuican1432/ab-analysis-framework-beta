@@ -45,6 +45,15 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - Preferred: create a Feishu/Lark doc and return the doc link.
 - Fallback: if doc creation is not available due to permission/tooling limits, output a fully structured "doc body" that the user can paste into a new doc, and clearly state what capability/permission is missing.
 
+### Run Signature | 运行签名（防上下文污染）
+
+- Always include a short `Run Signature` block near the beginning of the report (after `总结论/总建议`).
+- Include:
+  - PRD URL, Raw Data URL
+  - `source_hash` (hash of normalized URLs + extracted header/config snapshot)
+  - extracted data date range
+- If this run is a rerun or looks similar to a prior run but has a different `source_hash`, add a `to confirm` item asking the user to confirm it is a new run.
+
 ### Tables | 表格
 
 - Use standard Markdown tables (they may be converted into native tables by Feishu automatically).

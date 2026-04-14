@@ -8,7 +8,13 @@ Use this default order for experiment analysis:
 
 1. Read the experiment inputs first.
    - Prefer PRD, raw-data docs, screenshots, and tables.
-2. Extract experiment setup / config facts from the source header first.
+2. Generate a Run Signature (anti-contamination).
+   - Record the source URLs (PRD + Raw Data) and a `source_hash` for this run.
+   - The `source_hash` should be computed from:
+     - normalized source URLs, plus
+     - a verbatim snapshot of the extracted header/config block.
+   - Store it under `experiment/<experiment_id>/version_<yyyymmdd>/run_signature.json` when local files are available.
+3. Extract experiment setup / config facts from the source header first.
    - Must extract when available:
      - experiment name / experiment link
      - experiment period / data date
@@ -27,7 +33,7 @@ Use this default order for experiment analysis:
      - if the header-level data date and the per-metric-group data date differ, use the per-metric-group date range as the truth and flag the discrepancy in `to confirm`
    - Missing required fields stay `not found`.
    - If PRD and Raw Data conflict, show both and mark `to confirm`.
-3. Extract metric-level evidence fields when the source exposes them.
+4. Extract metric-level evidence fields when the source exposes them.
    - For every metric that will be marked as significant (✅/🔻 or Block API L1 coloring), capture this minimum evidence set:
      - metric (full name from Raw Data)
      - delta (relative and/or absolute)
@@ -36,11 +42,11 @@ Use this default order for experiment analysis:
      - N / sample size signal (optional when the source provides it)
      - source_location (where in the Raw Data this evidence came from: table name / section / screenshot reference)
    - If p_value is missing, do not claim significance even if the source uses words like "显著"; add it into `to confirm`.
-4. Consult the glossary and KB.
+5. Consult the glossary and KB.
    - Disambiguate metric names, metric groups, business-domain terms, and caliber rules.
-5. Read the PRD carefully.
+6. Read the PRD carefully.
    - Identify target metrics, guardrails, mechanism clues, and experiment object details.
-6. Build the recall set.
+7. Build the recall set.
    - Keep explicit targets.
    - Keep mechanism-implied metrics.
    - Keep core guardrails.
@@ -48,11 +54,11 @@ Use this default order for experiment analysis:
 
 ### Stage B: Logic and Attribution
 
-7. Turn Stage A facts into Stage B logic.
+8. Turn Stage A facts into Stage B logic.
 
 ### Stage C: Final Report
 
-8. Write Stage C report.
+9. Write Stage C report.
 
 ## Live Libra Branch
 
