@@ -34,6 +34,9 @@ Key constraints (v1.2):
 - Significant marking degradation: L1 (color+bold+bg via Block API) > L2 (emoji) > L3 (plain text).
 - Table hard limit: row_count <= 8 (including header); over-limit must split or use inline text.
 - Experiment info prefers inline text (bold key + value) to avoid large-table API failures.
+- Table modes:
+  - summary tables: 3 columns (metric / relative change / p-value), widths `[300, 150, 120]`
+  - data appendix tables: 5 columns (metric / relative change / absolute change / 95% CI / p-value), widths `[200, 110, 90, 160, 90]`
 
 Canonical spec: `references/core/beautification_spec_v1.2.md`
 

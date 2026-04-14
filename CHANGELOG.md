@@ -12,5 +12,10 @@
 - 在 `Knowledge Ingestion` 中明确 confirmed / draft / to confirm 的分流方式。
 - 保留 `Storage Hint`，明确 shared knowledge、runtime local layer 与 memory 的边界。
 
+### Added (Block API Beautification)
+- Added Block API beautification proposal and canonical spec under `references/core/*`.
+- Added optional `Stage C+` beautification pointer (Enhanced Layer post-processing) in `references/core/runbook.md`.
+- Added Block API tooling quick reference + pitfalls in `references/core/tooling.md`.
+
 ### Packaging
 - 当前版本适合直接重新打包并作为 Mira 可发布 skill 包使用。

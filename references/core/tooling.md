@@ -42,3 +42,49 @@ Hard constraints:
 - divider must include `"divider": {}`
 
 Canonical spec: `references/core/beautification_spec_v1.2.md`
+
+Block type mapping (quick reference, keep in sync with canonical spec):
+
+| block_type | name | json field | note |
+|---|---|---|---|
+| 2 | text | text | base text block |
+| 3 | heading1 | heading1 | requires style.align + style.folded |
+| 4 | heading2 | heading2 | requires style.align + style.folded |
+| 5 | heading3 | heading3 | requires style.align + style.folded |
+| 12 | bullet list | bullet | not 11 |
+| 13 | ordered list | ordered | not 12 |
+| 15 | quote | quote | |
+| 19 | callout | callout | not 14; container block |
+| 22 | divider | divider | must include `{}` |
+| 31 | table | table | row_count <= 8; create with cells=[] |
+| 32 | table_cell | table_cell | read-only, API creates |
+| 34 | quote_container | quote_container | container block |
+
+Pitfalls (P-1 ~ P-26):
+
+1. Callout type is 19, not 14.
+2. Bullet list type is 12 (bullet), not 11.
+3. Ordered list type is 13 (ordered), not 12.
+4. text_color range is 1-7 only.
+5. background_color range is 1-15+.
+6. divider must include `"divider": {}`.
+7. heading field names: heading1/2/3 correspond to 3/4/5.
+8. heading/list must include `"style": {"align": 1, "folded": False}`.
+9. Callout/quote_container are container blocks: create container first, then POST children.
+10. table cells: create with `"cells": []`, then read cell_ids from response.
+11. table_cell background is not supported via block-level PATCH.
+12. use text_element_style.background_color to highlight text instead.
+13. delete/merge end_index is exclusive.
+14. quote_container is block_type=34.
+15. text block style: `"style": {}` must be present (can be empty but do not omit).
+16. token must be read from env; never hardcode it.
+17. POST index: -1 appends to the end.
+18. summary tables are 3 columns (metric / relative change / p-value), no "judgment" column.
+19. document cleanup: looping DELETE is unreliable; use new doc or overwrite.
+20. big tables: row_size >= 10 may fail invalid param; keep <= 8 rows.
+21. insert_table_row is unstable; decide row_size when creating.
+22. quote style: use consistent ASCII quotes in code examples to avoid copy errors.
+23. read table cells: prefer one-shot read of doc block tree if available.
+24. env var names: support both `LARK_USER_ACCESS_TOKEN` and `MIRA_LARK_USER_ACCESS_TOKEN`.
+25. appendix tables: summary is 3 columns, appendix is 5 columns.
+26. emoji is only a fallback: L1 color > L2 emoji > L3 plain labels.

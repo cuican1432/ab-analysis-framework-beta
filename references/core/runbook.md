@@ -266,8 +266,21 @@ What to avoid:
 
 If the user asks for richer visual styling and a valid Block API token is available, apply an Enhanced Layer post-processing step:
 
-- Keep "V3 Clean": do not add/remove/reorder chapters; only overlay styling.
-- Prefer L1 styling (color+bold+bg via Block API) for significance, and only fall back to emoji/labels when Block API styling is unavailable.
-- Follow hard table limits (row_count <= 8) and inline experiment info rules.
+1. Document preparation:
+   - do not loop DELETE to clear a large doc; use a new doc or overwrite with a blank base layer first.
+2. Insert color legend:
+   - use `quote_container` (block_type=34) and show the legend using colored text (no emoji).
+3. Beautify top-to-bottom (each step try/except, degrade silently):
+   - headings: H2 with blue decoration line
+   - conclusions/risks: callout (block_type=19), values use L1 styling when possible
+   - experiment info: inline text (bold key + value)
+   - summary tables: 3 columns, row_count <= 8
+   - appendix tables: 5 columns, row_count <= 8 (split when needed)
+
+Significance marking degradation (core):
+
+- L1: color+bold+bg via Block API (prefer this; do not use emoji when L1 works)
+- L2: emoji fallback
+- L3: plain labels fallback
 
 Canonical spec: `references/core/beautification_spec_v1.2.md`
