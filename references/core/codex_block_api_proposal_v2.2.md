@@ -70,7 +70,7 @@ M-2: 修改 docs/report_output_rules.md
 ### 实验信息 (v1.2: inline text)
 
 bold key + value 逐行展示，不用大表格。
-仅实验臂配置 (<=5行) 保留表格。
+仅实验组（arm）配置 (<=5行) 保留表格。
 
 ---
 
@@ -193,4 +193,3 @@ M-6: 新增 scripts/beautify_report.py
 8. 实验信息用 inline text
 9. 文档清理用空白覆盖
 10. 能用颜色文字就不用emoji; emoji仅是降级手段
-

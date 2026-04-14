@@ -110,6 +110,133 @@ def _get_children(token: str, doc_id: str, block_id: str, page_size: int = 500) 
     return _api(token, "GET", f"{DOCX_BASE}/{doc_id}/blocks/{block_id}/children?page_size={page_size}")
 
 
+def _batch_delete_children(token: str, doc_id: str, parent_id: str, start_index: int, end_index: int, document_revision_id: int = -1) -> dict[str, Any]:
+    """
+    Delete a child range under a parent block.
+
+    Pitfalls:
+    - start_index/end_index must be in JSON body (not query params).
+    - per-block DELETE may 404 for container children; batch_delete is more reliable.
+    - document_revision_id=-1 means "latest".
+    """
+    url = f"{DOCX_BASE}/{doc_id}/blocks/{parent_id}/children/batch_delete?document_revision_id={document_revision_id}"
+    return _api(token, "DELETE", url, {"start_index": start_index, "end_index": end_index})
+
+
+def _unwrap_block(item: dict[str, Any]) -> dict[str, Any]:
+    """
+    Normalize a children list item to a flat block dict.
+    Some endpoints return: {"block_type": X, "block": {...}}.
+    """
+    if isinstance(item.get("block"), dict):
+        b = dict(item["block"])
+        if "block_type" not in b and "block_type" in item:
+            b["block_type"] = item["block_type"]
+        return b
+    return item
+
+
+def _is_empty_placeholder_text_block(b: dict[str, Any]) -> bool:
+    """
+    Conservative placeholder detection to avoid deleting real user-intended blank lines.
+
+    Only treat a child as placeholder when:
+    - block_type is text (2)
+    - elements are missing/empty OR all text_run contents are empty strings
+    """
+    if b.get("block_type") != BLOCK_TEXT:
+        return False
+    text = b.get("text") or {}
+    elements = text.get("elements")
+    if not elements:
+        return True
+    for el in elements:
+        if not isinstance(el, dict):
+            continue
+        trn = el.get("text_run")
+        if isinstance(trn, dict) and str(trn.get("content", "")) != "":
+            return False
+    return True
+
+
+def cleanup_empty_blocks(token: str, doc_id: str, root_id: str) -> None:
+    """
+    Clean up auto-generated empty placeholder child blocks inside containers and table cells.
+
+    Feishu may create an empty text block as the first child of:
+    - callout (19)
+    - quote_container (34)
+    - table_cell (32)
+
+    We delete that first child only when it is a verified empty placeholder AND there is another child after it.
+    """
+    try:
+        r = _get_children(token, doc_id, root_id)
+        if r.get("code") not in (0, "0", None):
+            return
+        items = list(r.get("data", {}).get("items", []) or [])
+    except Exception as e:
+        logger.warning("cleanup_empty_blocks: list root children failed: %s", e)
+        return
+
+    # P-30: doc root itself may have a placeholder text block created by base-layer write.
+    try:
+        if len(items) > 1:
+            first_root = _unwrap_block(items[0])
+            if _is_empty_placeholder_text_block(first_root):
+                _batch_delete_children(token, doc_id, root_id, 0, 1, document_revision_id=-1)
+                # Re-fetch after deleting root placeholder to keep indices stable for later steps.
+                r = _get_children(token, doc_id, root_id)
+                if r.get("code") in (0, "0", None):
+                    items = list(r.get("data", {}).get("items", []) or [])
+    except Exception as e:
+        logger.warning("cleanup_empty_blocks: root placeholder cleanup failed: %s", e)
+
+    container_ids: list[str] = []
+    table_cell_ids: list[str] = []
+
+    for it in items:
+        b = _unwrap_block(it)
+        bid = b.get("block_id")
+        if not bid:
+            continue
+        btype = b.get("block_type")
+        if btype in (BLOCK_CALLOUT, BLOCK_QUOTE_CONTAINER):
+            container_ids.append(bid)
+        if btype == BLOCK_TABLE:
+            cells = (b.get("table") or {}).get("cells") or []
+            if isinstance(cells, list):
+                table_cell_ids.extend([c for c in cells if isinstance(c, str)])
+
+    for parent_id in container_ids:
+        try:
+            rr = _get_children(token, doc_id, parent_id)
+            if rr.get("code") not in (0, "0", None):
+                continue
+            kids = list(rr.get("data", {}).get("items", []) or [])
+            if len(kids) <= 1:
+                continue
+            first = _unwrap_block(kids[0])
+            if _is_empty_placeholder_text_block(first):
+                _batch_delete_children(token, doc_id, parent_id, 0, 1, document_revision_id=-1)
+        except Exception as e:
+            logger.warning("cleanup_empty_blocks: container %s failed: %s", parent_id, e)
+
+    for cell_id in table_cell_ids:
+        try:
+            rr = _get_children(token, doc_id, cell_id)
+            if rr.get("code") not in (0, "0", None):
+                continue
+            kids = list(rr.get("data", {}).get("items", []) or [])
+            if len(kids) <= 1:
+                continue
+            first = _unwrap_block(kids[0])
+            if _is_empty_placeholder_text_block(first):
+                _batch_delete_children(token, doc_id, cell_id, 0, 1, document_revision_id=-1)
+        except Exception as e:
+            logger.warning("cleanup_empty_blocks: table cell %s failed: %s", cell_id, e)
+
+
 # ---- TextRun builders ----
 
 
@@ -226,7 +353,7 @@ def create_color_legend(token: str, doc_id: str, parent_id: str, index: int = -1
                     sig_tr("+X.XX%", "marginal"),
                     tr(" 边际显著（橙色粗体）"),
                     tr("    "),
-                    sig_tr("---", "ns"),
+                    sig_tr("+X.XX%", "ns"),
                     tr(" 不显著（灰色）"),
                 ]
             ),
@@ -365,10 +492,11 @@ def main() -> int:
     ap.add_argument("--decorate-headings", action="store_true", help="Decorate H2 headings with a blue prefix (V3 Clean)")
     ap.add_argument("--max-headings", type=int, default=80, help="Max H2 headings to patch (safety guard)")
     ap.add_argument("--legend-only", action="store_true", help="Only insert the color legend")
+    ap.add_argument("--no-cleanup-empty", dest="cleanup_empty", action="store_false", default=True, help="Disable empty placeholder cleanup")
     args = ap.parse_args()
 
+    if args.dry_run:
         # Validate arg parsing only. No network calls.
-        return 0
         return 0
 
     token = _get_token()
@@ -393,6 +521,11 @@ def main() -> int:
         logger.warning("Insert legend failed (degrade): %s", e)
 
     if args.legend_only:
+        if args.cleanup_empty:
+            try:
+                cleanup_empty_blocks(token, doc_id, parent_id)
+            except Exception as e:
+                logger.warning("Cleanup failed (degrade): %s", e)
         logger.info("Legend-only done. API calls: %d", _call_count)
         return 0
 
@@ -417,9 +550,16 @@ def main() -> int:
             except Exception as e:
                 logger.warning("Patch heading failed (degrade): %s", e)
         logger.info("Patched H2 headings: %d", patched)
-        return 0
+
+    # Final: cleanup auto-generated empty placeholder blocks (best-effort, conservative).
+    if args.cleanup_empty:
+        try:
+            cleanup_empty_blocks(token, doc_id, parent_id)
+        except Exception as e:
+            logger.warning("Cleanup failed (degrade): %s", e)
+
     logger.info("Beautification done (best-effort). API calls: %d", _call_count)
-    logger.info("Full pipeline: import as library. Calls: %d", _call_count)
+    return 0
 
 
 if __name__ == "__main__":

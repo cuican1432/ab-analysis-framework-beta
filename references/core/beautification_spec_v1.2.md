@@ -158,7 +158,7 @@ post(qid, [
         tr("    "),
         sig_tr("+X.XX%", "marginal"), tr(" 边际显著（橙色粗体）"),
         tr("    "),
-        sig_tr("---", "ns"), tr(" 不显著（灰色）"),
+        sig_tr("+X.XX%", "ns"), tr(" 不显著（灰色）"),
     ]),
 ])
 ```
@@ -223,7 +223,7 @@ make_table(doc_id, appendix, [200, 110, 90, 160, 90])
 9. [Divider] ─────────
 10. [H2] ▎实验背景与设计
 11. [text] 实验信息 (inline)
-12. [Table] 实验臂 (<=5行)
+12. [Table] 实验组（arm）(<=5行)
 13-28. [H2+Table+text] 分结论1-4 (3列表)
 29-34. [H2+Table+Callout] 风险与异常
 35-36. [H2+Callout] DM安全护栏
@@ -240,7 +240,7 @@ make_table(doc_id, appendix, [200, 110, 90, 160, 90])
 
 ---
 
-## 六、Pitfall 完整清单 (P-1 ~ P-26)
+## 六、Pitfall 完整清单 (P-1 ~ P-30)
 
 | # | 陷阱 | 正确做法 |
 |---|---|---|
@@ -270,6 +270,10 @@ make_table(doc_id, appendix, [200, 110, 90, 160, 90])
 | P-24 | env变量名 | 做兼容 get("A") or get("B") |
 | P-25 | 附录表列数 | 分结论3列, 附录5列 |
 | P-26 | emoji仅降级用 | 能用颜色文字就不用emoji; L1颜色>L2emoji>L3文字 |
+| P-27 | batch_delete 参数位置 | start_index/end_index 必须在 body 里，不是 query params |
+| P-28 | DELETE 单个容器子 block | 容器子 block 可能 404；用父容器 batch_delete |
+| P-29 | document_revision_id=-1 | batch_delete 用 -1 表示最新版本，避免版本冲突 |
+| P-30 | placeholder block 清理 | Base layer 写入后 doc root 可能有 placeholder text block，需要后置清理 |
 
 ---
 
@@ -311,4 +315,3 @@ make_table(doc_id, appendix, [200, 110, 90, 160, 90])
 | insert_table_row | ⚠️ | 不稳定 |
 | DELETE block | ⚠️ | 大文档不可靠 |
 | table_cell background | ❌ | 用text bg_color替代 |
-

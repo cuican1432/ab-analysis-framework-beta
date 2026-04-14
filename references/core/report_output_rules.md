@@ -37,6 +37,7 @@ Key constraints (v1.2):
 - Table modes:
   - summary tables: 3 columns (metric / relative change / p-value), widths `[300, 150, 120]`
   - data appendix tables: 5 columns (metric / relative change / absolute change / 95% CI / p-value), widths `[200, 110, 90, 160, 90]`
+  - comparison tables: 4 columns (dimension / v1 / v2 / winner), widths `[180, 200, 200, 120]`
 
 Canonical spec: `references/core/beautification_spec_v1.2.md`
 
@@ -119,6 +120,14 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - ✗ `caliber artifact` → ✓ `指标口径问题导致的虚假显著`
 - Metric names follow their original language in Raw Data (usually English); all other text uses Chinese.
 - Avoid mid-sentence language switching. If an English term must appear (for example, a proper noun), wrap it in parentheses after the Chinese equivalent.
+
+Terminology mapping (user-facing):
+
+| English | Chinese (report body) | Notes |
+|---|---|---|
+| arm | 实验组（arm） | prefer "实验组" in Chinese; keep "(arm)" when it helps clarity |
+| treatment | 实验组（treatment） | use only when needed |
+| control | 对照组（control） | use in正文/表头 |
 
 ### Callouts | 高亮块
 
