@@ -653,7 +653,11 @@ def main() -> int:
         # Validate arg parsing only. No network calls.
         return 0
 
-    token = _get_token()
+    try:
+        token = _get_token()
+    except RuntimeError as e:
+        logger.warning("%s Skip beautification and keep the base output.", e)
+        return 0
     doc_id = args.doc_id
     parent_id = args.parent_id or doc_id
     # Stage C+ Step 1: Read doc tree (best-effort). Do not block if it fails.
