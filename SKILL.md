@@ -50,6 +50,22 @@ If the main goal is to build or normalize the knowledge store itself rather than
 
 ### Beautification Rules (Optional) | 美化规则（可选）
 
+What is the token:
+
+- `token` means your Feishu/Lark access token, used to let the tool modify the doc style via Block API after the base report is written.
+- If you do not provide a token, the report will still be generated, but it will stay in the base (Markdown) style.
+
+Default behavior:
+
+- If a valid token is available in the environment, the framework will automatically run the beautification post-processing step after writing the doc.
+- If token is missing/invalid, the framework will skip beautification and keep the base output, and add a short note in `to confirm` / report header.
+
+How to provide the token:
+
+- Set one of these environment variables (do not paste tokens into the report body or share in chat):
+  - `LARK_USER_ACCESS_TOKEN="Bearer <token>"`
+  - `MIRA_LARK_USER_ACCESS_TOKEN="Bearer <token>"`
+
 MUST DO:
 
 - ✅ use Block API only as post-processing (Enhanced Layer); Base Layer stays standard Markdown
