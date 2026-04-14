@@ -280,6 +280,8 @@ Execution note:
 
 - Do not implement a new beautification script during the run.
 - Reuse the packaged `scripts/beautify_report.py` and run it from the skill install root (zip root), not from the sandbox/workspace `pwd`.
+- Treat beautification as idempotent by default: if the doc already appears beautified, skip mutating steps.
+- Use `--force-reapply` only when you intentionally want to re-run beautification on an already beautified doc.
 
 1. Document preparation:
    - do not loop DELETE to clear a large doc; use a new doc or overwrite with a blank base layer first.

@@ -544,6 +544,36 @@ def replace_color_legend(token: str, doc_id: str, parent_id: str, children: list
     return create_color_legend(token, doc_id, parent_id, index=0)
 
 
+def _count_decorated_h2(children: list[dict[str, Any]]) -> int:
+    count = 0
+    for raw in children:
+        b = _unwrap_block(raw)
+        if b.get("block_type") != BLOCK_H2:
+            continue
+        title = _extract_block_plain_text(b).strip()
+        if title.startswith("▎"):
+            count += 1
+    return count
+
+
+def detect_existing_beautification(
+    token: str,
+    doc_id: str,
+    parent_id: str,
+    children: list[dict[str, Any]],
+) -> dict[str, int]:
+    """
+    Best-effort beautification detection for idempotent reruns.
+
+    We currently treat these as strong signals:
+    - an existing legend-like block near the top
+    - H2 headings already decorated with the blue prefix marker
+    """
+    legend_count = len(_find_existing_legend_indices(token, doc_id, parent_id, children))
+    decorated_h2 = _count_decorated_h2(children)
+    return {"legend_count": legend_count, "decorated_h2": decorated_h2}
+
+
 def _patch_text_elements(token: str, doc_id: str, block_id: str, elements: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Generic text patch for text-like blocks (text / heading / list).
@@ -568,6 +598,7 @@ def main() -> int:
     ap.add_argument("--max-headings", type=int, default=80, help="Max H2 headings to patch (safety guard)")
     ap.add_argument("--legend-only", action="store_true", help="Only insert the color legend")
     ap.add_argument("--no-cleanup-empty", dest="cleanup_empty", action="store_false", default=True, help="Disable empty placeholder cleanup")
+    ap.add_argument("--force-reapply", action="store_true", help="Reapply beautification even if the doc already appears beautified")
     args = ap.parse_args()
 
     if args.dry_run:
@@ -588,6 +619,24 @@ def main() -> int:
             logger.warning("Fetch children failed: %s", str(r.get("msg", ""))[:120])
     except Exception as e:
         logger.warning("Fetch children exception: %s", e)
+
+    existing = {"legend_count": 0, "decorated_h2": 0}
+    try:
+        existing = detect_existing_beautification(token, doc_id, parent_id, children)
+        logger.info("Beautification detection: legend=%d, decorated_h2=%d", existing["legend_count"], existing["decorated_h2"])
+    except Exception as e:
+        logger.warning("Beautification detection failed (degrade): %s", e)
+
+    already_beautified = (existing["legend_count"] > 0) or (existing["decorated_h2"] > 0)
+    if already_beautified and not args.force_reapply:
+        logger.info("Document already appears beautified; skip mutating beautification steps. Use --force-reapply to override.")
+        if args.cleanup_empty:
+            try:
+                cleanup_empty_blocks(token, doc_id, parent_id)
+            except Exception as e:
+                logger.warning("Cleanup failed (degrade): %s", e)
+        logger.info("Beautification skipped (already beautified). API calls: %d", _call_count)
+        return 0
 
     # Stage C+ Step 2: Replace any existing top legend, then insert exactly one enhanced legend.
     try:

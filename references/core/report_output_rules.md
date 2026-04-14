@@ -48,6 +48,16 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - Preferred: create a Feishu/Lark doc and return the doc link.
 - Fallback: if doc creation is not available due to permission/tooling limits, output a fully structured "doc body" that the user can paste into a new doc, and clearly state what capability/permission is missing.
 
+### Document Header Block | 文档头部信息
+
+- Near the beginning of the doc (right after `总结论 / 总建议`), include a small professional reference block.
+- Recommended fields:
+  - generation note: `本报告由 AI 基于 PRD 与 Raw Data 自动整理生成，结论以引用数据和原始报告为准。`
+  - PRD reference: link or doc title
+  - Raw Data reference: link or doc title
+  - optional: data date range / generation time / source_hash
+- Keep the wording professional and concise. Do not expose framework-internal terms in this block.
+
 ### Run Signature | 运行签名（防上下文污染）
 
 - Always include a short `Run Signature` block near the beginning of the report (after `总结论/总建议`).

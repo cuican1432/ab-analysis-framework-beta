@@ -74,6 +74,8 @@ Execution rule (make it automatic, do not rewrite scripts):
   - `python3 scripts/beautify_report.py --doc-id <doc_id> --decorate-headings`
   - If running from a sandbox/workspace where relative paths do not point to the skill root, locate the skill root first:
     - `SKILL_ROOT=$(python3 scripts/find_skill_root.py) && cd "$SKILL_ROOT"`
+- The beautification script is idempotent by default: if the doc already appears beautified, skip mutating steps instead of beautifying again.
+- Only use `--force-reapply` when you explicitly need to re-run beautification on an already beautified doc.
 
 MUST DO:
 
