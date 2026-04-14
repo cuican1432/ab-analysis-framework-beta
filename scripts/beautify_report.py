@@ -53,7 +53,8 @@ SIG_STYLES: dict[str, dict[str, Any]] = {
     "marginal": {"bold": True, "text_color": COLOR_ORANGE},
     "ns": {"text_color": COLOR_GRAY},
 }
-SIG_EMOJI = {"pos": "\u2705", "neg": "\U0001f53b", "marginal": "\u26a0\ufe0f", "ns": "\u2796"}
+# L2 fallback markers (Markdown/Base Layer). Use plain arrows instead of "pass/fail" emojis.
+SIG_EMOJI = {"pos": "↑", "neg": "↓", "marginal": "⚠️", "ns": "➖"}
 
 MAX_TABLE_ROWS = 8
 API_DELAY = 0.08
@@ -262,7 +263,7 @@ def sig_tr(value: str, sig: str) -> dict[str, Any]:
 def sig_markdown(value: str, sig: str) -> str:
     e = SIG_EMOJI.get(sig, "")
     if e:
-        return f"{e} **{value}**"
+        return f"{e} {value}"
     labels = {"pos": "正向显著", "neg": "负向显著", "marginal": "边际显著", "ns": "不显著"}
     return f"[{labels.get(sig, sig)}] {value}"
 
@@ -469,6 +470,78 @@ def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
     return "".join(out)
 
 
+def _extract_block_plain_text(block: dict[str, Any]) -> str:
+    btype = block.get("block_type")
+    if btype == BLOCK_TEXT:
+        return _extract_plain_text((block.get("text") or {}).get("elements"))
+    if btype == BLOCK_H2:
+        return _extract_plain_text((block.get("heading2") or {}).get("elements"))
+    if btype == BLOCK_H3:
+        return _extract_plain_text((block.get("heading3") or {}).get("elements"))
+    if btype == BLOCK_BULLET:
+        return _extract_plain_text((block.get("bullet") or {}).get("elements"))
+    if btype == BLOCK_ORDERED:
+        return _extract_plain_text((block.get("ordered") or {}).get("elements"))
+    return ""
+
+
+def _is_legend_title_text(text: str) -> bool:
+    t = (text or "").strip().lower()
+    return ("阅读指引" in t) or ("color legend" in t)
+
+
+def _find_existing_legend_indices(
+    token: str,
+    doc_id: str,
+    parent_id: str,
+    children: list[dict[str, Any]],
+    top_n: int = 5,
+) -> list[int]:
+    """
+    Find existing legend-like blocks near the top of the doc.
+
+    We only scan the first few top-level blocks to avoid touching unrelated content.
+    """
+    found: list[int] = []
+    for idx, raw in enumerate(children[:top_n]):
+        b = _unwrap_block(raw)
+        txt = _extract_block_plain_text(b)
+        if _is_legend_title_text(txt):
+            found.append(idx)
+            continue
+
+        if b.get("block_type") == BLOCK_QUOTE_CONTAINER and b.get("block_id"):
+            try:
+                rr = _get_children(token, doc_id, b["block_id"])
+                if rr.get("code") not in (0, "0", None):
+                    continue
+                kids = list(rr.get("data", {}).get("items", []) or [])
+                for kid in kids[:2]:
+                    kid_b = _unwrap_block(kid)
+                    kid_txt = _extract_block_plain_text(kid_b)
+                    if _is_legend_title_text(kid_txt):
+                        found.append(idx)
+                        break
+            except Exception as e:
+                logger.warning("Legend scan failed for quote_container %s: %s", b.get("block_id"), e)
+    return found
+
+
+def replace_color_legend(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> str | None:
+    """
+    Make legend insertion idempotent:
+    - remove any existing top-of-doc legend-like blocks first
+    - then insert exactly one enhanced legend at index 0
+    """
+    indices = _find_existing_legend_indices(token, doc_id, parent_id, children)
+    for idx in sorted(indices, reverse=True):
+        try:
+            _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
+        except Exception as e:
+            logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
+    return create_color_legend(token, doc_id, parent_id, index=0)
+
+
 def _patch_text_elements(token: str, doc_id: str, block_id: str, elements: list[dict[str, Any]]) -> dict[str, Any]:
     """
     Generic text patch for text-like blocks (text / heading / list).
@@ -514,9 +587,10 @@ def main() -> int:
     except Exception as e:
         logger.warning("Fetch children exception: %s", e)
 
-    # Stage C+ Step 2: Insert color legend at the top (best-effort).
+    # Stage C+ Step 2: Replace any existing top legend, then insert exactly one enhanced legend.
     try:
-        create_color_legend(token, doc_id, parent_id, index=0)
+        create_color_legend_fn = replace_color_legend
+        create_color_legend_fn(token, doc_id, parent_id, children)
     except Exception as e:
         logger.warning("Insert legend failed (degrade): %s", e)
 
