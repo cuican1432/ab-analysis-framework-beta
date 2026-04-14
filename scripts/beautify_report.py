@@ -472,6 +472,43 @@ def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
     return "".join(out)
 
 
+SIG_MARKER_PREFIXES = ("↑ ", "↓ ", "↗ ", "↘ ", "➖ ")
+
+
+def _strip_sig_marker_prefix(text: str) -> str:
+    s = text or ""
+    for prefix in SIG_MARKER_PREFIXES:
+        if s.startswith(prefix):
+            return s[len(prefix):].lstrip()
+    return s
+
+
+def _normalize_text_run_for_l1(el: dict[str, Any]) -> dict[str, Any]:
+    """
+    Normalize an existing text_run before L1 styling.
+
+    For significance values, Base Layer may already prepend L2 markers like:
+    - ↑ +0.12%
+    - ↓ -0.08%
+    - ↗ +0.05%
+    - ↘ -0.04%
+    - ➖ 不显著
+
+    If the same value is later upgraded to L1, the marker should be removed first
+    so we do not stack L2 + L1 on the same token.
+    """
+    trn = el.get("text_run")
+    if not isinstance(trn, dict):
+        return el
+    out = json.loads(json.dumps(el))
+    out["text_run"]["content"] = _strip_sig_marker_prefix(str(trn.get("content", "")))
+    return out
+
+
+def _normalize_elements_for_l1(elements: list[dict[str, Any]] | None) -> list[dict[str, Any]]:
+    return [_normalize_text_run_for_l1(el) for el in (elements or [])]
+
+
 def _extract_block_plain_text(block: dict[str, Any]) -> str:
     btype = block.get("block_type")
     if btype == BLOCK_TEXT:
@@ -556,6 +593,15 @@ def _count_decorated_h2(children: list[dict[str, Any]]) -> int:
     return count
 
 
+def _count_top_quote_containers(children: list[dict[str, Any]], top_n: int = 8) -> int:
+    count = 0
+    for raw in children[:top_n]:
+        b = _unwrap_block(raw)
+        if b.get("block_type") == BLOCK_QUOTE_CONTAINER:
+            count += 1
+    return count
+
+
 def detect_existing_beautification(
     token: str,
     doc_id: str,
@@ -568,10 +614,12 @@ def detect_existing_beautification(
     We currently treat these as strong signals:
     - an existing legend-like block near the top
     - H2 headings already decorated with the blue prefix marker
+    - multiple top quote_container blocks that usually come from previous beautification
     """
     legend_count = len(_find_existing_legend_indices(token, doc_id, parent_id, children))
     decorated_h2 = _count_decorated_h2(children)
-    return {"legend_count": legend_count, "decorated_h2": decorated_h2}
+    top_quote_containers = _count_top_quote_containers(children)
+    return {"legend_count": legend_count, "decorated_h2": decorated_h2, "top_quote_containers": top_quote_containers}
 
 
 def _patch_text_elements(token: str, doc_id: str, block_id: str, elements: list[dict[str, Any]]) -> dict[str, Any]:
@@ -620,14 +668,23 @@ def main() -> int:
     except Exception as e:
         logger.warning("Fetch children exception: %s", e)
 
-    existing = {"legend_count": 0, "decorated_h2": 0}
+    existing = {"legend_count": 0, "decorated_h2": 0, "top_quote_containers": 0}
     try:
         existing = detect_existing_beautification(token, doc_id, parent_id, children)
-        logger.info("Beautification detection: legend=%d, decorated_h2=%d", existing["legend_count"], existing["decorated_h2"])
+        logger.info(
+            "Beautification detection: legend=%d, decorated_h2=%d, top_quote_containers=%d",
+            existing["legend_count"],
+            existing["decorated_h2"],
+            existing["top_quote_containers"],
+        )
     except Exception as e:
         logger.warning("Beautification detection failed (degrade): %s", e)
 
-    already_beautified = (existing["legend_count"] > 0) or (existing["decorated_h2"] > 0)
+    already_beautified = (
+        (existing["legend_count"] > 0)
+        or (existing["decorated_h2"] > 0)
+        or (existing["top_quote_containers"] >= 2)
+    )
     if already_beautified and not args.force_reapply:
         logger.info("Document already appears beautified; skip mutating beautification steps. Use --force-reapply to override.")
         if args.cleanup_empty:
@@ -670,7 +727,7 @@ def main() -> int:
             if not title:
                 continue
             try:
-                _patch_text_elements(token, doc_id, b["block_id"], _decorate_h2_elements(title))
+                _patch_text_elements(token, doc_id, b["block_id"], _normalize_elements_for_l1(_decorate_h2_elements(title)))
                 patched += 1
             except Exception as e:
                 logger.warning("Patch heading failed (degrade): %s", e)
