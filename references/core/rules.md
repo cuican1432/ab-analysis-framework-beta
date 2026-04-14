@@ -253,6 +253,18 @@ When possible, connect attribution as a usable chain rather than a loose observa
 
 Prefer this kind of chain when the source supports it, but do not force a fake chain when the middle steps are missing.
 
+Mechanism anchoring requirement (Step 2):
+
+- The Step 2 mechanism/path claim MUST be bound to a source anchor:
+  - PRD anchor: a specific feature delta / exposure rule / entry point / interaction change that plausibly enables the mechanism
+  - Raw Data anchor: a supporting intermediate metric / funnel step / slice pattern that matches the mechanism
+- If Step 2 has no direct anchor, the chain must be downgraded:
+  - put the mechanism into a "possible path" subsection
+  - label it as `[indirect evidence]`
+  - do not treat it as the "main attribution" for the decision
+- Always add `Alternative explanations:` after the chain:
+  - at least 1 competing explanation that could also produce the same metric movement (for example: external events, time trend, data-quality artifacts, cross-module spillover)
+
 When investigating attribution, check the most relevant of these directions:
 
 - path attribution

@@ -106,7 +106,7 @@ Practical chain template:
 Follow the canonical 5-step attribution chain defined in `rules.md` (Attribution Discipline):
 
 1. product / UX delta
-2. most credible mechanism, path, or structural change
+2. most credible mechanism, path, or structural change (must include a source anchor; otherwise downgrade to `possible path` + `[indirect evidence]`)
 3. metric movement
 4. business implication
 5. remaining uncertainty or next validation step
@@ -118,6 +118,10 @@ When possible, prefer a clean chain such as:
 - button / layout change -> interaction error or friction -> risk metric movement
 
 If the source only supports steps 1 and 3, do not pretend that steps 2 and 4 are fully proven. Mark the middle link as `[indirect evidence]` or `[hypothesis to verify]`.
+
+Always add after the chain:
+
+- `Alternative explanations:` list at least 1 competing explanation (external/time/data-quality/spillover) that could also produce the movement.
 
 ### Attribution Red Lines (Anti-Hallucination) | 归因推演红线（反幻觉）
 
