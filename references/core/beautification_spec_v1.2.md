@@ -134,7 +134,7 @@ L2 方向标记（`↑/↓/↗/↘`）代表业务方向，不是数值方向：
 - 去掉 `↑/↓/↗/↘/➖` 前缀
 - 只保留 `+/-数值`
 - 用颜色 + 粗体 (+ 底色) 表达显著性
-- 不要同时保留方向箭头和 L1 颜色样式
+- 不要同时保留方向箭头和 L1 颜色样式（详见 §7.1）
 
 ### 3.5 着色粒度规则（Coloring Granularity）
 
@@ -170,7 +170,7 @@ def sig_markdown(value, sig):
     marker_map = {"pos": "↑", "neg": "↓", "marginal_pos": "↗", "marginal_neg": "↘", "ns": "➖"}
     label_map = {"pos": "[正向显著]", "neg": "[负向显著]", "marginal": "[边际显著]", "marginal_pos": "[边际正向]", "marginal_neg": "[边际负向]", "ns": "[不显著]"}
     if sig == "marginal":
-        return f"{label_map['marginal']} {value}"  # L3 to avoid guessing business direction from numeric sign
+        return f"{label_map['marginal']} {value}"  # L3; callers should prefer marginal_pos / marginal_neg when business direction is known
     marker = marker_map.get(sig, "")
     if marker:
         return f"{marker} {value}"  # L2

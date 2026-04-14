@@ -385,6 +385,7 @@ def sig_markdown(value: str, sig: str) -> str:
         "ns": "➖",
     }
     if sig == "marginal":
+        # Callers should prefer marginal_pos / marginal_neg when business direction is known.
         return f"[边际显著] {value}"
     e = marker_map.get(sig) or SIG_EMOJI.get(sig, "")
     if e:
@@ -834,6 +835,8 @@ def _decorate_h2_elements(title: str) -> list[dict[str, Any]]:
 
 def colorize_existing_table_cells(token: str, doc_id: str, children: list[dict[str, Any]]) -> int:
     """
+    Legacy fallback path with higher API cost than the full-block scan path.
+
     Traverse existing top-level tables and upgrade L2 significance markers inside
     table cells into L1 styles.
 

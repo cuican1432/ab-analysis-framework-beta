@@ -97,7 +97,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - Enhanced Layer: apply Block API styling only to the numeric value cell / inline value token, e.g. `+0.35%` / `-1.27%` without arrows
   - Keep metric names, descriptions, and surrounding narrative in plain text
   - When a bullet or paragraph contains multiple metrics, style each value separately; do not wrap the whole bullet / paragraph in one color
-- Enhanced layer (Block API post-processing) should use colored text styles first (L1), and only fall back to direction markers (L2) or plain labels (L3) when Block API styling fails.
+- Enhanced layer (Block API post-processing) should use colored text styles first (L1), keep only styled numeric values, and fall back to direction markers (L2) or plain labels (L3) only when Block API styling fails.
 - L1/L2 must not stack on the same value. If Enhanced Layer runs, strip existing Base Layer markers such as `↑` / `↓` / `↗` / `↘` / `➖` before applying L1 styling.
 - Only mark as significant when significance is supported by the source:
   - preferred: p-value is present
