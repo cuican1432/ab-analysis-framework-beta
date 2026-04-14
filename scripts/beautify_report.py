@@ -51,6 +51,8 @@ SIG_STYLES: dict[str, dict[str, Any]] = {
     "pos": {"bold": True, "text_color": COLOR_GREEN, "background_color": 4},
     "neg": {"bold": True, "text_color": COLOR_DARK_RED, "background_color": 1},
     "marginal": {"bold": True, "text_color": COLOR_ORANGE},
+    "marginal_pos": {"bold": True, "text_color": COLOR_ORANGE},
+    "marginal_neg": {"bold": True, "text_color": COLOR_ORANGE},
     "ns": {"text_color": COLOR_GRAY},
 }
 # L2 fallback markers (Markdown/Base Layer). Use plain directional markers.
@@ -375,12 +377,26 @@ def sig_tr(value: str, sig: str) -> dict[str, Any]:
 
 
 def sig_markdown(value: str, sig: str) -> str:
+    marker_map = {
+        "pos": "↑",
+        "neg": "↓",
+        "marginal_pos": "↗",
+        "marginal_neg": "↘",
+        "ns": "➖",
+    }
     if sig == "marginal":
-        return f"{'↘' if '-' in value else '↗'} {value}"
-    e = SIG_EMOJI.get(sig, "")
+        return f"[边际显著] {value}"
+    e = marker_map.get(sig) or SIG_EMOJI.get(sig, "")
     if e:
         return f"{e} {value}"
-    labels = {"pos": "正向显著", "neg": "负向显著", "marginal": "边际显著", "ns": "不显著"}
+    labels = {
+        "pos": "正向显著",
+        "neg": "负向显著",
+        "marginal": "边际显著",
+        "marginal_pos": "边际正向",
+        "marginal_neg": "边际负向",
+        "ns": "不显著",
+    }
     return f"[{labels.get(sig, sig)}] {value}"
 
 
@@ -624,6 +640,15 @@ def _normalize_elements_for_l1(elements: list[dict[str, Any]] | None) -> list[di
 
 
 def _infer_sig_from_text(text: str) -> str | None:
+    """
+    Infer significance styling from the already-written L2 marker.
+
+    The marker reflects business direction, not numeric direction:
+    - ↑ => favorable => green
+    - ↓ => unfavorable => red
+    - ↗/↘ => marginal => orange
+    - ➖ => not significant => gray
+    """
     s = (text or "").strip()
     if s.startswith("↑ "):
         return "pos"

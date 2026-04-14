@@ -112,6 +112,37 @@ L1 首选: Block API 颜色配套
 
 L2 降级标记 (仅在 L1 不可用时): ↑正向 / ↓负向 / ↗边际正向 / ↘边际负向 / ➖不显著
 
+### 3.4 方向标记语义规则（Polarity Convention）
+
+L2 方向标记（`↑/↓/↗/↘`）代表业务方向，不是数值方向：
+
+| 标记 | 含义 | 着色 |
+|---|---|---|
+| `↑` | 对业务有利（正向） | 绿色 (`color=4`, `bg=4`) |
+| `↓` | 对业务不利（负向） | 红色 (`color=1`, `bg=1`) |
+| `↗` | 边际正向 | 橙色 (`color=2`) |
+| `↘` | 边际负向 | 橙色 (`color=2`) |
+| `➖` | 不显著 | 灰色 (`color=7`) |
+
+对于反向指标（越低越好，如 `block/user`、`mute/user`、`report_rate`、`latency`、`crash_rate`）：
+- 数值下降 → 业务正向 → `↑ -X%`
+- 数值上升 → 业务负向 → `↓ +X%`
+
+这样 `beautify_report.py` 在着色时只需读取标记方向即可：`↑` = 绿，`↓` = 红，无需理解指标极性。
+
+### 3.5 着色粒度规则（Coloring Granularity）
+
+着色仅应用于数值 token（变化幅度、必要时的 p 值），不应用于指标名称或描述文字：
+
+| 元素 | Base Layer (L2) | Enhanced Layer (L1) |
+|---|---|---|
+| 指标名称 | 普通黑色文本 | 普通黑色文本 |
+| 数值（相对变化） | `↑ +0.35%` 前缀标记 | 绿色粗体+绿色底色 |
+| p 值 | 普通文本或同色 | 可同色（可选） |
+| 描述文字 | 普通黑色文本 | 普通黑色文本 |
+
+禁止：将整个 bullet point、整段结论、或整行表格用一个颜色包裹。
+
 L3 兜底纯文字 (仅在 L1+L2 都不可用时): [正向显著] / [负向显著] / [边际显著] / [不显著]
 
 Python 实现:
@@ -123,20 +154,20 @@ def sig_tr(value, sig):
         return tr(value, bold=True, color=4, bg_color=4)
     elif sig == "neg":
         return tr(value, bold=True, color=1, bg_color=1)
-    elif sig == "marginal":
+    elif sig in ("marginal", "marginal_pos", "marginal_neg"):
         return tr(value, bold=True, color=2)
     else:
         return tr(value, color=7)
 
 def sig_markdown(value, sig):
     """L2/L3 降级: Markdown fallback"""
-    emoji_map = {"pos": "↑", "neg": "↓", "ns": "➖"}
-    label_map = {"pos": "[正向显著]", "neg": "[负向显著]", "marginal": "[边际显著]", "ns": "[不显著]"}
+    marker_map = {"pos": "↑", "neg": "↓", "marginal_pos": "↗", "marginal_neg": "↘", "ns": "➖"}
+    label_map = {"pos": "[正向显著]", "neg": "[负向显著]", "marginal": "[边际显著]", "marginal_pos": "[边际正向]", "marginal_neg": "[边际负向]", "ns": "[不显著]"}
     if sig == "marginal":
-        return f"{'↘' if '-' in value else '↗'} {value}"  # L2
-    emoji = emoji_map.get(sig, "")
-    if emoji:
-        return f"{emoji} {value}"  # L2
+        return f"{label_map['marginal']} {value}"  # L3 to avoid guessing business direction from numeric sign
+    marker = marker_map.get(sig, "")
+    if marker:
+        return f"{marker} {value}"  # L2
     return f"{label_map.get(sig, '')} {value}"  # L3
 ```
 
