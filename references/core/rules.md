@@ -16,6 +16,23 @@ Maintainer-owned. Do not casually change this section.
 
 Framework defaults live here. These rules are stable and should be changed carefully, but they are not as absolute as the hard rules above.
 
+### Instruction Precedence
+
+Use this precedence when instructions conflict:
+
+1. `Hard Rules`
+2. the user's current prompt / current-run explicit instruction
+3. current-run temporary guidance
+4. reusable user overrides in `userdata/ab-analysis-framework-beta/custom_rules/*`
+5. framework default rules in this file and `runbook.md`
+6. stored glossary / KB defaults such as base priority, aliases, or interpretation hints
+
+Practical reading:
+
+- if the user asks for a different report structure, emphasis, wording style, or temporary interpretation preference, follow it by default
+- unless it violates `Hard Rules`, causes fabrication, or conflicts with explicit source facts
+- reusable `custom_rules` are long-term defaults, but the current prompt still wins for the current run
+
 ### Priority of Truth
 
 Use this default priority:
