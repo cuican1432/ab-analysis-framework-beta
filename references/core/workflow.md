@@ -36,7 +36,7 @@ Use this default order for experiment analysis:
    - Missing required fields stay `not found`.
    - If PRD and Raw Data conflict, show both and mark `to confirm`.
 4. Extract metric-level evidence fields when the source exposes them.
-   - For every metric that will be marked as significant (✅/🔻 or Block API L1 coloring), capture this minimum evidence set:
+   - For every metric that will be marked as significant (`↑` / `↓` / `↗` / `↘` or Block API L1 coloring), capture this minimum evidence set:
      - metric (full name from Raw Data)
      - delta (relative and/or absolute)
      - p_value (required to claim significance; if missing, the metric can only be described directionally)
@@ -46,6 +46,9 @@ Use this default order for experiment analysis:
    - If p_value is missing, do not claim significance even if the source uses words like "显著"; add it into `to confirm`.
 5. Consult the glossary and KB.
    - Disambiguate metric names, metric groups, business-domain terms, and caliber rules.
+   - Resolve `userdata/...` and `references/...` paths relative to the skill install root (zip root), not the workspace/sandbox CWD.
+   - Use `references/knowledge/glossary/index.md` and `references/knowledge/kb/index.md` as the reading-order entry pages.
+   - If live `userdata/ab-knowledge-builder-beta/*` is unavailable, fall back to `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`.
 6. Read the PRD carefully.
    - Identify target metrics, guardrails, mechanism clues, and experiment object details.
 7. Build the recall set.
