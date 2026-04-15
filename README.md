@@ -65,6 +65,10 @@ The simplest validation flow is:
 3. Pass the `PRD` link and `Raw Data` link directly into the skill.
 4. Check whether it can follow the doc-first path and produce a structured experiment report.
 
+Note (beautification):
+- Conclusion / Risk callouts render their own icon. Do not keep a leading inline status emoji (e.g. `💡`, `⚠️`) in the same line, or it may show as "double emoji".
+- The arrow reading guide line is included only when direction markers (e.g. `↑`, `↓`, `↗`, `↘`, `➖`) still appear in the final doc.
+
 你可以直接复制粘贴下面任意一个 prompt：
 
 ```text

@@ -488,6 +488,18 @@ def _is_report_reference_text(text: str) -> bool:
     return any(t.startswith(prefix) for prefix in prefixes)
 
 
+def _is_arrow_guide_reference_text(text: str) -> bool:
+    t = (text or "").strip()
+    if not t:
+        return False
+    if "方向标记说明" in t:
+        return True
+    # Heuristic: a single line explaining arrow meanings.
+    if ("↑" in t and "↓" in t and "↗" in t and "↘" in t and "➖" in t and "不显著" in t):
+        return True
+    return False
+
+
 def _find_top_reference_block_indices(children: list[dict[str, Any]], top_n: int = 12) -> list[int]:
     matched: list[int] = []
     scan_children = children[:top_n]
@@ -527,21 +539,22 @@ def _clone_block_for_reference_container(block: dict[str, Any]) -> dict[str, Any
     return None
 
 
-def _build_reference_guide_blocks(reference_blocks: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+def _build_reference_guide_blocks(reference_blocks: list[dict[str, Any]] | None = None, include_arrow_guide: bool = True) -> list[dict[str, Any]]:
     blocks: list[dict[str, Any]] = []
     if reference_blocks:
         blocks.append(make_text([tr("报告说明 | 阅读指引", bold=True)]))
         blocks.extend(reference_blocks)
     else:
         blocks.append(make_text([tr("阅读指引 | Color Legend", bold=True)]))
-    blocks.append(
-        make_text(
-            [
-                tr("阅读指引：", bold=True),
-                tr("↑ = 业务正向显著 | ↓ = 业务负向显著 | ↗ = 边际正向 | ↘ = 边际负向 | ➖ = 不显著。方向标记反映业务含义（考虑极性），非原始数值符号。"),
-            ]
+    if include_arrow_guide:
+        blocks.append(
+            make_text(
+                [
+                    tr("阅读指引：", bold=True),
+                    tr("↑ = 业务正向显著 | ↓ = 业务负向显著 | ↗ = 边际正向 | ↘ = 边际负向 | ➖ = 不显著。方向标记反映业务含义（考虑极性），非原始数值符号。"),
+                ]
+            )
         )
-    )
     blocks.append(
         make_text(
             [
@@ -568,6 +581,7 @@ def create_color_legend(
     doc_id: str,
     parent_id: str,
     reference_blocks: list[dict[str, Any]] | None = None,
+    include_arrow_guide: bool = True,
     index: int = -1,
 ) -> str | None:
     """Create a single top guide container for report references + legend."""
@@ -575,7 +589,7 @@ def create_color_legend(
         token,
         doc_id,
         parent_id,
-        _build_reference_guide_blocks(reference_blocks),
+        _build_reference_guide_blocks(reference_blocks, include_arrow_guide=include_arrow_guide),
         index=index,
     )
 
@@ -668,7 +682,9 @@ def insert_section(token: str, doc_id: str, parent_id: str, title: str, blocks: 
 def insert_conclusion_callout(token: str, doc_id: str, parent_id: str, text_elements: list[dict[str, Any]], level: str = "positive") -> str | None:
     configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
     bg, border, emoji = configs.get(level, configs["positive"])
-    return create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(text_elements)])
+    # Avoid double icons: callout has its own emoji, so strip leading inline emoji in the text.
+    clean_elements = _strip_leading_status_emoji_from_elements(text_elements)
+    return create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)])
 
 
 def insert_attribution_chain(token: str, doc_id: str, parent_id: str, steps: list[tuple[str, list[dict[str, Any]]]]) -> None:
@@ -734,7 +750,8 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
                 continue
             configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
             bg, border, emoji = configs.get(level, configs["positive"])
-            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(elements)], index=idx)
+            clean_elements = _strip_leading_status_emoji_from_elements(elements)
+            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=idx)
             if not callout_id:
                 continue
             time.sleep(0.3)
@@ -760,6 +777,16 @@ def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
 SIG_MARKER_PREFIXES = ("↑ ", "↓ ", "↗ ", "↘ ", "➖ ")
 SIG_INLINE_RE = re.compile(r"(↑|↓|↗|↘|➖)\s*((?:[+-]\d[\d,]*(?:\.\d+)?%?)|不显著)")
 PLAIN_VALUE_RE = re.compile(r"([+-]\d[\d,]*(?:\.\d+)?%?)")
+
+
+def _doc_has_direction_markers(blocks: list[dict[str, Any]]) -> bool:
+    for b in blocks:
+        txt = _extract_block_plain_text(b)
+        if not txt:
+            continue
+        if SIG_INLINE_RE.search(txt):
+            return True
+    return False
 
 
 def _strip_sig_marker_prefix(text: str) -> str:
@@ -810,6 +837,40 @@ def _clone_text_run_with_content(el: dict[str, Any], content: str) -> dict[str, 
     out = json.loads(json.dumps(el))
     out.setdefault("text_run", {})
     out["text_run"]["content"] = content
+    return out
+
+
+def _strip_leading_status_emoji_from_elements(elements: list[dict[str, Any]] | None) -> list[dict[str, Any]]:
+    """
+    When a paragraph is upgraded into a callout, the callout already renders its own icon.
+    Strip leading inline status emoji (e.g. '💡', '⚠️') from the first text_run to avoid double icons.
+    """
+    if not elements:
+        return []
+    out = json.loads(json.dumps(elements))
+    emojis = ("💡", "⚠️", "🤖", "🚨")
+    for el in out:
+        trn = el.get("text_run")
+        if not isinstance(trn, dict):
+            continue
+        content = str(trn.get("content", ""))
+        if not content.strip():
+            continue
+        s = content.lstrip()
+        changed = False
+        while True:
+            removed = False
+            for e in emojis:
+                if s.startswith(e):
+                    s = s[len(e) :].lstrip()
+                    removed = True
+                    changed = True
+                    break
+            if not removed:
+                break
+        if changed:
+            trn["content"] = s
+        break
     return out
 
 
@@ -1009,7 +1070,13 @@ def _find_existing_legend_indices_from_blocks(
     return found
 
 
-def replace_color_legend(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> str | None:
+def replace_color_legend(
+    token: str,
+    doc_id: str,
+    parent_id: str,
+    children: list[dict[str, Any]],
+    include_arrow_guide: bool = True,
+) -> str | None:
     """
     Make legend insertion idempotent:
     - remove any existing top-of-doc legend/reference-like blocks first
@@ -1017,15 +1084,22 @@ def replace_color_legend(token: str, doc_id: str, parent_id: str, children: list
     - then insert exactly one enhanced guide container at index 0
     """
     reference_indices = _find_top_reference_block_indices(children)
-    reference_blocks = [_clone_block_for_reference_container(children[idx]) for idx in reference_indices]
-    reference_blocks = [b for b in reference_blocks if b is not None]
+    reference_blocks: list[dict[str, Any]] = []
+    for idx in reference_indices:
+        # Dedupe: if the input already contains an arrow-guide explanation line, drop it here
+        # and let the unified guide block decide whether to include it.
+        if _is_arrow_guide_reference_text(_extract_block_plain_text(children[idx])):
+            continue
+        cb = _clone_block_for_reference_container(children[idx])
+        if cb is not None:
+            reference_blocks.append(cb)
     indices = sorted(set(_find_existing_legend_indices(token, doc_id, parent_id, children) + reference_indices))
     for idx in sorted(indices, reverse=True):
         try:
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
         except Exception as e:
             logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
-    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, index=0)
+    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, include_arrow_guide=include_arrow_guide, index=0)
 
 
 def replace_color_legend_from_blocks(
@@ -1034,17 +1108,23 @@ def replace_color_legend_from_blocks(
     parent_id: str,
     children: list[dict[str, Any]],
     children_map: dict[str, list[dict[str, Any]]],
+    include_arrow_guide: bool = True,
 ) -> str | None:
     reference_indices = _find_top_reference_block_indices(children)
-    reference_blocks = [_clone_block_for_reference_container(children[idx]) for idx in reference_indices]
-    reference_blocks = [b for b in reference_blocks if b is not None]
+    reference_blocks: list[dict[str, Any]] = []
+    for idx in reference_indices:
+        if _is_arrow_guide_reference_text(_extract_block_plain_text(children[idx])):
+            continue
+        cb = _clone_block_for_reference_container(children[idx])
+        if cb is not None:
+            reference_blocks.append(cb)
     indices = sorted(set(_find_existing_legend_indices_from_blocks(children, children_map) + reference_indices))
     for idx in sorted(indices, reverse=True):
         try:
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
         except Exception as e:
             logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
-    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, index=0)
+    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, include_arrow_guide=include_arrow_guide, index=0)
 
 
 def _count_decorated_h2(children: list[dict[str, Any]]) -> int:
@@ -1315,16 +1395,30 @@ def main() -> int:
 
     already_beautified = existing["decorated_h2"] > 0
     if already_beautified and not args.force_reapply:
-        logger.info("Document already appears beautified; skip mutating beautification steps. Use --force-reapply to override.")
+        # Keep idempotency for heavy operations, but still refresh the top guide container so
+        # formatting rules (dedupe / arrow-guide conditional) can be applied on reruns.
+        legend_container_id: str | None = None
+        try:
+            include_arrow_guide = _doc_has_direction_markers(all_blocks if all_blocks else children)
+            if all_blocks and children_map:
+                legend_container_id = replace_color_legend_from_blocks(
+                    token, doc_id, parent_id, children, children_map, include_arrow_guide=include_arrow_guide
+                )
+            else:
+                legend_container_id = replace_color_legend(token, doc_id, parent_id, children, include_arrow_guide=include_arrow_guide)
+        except Exception as e:
+            logger.warning("Refresh top guide failed (degrade): %s", e)
         if args.cleanup_empty:
             try:
-                if all_blocks and children_map:
+                if legend_container_id:
+                    cleanup_first_placeholder_under_parent(token, doc_id, legend_container_id)
+                elif all_blocks and children_map:
                     cleanup_empty_blocks_from_blocks(token, doc_id, parent_id, children, children_map)
                 else:
                     cleanup_empty_blocks(token, doc_id, parent_id)
             except Exception as e:
                 logger.warning("Cleanup failed (degrade): %s", e)
-        logger.info("Beautification skipped (already beautified). API calls: %d", _call_count)
+        logger.info("Beautification skipped (already beautified; refreshed top guide). API calls: %d", _call_count)
         return 0
 
     if args.cleanup_empty:
@@ -1336,15 +1430,29 @@ def main() -> int:
         except Exception as e:
             logger.warning("Pre-cleanup failed (degrade): %s", e)
 
-    # Stage C+ Step 2: Replace any existing top legend, then insert exactly one enhanced legend.
-    legend_container_id: str | None = None
-    try:
-        if all_blocks and children_map:
-            legend_container_id = replace_color_legend_from_blocks(token, doc_id, parent_id, children, children_map)
-        else:
-            legend_container_id = replace_color_legend(token, doc_id, parent_id, children)
-    except Exception as e:
-        logger.warning("Insert legend failed (degrade): %s", e)
+    # Legend-only mode: only refresh/replace the top guide container and exit.
+    if args.legend_only:
+        legend_container_id: str | None = None
+        try:
+            include_arrow_guide = _doc_has_direction_markers(all_blocks if all_blocks else children)
+            if all_blocks and children_map:
+                legend_container_id = replace_color_legend_from_blocks(
+                    token, doc_id, parent_id, children, children_map, include_arrow_guide=include_arrow_guide
+                )
+            else:
+                legend_container_id = replace_color_legend(token, doc_id, parent_id, children, include_arrow_guide=include_arrow_guide)
+        except Exception as e:
+            logger.warning("Insert legend failed (degrade): %s", e)
+        if args.cleanup_empty:
+            try:
+                if legend_container_id:
+                    cleanup_first_placeholder_under_parent(token, doc_id, legend_container_id)
+                elif not (all_blocks and children_map):
+                    cleanup_empty_blocks(token, doc_id, parent_id)
+            except Exception as e:
+                logger.warning("Cleanup failed (degrade): %s", e)
+        logger.info("Legend-only done. API calls: %d", _call_count)
+        return 0
 
     # Stage C+ Step 2.5: Upgrade conclusion/risk plain paragraphs into callouts (best-effort).
     try:
@@ -1357,18 +1465,6 @@ def main() -> int:
             children = list(children_map.get(parent_id, [])) if children_map else children
     except Exception as e:
         logger.warning("Upgrade conclusion/risk callouts failed (degrade): %s", e)
-
-    if args.legend_only:
-        if args.cleanup_empty:
-            try:
-                if legend_container_id:
-                    cleanup_first_placeholder_under_parent(token, doc_id, legend_container_id)
-                elif not (all_blocks and children_map):
-                    cleanup_empty_blocks(token, doc_id, parent_id)
-            except Exception as e:
-                logger.warning("Cleanup failed (degrade): %s", e)
-        logger.info("Legend-only done. API calls: %d", _call_count)
-        return 0
 
     # Stage C+ Step 3: Beautify top-to-bottom (best-effort). Each step must degrade silently.
     if all_blocks and children_map:
@@ -1415,6 +1511,28 @@ def main() -> int:
             logger.info("Colorized table cells: %d", colored)
         except Exception as e:
             logger.warning("Colorize table cells failed (degrade): %s", e)
+
+    # Stage C+ Step 4: Replace top guide container AFTER beautification so we can
+    # decide whether to include the arrow guide line based on the final doc state.
+    legend_container_id: str | None = None
+    try:
+        refreshed_blocks = _get_all_blocks(token, doc_id)
+        refreshed_children_map = _build_children_map(refreshed_blocks) if refreshed_blocks else {}
+        refreshed_children = list(refreshed_children_map.get(parent_id, [])) if refreshed_children_map else children
+        include_arrow_guide = _doc_has_direction_markers(refreshed_blocks or refreshed_children)
+        if refreshed_blocks and refreshed_children_map:
+            legend_container_id = replace_color_legend_from_blocks(
+                token,
+                doc_id,
+                parent_id,
+                refreshed_children,
+                refreshed_children_map,
+                include_arrow_guide=include_arrow_guide,
+            )
+        else:
+            legend_container_id = replace_color_legend(token, doc_id, parent_id, refreshed_children, include_arrow_guide=include_arrow_guide)
+    except Exception as e:
+        logger.warning("Insert legend failed (degrade): %s", e)
 
     # Final: cleanup auto-generated empty placeholder blocks (best-effort, conservative).
     if args.cleanup_empty:
