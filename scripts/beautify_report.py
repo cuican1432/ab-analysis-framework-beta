@@ -477,30 +477,105 @@ def create_quote_container(token: str, doc_id: str, parent_id: str, children_blo
     return qid
 
 
-def create_color_legend(token: str, doc_id: str, parent_id: str, index: int = -1) -> str | None:
-    """Color legend using quote_container (block_type=34), per v1.2 spec."""
+def _is_report_reference_text(text: str) -> bool:
+    t = (text or "").strip()
+    t = t.lstrip("- ").strip()
+    if not t:
+        return False
+    if "本报告由 AI 基于 PRD 与 Raw Data 自动整理生成" in t:
+        return True
+    prefixes = ("PRD:", "Raw Data:", "数据日期:", "Run Signature:")
+    return any(t.startswith(prefix) for prefix in prefixes)
+
+
+def _find_top_reference_block_indices(children: list[dict[str, Any]], top_n: int = 12) -> list[int]:
+    matched: list[int] = []
+    scan_children = children[:top_n]
+    for idx, b in enumerate(scan_children):
+        if _is_report_reference_text(_extract_block_plain_text(b)):
+            matched.append(idx)
+    if not matched:
+        return []
+    start = matched[0]
+    end = matched[-1]
+    out: list[int] = []
+    for idx in range(start, end + 1):
+        b = scan_children[idx]
+        if b.get("block_type") == BLOCK_DIVIDER or _is_report_reference_text(_extract_block_plain_text(b)):
+            out.append(idx)
+    if start > 0 and scan_children[start - 1].get("block_type") == BLOCK_DIVIDER:
+        out.insert(0, start - 1)
+    if end + 1 < len(scan_children) and scan_children[end + 1].get("block_type") == BLOCK_DIVIDER:
+        out.append(end + 1)
+    return sorted(set(out))
+
+
+def _clone_block_for_reference_container(block: dict[str, Any]) -> dict[str, Any] | None:
+    btype = block.get("block_type")
+    if btype == BLOCK_TEXT:
+        return make_text((block.get("text") or {}).get("elements") or [])
+    if btype == BLOCK_BULLET:
+        return make_bullet((block.get("bullet") or {}).get("elements") or [])
+    if btype == BLOCK_ORDERED:
+        return make_ordered((block.get("ordered") or {}).get("elements") or [])
+    if btype == BLOCK_DIVIDER:
+        return make_divider()
+    if btype == BLOCK_H2:
+        return make_text((block.get("heading2") or {}).get("elements") or [])
+    if btype == BLOCK_H3:
+        return make_text((block.get("heading3") or {}).get("elements") or [])
+    return None
+
+
+def _build_reference_guide_blocks(reference_blocks: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    blocks: list[dict[str, Any]] = []
+    if reference_blocks:
+        blocks.append(make_text([tr("报告说明 | 阅读指引", bold=True)]))
+        blocks.extend(reference_blocks)
+    else:
+        blocks.append(make_text([tr("阅读指引 | Color Legend", bold=True)]))
+    blocks.append(
+        make_text(
+            [
+                tr("阅读指引：", bold=True),
+                tr("↑ = 业务正向显著 | ↓ = 业务负向显著 | ↗ = 边际正向 | ↘ = 边际负向 | ➖ = 不显著。方向标记反映业务含义（考虑极性），非原始数值符号。"),
+            ]
+        )
+    )
+    blocks.append(
+        make_text(
+            [
+                tr("样式示例：", bold=True),
+                sig_tr("+X.XX%", "pos"),
+                tr(" 正向显著（绿色粗体+绿色底色）"),
+                tr("    "),
+                sig_tr("-X.XX%", "neg"),
+                tr(" 负向显著（红色粗体+红色底色）"),
+                tr("    "),
+                sig_tr("+X.XX%", "marginal"),
+                tr(" 边际显著（橙色粗体）"),
+                tr("    "),
+                sig_tr("+X.XX%", "ns"),
+                tr(" 不显著（灰色）"),
+            ]
+        )
+    )
+    return blocks
+
+
+def create_color_legend(
+    token: str,
+    doc_id: str,
+    parent_id: str,
+    reference_blocks: list[dict[str, Any]] | None = None,
+    index: int = -1,
+) -> str | None:
+    """Create a single top guide container for report references + legend."""
     return create_quote_container(
         token,
         doc_id,
         parent_id,
-        [
-            make_text([tr("阅读指引 | Color Legend", bold=True)]),
-            make_text(
-                [
-                    sig_tr("+X.XX%", "pos"),
-                    tr(" 正向显著（绿色粗体+绿色底色）"),
-                    tr("    "),
-                    sig_tr("-X.XX%", "neg"),
-                    tr(" 负向显著（红色粗体+红色底色）"),
-                    tr("    "),
-                    sig_tr("+X.XX%", "marginal"),
-                    tr(" 边际显著（橙色粗体）"),
-                    tr("    "),
-                    sig_tr("+X.XX%", "ns"),
-                    tr(" 不显著（灰色）"),
-                ]
-            ),
-        ],
+        _build_reference_guide_blocks(reference_blocks),
         index=index,
     )
 
@@ -684,6 +759,7 @@ def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
 
 SIG_MARKER_PREFIXES = ("↑ ", "↓ ", "↗ ", "↘ ", "➖ ")
 SIG_INLINE_RE = re.compile(r"(↑|↓|↗|↘|➖)\s*((?:[+-]\d[\d,]*(?:\.\d+)?%?)|不显著)")
+PLAIN_VALUE_RE = re.compile(r"([+-]\d[\d,]*(?:\.\d+)?%?)")
 
 
 def _strip_sig_marker_prefix(text: str) -> str:
@@ -737,6 +813,46 @@ def _clone_text_run_with_content(el: dict[str, Any], content: str) -> dict[str, 
     return out
 
 
+def _infer_sig_from_context(content: str, start: int, end: int) -> str | None:
+    """
+    Infer inline significance from nearby wording when the numeric token has no arrow marker.
+
+    Examples:
+    - `出现 -0.1479% 的显著下降`
+    - `显著负向（-1.0891%，p=0.040）`
+    """
+    before = content[max(0, start - 24) : start]
+    after = content[end : min(len(content), end + 24)]
+    window = f"{before}{after}"
+    if "不显著" in window:
+        return "ns"
+    neg_cues = ("显著下降", "显著负向", "负向显著", "显著下滑", "显著降低", "显著回落")
+    if any(cue in window for cue in neg_cues):
+        return "neg"
+    pos_cues = ("显著提升", "显著增长", "显著上升", "显著正向", "正向显著", "显著改善", "显著增加")
+    if any(cue in window for cue in pos_cues):
+        return "pos"
+    marginal_neg_cues = ("边际负向", "边际下降", "边际下滑")
+    if any(cue in window for cue in marginal_neg_cues):
+        return "marginal_neg"
+    marginal_pos_cues = ("边际正向", "边际提升", "边际增长")
+    if any(cue in window for cue in marginal_pos_cues):
+        return "marginal_pos"
+    if "边际显著" in window:
+        return "marginal"
+    return None
+
+
+def _find_next_contextual_value_match(content: str, start: int, end_limit: int | None = None) -> tuple[re.Match[str], str] | None:
+    for m in PLAIN_VALUE_RE.finditer(content, start):
+        if end_limit is not None and m.start() >= end_limit:
+            break
+        sig = _infer_sig_from_context(content, m.start(1), m.end(1))
+        if sig is not None:
+            return m, sig
+    return None
+
+
 def _colorize_inline_elements(elements: list[dict[str, Any]] | None) -> tuple[list[dict[str, Any]], bool]:
     """
     Convert inline L2 markers inside a text-like block into L1-styled numeric values.
@@ -756,15 +872,36 @@ def _colorize_inline_elements(elements: list[dict[str, Any]] | None) -> tuple[li
         content = str(trn.get("content", ""))
         last = 0
         local_changed = False
-        for m in SIG_INLINE_RE.finditer(content):
-            start, end = m.span()
-            if start > last:
-                out.append(_clone_text_run_with_content(el, content[last:start]))
-            marker, value = m.group(1), m.group(2)
-            # Body context: keep the arrow marker visible; tables strip markers separately.
-            out.append(sig_tr(f"{marker} {value}", _sig_from_marker(marker)))
-            last = end
-            local_changed = True
+        while True:
+            marker_match = SIG_INLINE_RE.search(content, last)
+            contextual = _find_next_contextual_value_match(
+                content,
+                last,
+                marker_match.start() if marker_match else None,
+            )
+            use_marker = marker_match is not None and (
+                contextual is None or marker_match.start() <= contextual[0].start()
+            )
+            if use_marker:
+                start, end = marker_match.span()
+                if start > last:
+                    out.append(_clone_text_run_with_content(el, content[last:start]))
+                value = marker_match.group(2)
+                # Enhanced Layer must not stack L2 arrows on top of L1 styles.
+                out.append(sig_tr(value, _sig_from_marker(marker_match.group(1))))
+                last = end
+                local_changed = True
+                continue
+            if contextual is not None:
+                m, sig = contextual
+                start, end = m.span(1)
+                if start > last:
+                    out.append(_clone_text_run_with_content(el, content[last:start]))
+                out.append(sig_tr(m.group(1), sig))
+                last = end
+                local_changed = True
+                continue
+            break
         if local_changed:
             if last < len(content):
                 out.append(_clone_text_run_with_content(el, content[last:]))
@@ -813,13 +950,13 @@ def _extract_block_plain_text(block: dict[str, Any]) -> str:
 
 def _is_legend_title_text(text: str) -> bool:
     t = (text or "").strip().lower()
-    return ("阅读指引" in t) or ("color legend" in t)
+    return ("阅读指引" in t) or ("color legend" in t) or ("报告说明" in t) or ("report reference" in t)
 
 
 def _find_existing_legend_indices(
     token: str,
     doc_id: str,
-    parent_id: str,
+    _parent_id: str,
     children: list[dict[str, Any]],
     top_n: int | None = None,
 ) -> list[int]:
@@ -875,16 +1012,20 @@ def _find_existing_legend_indices_from_blocks(
 def replace_color_legend(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> str | None:
     """
     Make legend insertion idempotent:
-    - remove any existing top-of-doc legend-like blocks first
-    - then insert exactly one enhanced legend at index 0
+    - remove any existing top-of-doc legend/reference-like blocks first
+    - merge any detected report reference lines into the same top guide container
+    - then insert exactly one enhanced guide container at index 0
     """
-    indices = _find_existing_legend_indices(token, doc_id, parent_id, children)
+    reference_indices = _find_top_reference_block_indices(children)
+    reference_blocks = [_clone_block_for_reference_container(children[idx]) for idx in reference_indices]
+    reference_blocks = [b for b in reference_blocks if b is not None]
+    indices = sorted(set(_find_existing_legend_indices(token, doc_id, parent_id, children) + reference_indices))
     for idx in sorted(indices, reverse=True):
         try:
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
         except Exception as e:
             logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
-    return create_color_legend(token, doc_id, parent_id, index=0)
+    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, index=0)
 
 
 def replace_color_legend_from_blocks(
@@ -894,13 +1035,16 @@ def replace_color_legend_from_blocks(
     children: list[dict[str, Any]],
     children_map: dict[str, list[dict[str, Any]]],
 ) -> str | None:
-    indices = _find_existing_legend_indices_from_blocks(children, children_map)
+    reference_indices = _find_top_reference_block_indices(children)
+    reference_blocks = [_clone_block_for_reference_container(children[idx]) for idx in reference_indices]
+    reference_blocks = [b for b in reference_blocks if b is not None]
+    indices = sorted(set(_find_existing_legend_indices_from_blocks(children, children_map) + reference_indices))
     for idx in sorted(indices, reverse=True):
         try:
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
         except Exception as e:
             logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
-    return create_color_legend(token, doc_id, parent_id, index=0)
+    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, index=0)
 
 
 def _count_decorated_h2(children: list[dict[str, Any]]) -> int:

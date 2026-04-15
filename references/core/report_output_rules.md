@@ -51,16 +51,21 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 ### Document Header Block | 文档头部信息
 
 - Near the beginning of the doc (right after `总结论 / 总建议`), include a small professional reference block.
+- Prefer a single merged top block that combines:
+  - generation note / report reference
+  - PRD / Raw Data / data date / run signature
+  - reading guide / legend
 - Recommended fields:
   - generation note: `本报告由 AI 基于 PRD 与 Raw Data 自动整理生成，结论以引用数据和原始报告为准。`
-  - PRD reference: link or doc title
-  - Raw Data reference: link or doc title
+  - PRD reference: clickable link when URL is available; otherwise doc title
+  - Raw Data reference: clickable link when URL is available; otherwise doc title
   - optional: data date range / generation time / source_hash
 - Keep the wording professional and concise. Do not expose framework-internal terms in this block.
 
 ### Legend Discipline | 图例纪律
 
 - Base Layer should emit at most one legend / reading guide block in the whole document.
+- Do not emit a separate standalone legend block when the same information can be merged into the top reference block.
 - Do not output multiple legend variants (for example both an inline blockquote version and a later H2+table version).
 - If Enhanced Layer runs, the packaged beautification script owns legend replacement and deduplication.
 

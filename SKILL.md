@@ -33,6 +33,7 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - Keep attribution evidence-bound. No unsupported psych speculation.
 - Fully disclose significant movements of core secondary metrics; do not hide them because they are not the headline metric.
 - Before writing `实验背景与设计`, extract required setup/config fields from the source header verbatim. Missing fields must be `not found`; PRD/Raw Data conflicts must be shown side-by-side with `to confirm`.
+- Near the beginning of the report, keep the document reference fields (`generation note`, `PRD`, `Raw Data`, `数据日期`, `Run Signature`) in one compact block, and prefer clickable links for `PRD` / `Raw Data` when URLs are available.
 - Do not truncate the raw detail tables in `## 数据附录 (Data Appendix)`. Follow the fallback chain in `references/core/report_output_rules.md`.
 - For detailed output/formatting/appendix rules, use `references/core/report_output_rules.md` as the single source of truth.
 - Enhanced Layer (auto when token available): after the base report is written, if a valid Block API token is available, apply the Enhanced Layer rules in `references/core/beautification_spec_v1.2.md` without changing report structure ("V3 Clean"). If Block API is not available, keep Base Layer Markdown output only.
