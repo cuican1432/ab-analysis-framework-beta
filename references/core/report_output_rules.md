@@ -50,7 +50,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 
 ### Document Header Block | 文档头部信息
 
-- Near the beginning of the doc (right after `总结论 / 总建议`), include a small professional reference block.
+- Place the reference block at the very top of the doc body, right after the H1 title and BEFORE `总结论 / 总建议`.
 - Prefer a single merged top block that combines:
   - generation note / report reference
   - PRD / Raw Data / data date / run signature
@@ -65,13 +65,19 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 ### Legend Discipline | 图例纪律
 
 - Base Layer should emit at most one legend / reading guide block in the whole document.
+- Base Layer should NOT emit a separate `## 阅读指引 | Color Legend` section.
+- Base Layer keeps inline direction markers (`↑` / `↓` / `↗` / `↘` / `➖`) and may explain them in the top reference block only.
 - Do not emit a separate standalone legend block when the same information can be merged into the top reference block.
 - Do not output multiple legend variants (for example both an inline blockquote version and a later H2+table version).
 - If Enhanced Layer runs, the packaged beautification script owns legend replacement and deduplication.
+- Enhanced Layer should replace the top reference block with one unified guide container:
+  - keep generation note / PRD / Raw Data / data date / run signature
+  - keep arrow-guide text only when direction markers still exist in the final doc body
+  - otherwise remove the arrow-guide text and keep only the color-style legend
 
 ### Run Signature | 运行签名（防上下文污染）
 
-- Always include a short `Run Signature` block near the beginning of the report (after `总结论/总建议`).
+- Always include a short `Run Signature` block near the beginning of the report, inside the top reference block before `总结论/总建议`.
 - Include:
   - PRD URL, Raw Data URL
   - `source_hash` (hash of normalized URLs + extracted header/config snapshot)

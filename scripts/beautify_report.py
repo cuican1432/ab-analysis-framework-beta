@@ -500,11 +500,16 @@ def _is_arrow_guide_reference_text(text: str) -> bool:
     return False
 
 
-def _find_top_reference_block_indices(children: list[dict[str, Any]], top_n: int = 12) -> list[int]:
+def _is_top_guide_reference_text(text: str) -> bool:
+    t = (text or "").strip()
+    return _is_report_reference_text(t) or _is_arrow_guide_reference_text(t) or _is_legend_title_text(t) or ("样式示例" in t)
+
+
+def _find_top_reference_block_indices(children: list[dict[str, Any]], top_n: int = 15) -> list[int]:
     matched: list[int] = []
     scan_children = children[:top_n]
     for idx, b in enumerate(scan_children):
-        if _is_report_reference_text(_extract_block_plain_text(b)):
+        if _is_top_guide_reference_text(_extract_block_plain_text(b)):
             matched.append(idx)
     if not matched:
         return []
@@ -513,13 +518,25 @@ def _find_top_reference_block_indices(children: list[dict[str, Any]], top_n: int
     out: list[int] = []
     for idx in range(start, end + 1):
         b = scan_children[idx]
-        if b.get("block_type") == BLOCK_DIVIDER or _is_report_reference_text(_extract_block_plain_text(b)):
+        if b.get("block_type") == BLOCK_DIVIDER or _is_top_guide_reference_text(_extract_block_plain_text(b)):
             out.append(idx)
     if start > 0 and scan_children[start - 1].get("block_type") == BLOCK_DIVIDER:
         out.insert(0, start - 1)
     if end + 1 < len(scan_children) and scan_children[end + 1].get("block_type") == BLOCK_DIVIDER:
         out.append(end + 1)
     return sorted(set(out))
+
+
+def _find_insertion_index_after_h1(children: list[dict[str, Any]]) -> int:
+    """
+    Insert the guide container after the document H1 title.
+
+    Fallback to index 1 to avoid prepending ahead of the leading title-like block.
+    """
+    for i, blk in enumerate(children):
+        if blk.get("block_type") == 3:
+            return i + 1
+    return 1 if children else 0
 
 
 def _clone_block_for_reference_container(block: dict[str, Any]) -> dict[str, Any] | None:
@@ -721,9 +738,8 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
     - startswith '💡' or contains '结论：'
     - startswith '⚠️' or contains '风险：'
     """
-    patched = 0
-    # Work from bottom to top to reduce index shifting impact.
-    for blk in list(reversed(children)):
+    targets: list[tuple[int, str, list[dict[str, Any]], str]] = []
+    for idx, blk in enumerate(children):
         if blk.get("block_type") != BLOCK_TEXT:
             continue
         bid = blk.get("block_id")
@@ -739,27 +755,45 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
             level = "positive"
         elif text.startswith("⚠️") or "风险：" in text:
             level = "warning"
-        else:
-            continue
+        if level is not None:
+            targets.append((idx, bid, elements, level))
 
-        # Create callout at the current index, then delete the original text block by id.
+    if not targets:
+        return 0
+
+    created: list[tuple[str, str]] = []
+    configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+    for orig_idx, bid, elements, level in reversed(targets):
         try:
-            kids = _get_parent_children(token, doc_id, parent_id)
-            idx = next((i for i, b in enumerate(kids) if b.get("block_id") == bid), None)
-            if idx is None:
-                continue
-            configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
             bg, border, emoji = configs.get(level, configs["positive"])
             clean_elements = _strip_leading_status_emoji_from_elements(elements)
-            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=idx)
-            if not callout_id:
-                continue
-            time.sleep(0.3)
-            # Delete the original text block.
-            if _delete_child_block_by_id(token, doc_id, parent_id, bid):
-                patched += 1
+            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=orig_idx)
+            if callout_id:
+                created.append((bid, callout_id))
         except Exception as e:
-            logger.warning("Upgrade callout failed (degrade): %s", e)
+            logger.warning("Upgrade callout create failed for %s (degrade): %s", bid, e)
+
+    if not created:
+        return 0
+
+    time.sleep(0.2)
+    kids = _get_parent_children(token, doc_id, parent_id)
+    orig_ids = {orig_bid for orig_bid, _ in created}
+    indices_to_delete = [i for i, b in enumerate(kids) if b.get("block_id") in orig_ids]
+    for idx in sorted(indices_to_delete, reverse=True):
+        try:
+            _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
+        except Exception as e:
+            logger.warning("Upgrade callout delete failed at index %d (degrade): %s", idx, e)
+
+    time.sleep(0.15)
+    remaining = {b.get("block_id") for b in _get_parent_children(token, doc_id, parent_id)}
+    for orig_bid, _ in created:
+        if orig_bid in remaining and _delete_child_block_by_id(token, doc_id, parent_id, orig_bid):
+            remaining.discard(orig_bid)
+    patched = sum(1 for orig_bid, _ in created if orig_bid not in remaining)
+    if patched < len(created):
+        logger.warning("Upgrade callout partial delete: created=%d, removed=%d", len(created), patched)
     return patched
 
 
@@ -1099,7 +1133,16 @@ def replace_color_legend(
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
         except Exception as e:
             logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
-    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, include_arrow_guide=include_arrow_guide, index=0)
+    kept_children = [b for i, b in enumerate(children) if i not in set(indices)]
+    insert_idx = _find_insertion_index_after_h1(kept_children)
+    return create_color_legend(
+        token,
+        doc_id,
+        parent_id,
+        reference_blocks=reference_blocks,
+        include_arrow_guide=include_arrow_guide,
+        index=insert_idx,
+    )
 
 
 def replace_color_legend_from_blocks(
@@ -1124,7 +1167,16 @@ def replace_color_legend_from_blocks(
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
         except Exception as e:
             logger.warning("Delete existing legend at index %d failed (degrade): %s", idx, e)
-    return create_color_legend(token, doc_id, parent_id, reference_blocks=reference_blocks, include_arrow_guide=include_arrow_guide, index=0)
+    kept_children = [b for i, b in enumerate(children) if i not in set(indices)]
+    insert_idx = _find_insertion_index_after_h1(kept_children)
+    return create_color_legend(
+        token,
+        doc_id,
+        parent_id,
+        reference_blocks=reference_blocks,
+        include_arrow_guide=include_arrow_guide,
+        index=insert_idx,
+    )
 
 
 def _count_decorated_h2(children: list[dict[str, Any]]) -> int:
