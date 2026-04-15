@@ -151,6 +151,11 @@ def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]
         r = _api(token, "PATCH", url, {"requests": chunk})
         if r.get("code") not in (0, "0", None):
             logger.warning("batch_update chunk %d-%d failed: %s", i, i + len(chunk), str(r.get("msg", ""))[:120])
+            # Fallback: retry each request individually (best-effort).
+            for req in chunk:
+                r2 = _api(token, "PATCH", url, {"requests": [req]})
+                if r2.get("code") in (0, "0", None):
+                    updated += 1
             continue
         updated += len(chunk)
     return updated
@@ -591,6 +596,74 @@ def insert_conclusion_callout(token: str, doc_id: str, parent_id: str, text_elem
 def insert_attribution_chain(token: str, doc_id: str, parent_id: str, steps: list[tuple[str, list[dict[str, Any]]]]) -> None:
     blocks = [make_ordered([tr(label, bold=True), tr("：")] + elems) for label, elems in steps]
     _post_children(token, doc_id, parent_id, blocks)
+
+
+def _get_parent_children(token: str, doc_id: str, parent_id: str) -> list[dict[str, Any]]:
+    rr = _get_children(token, doc_id, parent_id)
+    if rr.get("code") not in (0, "0", None):
+        return []
+    return [_unwrap_block(it) for it in list((rr.get("data") or {}).get("items") or [])]
+
+
+def _delete_child_block_by_id(token: str, doc_id: str, parent_id: str, target_block_id: str) -> bool:
+    # Index-based delete is the only API we use here, so re-fetch to locate the latest index.
+    for _ in range(2):
+        kids = _get_parent_children(token, doc_id, parent_id)
+        idx = next((i for i, b in enumerate(kids) if b.get("block_id") == target_block_id), None)
+        if idx is None:
+            return True
+        _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
+        time.sleep(0.15)
+    return False
+
+
+def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> int:
+    """
+    Upgrade plain-paragraph conclusion/risk lines into Callout blocks.
+
+    Trigger patterns (Base Layer):
+    - startswith '🤖' or contains '结论：'
+    - startswith '🚨' or contains '风险：'
+    """
+    patched = 0
+    # Work from bottom to top to reduce index shifting impact.
+    for blk in list(reversed(children)):
+        if blk.get("block_type") != BLOCK_TEXT:
+            continue
+        bid = blk.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        elements = (blk.get("text") or {}).get("elements") or []
+        text = _extract_plain_text(elements).strip()
+        if not text:
+            continue
+
+        level: str | None = None
+        if text.startswith("🤖") or "结论：" in text:
+            level = "positive"
+        elif text.startswith("🚨") or "风险：" in text:
+            level = "warning"
+        else:
+            continue
+
+        # Create callout at the current index, then delete the original text block by id.
+        try:
+            kids = _get_parent_children(token, doc_id, parent_id)
+            idx = next((i for i, b in enumerate(kids) if b.get("block_id") == bid), None)
+            if idx is None:
+                continue
+            configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+            bg, border, emoji = configs.get(level, configs["positive"])
+            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(elements)], index=idx)
+            if not callout_id:
+                continue
+            time.sleep(0.3)
+            # Delete the original text block.
+            if _delete_child_block_by_id(token, doc_id, parent_id, bid):
+                patched += 1
+        except Exception as e:
+            logger.warning("Upgrade callout failed (degrade): %s", e)
+    return patched
 
 
 def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
@@ -1122,6 +1195,18 @@ def main() -> int:
             legend_container_id = replace_color_legend(token, doc_id, parent_id, children)
     except Exception as e:
         logger.warning("Insert legend failed (degrade): %s", e)
+
+    # Stage C+ Step 2.5: Upgrade conclusion/risk plain paragraphs into callouts (best-effort).
+    try:
+        upgraded = upgrade_conclusion_risk_to_callouts(token, doc_id, parent_id, children)
+        if upgraded:
+            logger.info("Upgraded conclusion/risk callouts: %d", upgraded)
+            # Refresh blocks after structural mutation so batch updates don't target stale block_ids.
+            all_blocks = _get_all_blocks(token, doc_id)
+            children_map = _build_children_map(all_blocks) if all_blocks else {}
+            children = list(children_map.get(parent_id, [])) if children_map else children
+    except Exception as e:
+        logger.warning("Upgrade conclusion/risk callouts failed (degrade): %s", e)
 
     if args.legend_only:
         if args.cleanup_empty:
