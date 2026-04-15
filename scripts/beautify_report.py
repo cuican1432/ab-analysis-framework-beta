@@ -583,7 +583,7 @@ def insert_section(token: str, doc_id: str, parent_id: str, title: str, blocks: 
 
 
 def insert_conclusion_callout(token: str, doc_id: str, parent_id: str, text_elements: list[dict[str, Any]], level: str = "positive") -> str | None:
-    configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+    configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
     bg, border, emoji = configs.get(level, configs["positive"])
     return create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(text_elements)])
 
@@ -740,7 +740,7 @@ def _is_legend_title_text(text: str) -> bool:
 def _find_existing_legend_indices(
     token: str,
     doc_id: str,
-    parent_id: str,
+    _parent_id: str,
     children: list[dict[str, Any]],
     top_n: int | None = None,
 ) -> list[int]:

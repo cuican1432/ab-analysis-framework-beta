@@ -19,8 +19,8 @@ Supported patterns (examples):
 | Significant negative | direction marker | `↓ -0.1484%` |
 | Marginal result | direction marker | `↗ +0.0613%` / `↘ -0.0584%` |
 | Not significant | marker/text | `➖ 不显著` |
-| Conclusion highlight | blockquote + emoji + bold | `> 🤖 **结论：...**` |
-| Risk highlight | blockquote + emoji + bold | `> 🚨 **风险：...**` |
+| Conclusion highlight | plain paragraph + emoji + bold | `💡 **结论：...**` |
+| Risk highlight | plain paragraph + emoji + bold | `⚠️ **风险：...**` |
 | To confirm | blockquote + emoji + bold | `> 📝 **To Confirm**：...` |
 | Divider | `---` | `---` |
 
@@ -78,6 +78,9 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - Use standard Markdown tables (they may be converted into native tables by Feishu automatically).
 - Do NOT use Markdown code blocks for tables.
 - Avoid too-wide tables; split into sub-tables when columns exceed 6.
+- `不显著` does NOT mean empty.
+  - If the source provides relative change / absolute change / CI / p-value, keep those values even when the judgment is `不显著`.
+  - Use `—` only when the source field is truly missing or unavailable.
 
 ### Coloring | 染色
 
@@ -168,9 +171,10 @@ Terminology mapping (user-facing):
 
 ### Callouts | 高亮块
 
-- Use blockquote + emoji + bold:
-  - conclusion / core insights: `> 🤖 **结论：...**`
-  - risk / warning: `> 🚨 **风险：...**`
+- Do NOT use Markdown blockquote (`>`) for conclusion / risk highlights in the Base Layer.
+- Use plain paragraph + emoji + bold:
+  - conclusion / core insights: `💡 **结论：...**`
+  - risk / warning: `⚠️ **风险：...**`
 
 ### To Confirm | 待确认清单
 
@@ -191,3 +195,5 @@ Terminology mapping (user-facing):
   1. Copy/export the full raw tables into the appendix without summarization, and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
   2. Link-type lowest-fidelity fallback: if full-table copy/export is not possible, place direct links to the raw doc tables (or table nodes / screenshots) and list the missing tables and reasons. This still enables review to open the original evidence.
   3. Manual fallback (last resort): manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
+- When cloning or manually rebuilding appendix rows, do NOT drop numeric fields simply because a row is `不显著`.
+  - Preserve relative change, absolute change, 95% CI, and p-value whenever the source exposes them.

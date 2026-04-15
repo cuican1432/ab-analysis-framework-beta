@@ -46,7 +46,7 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - recall core-flag metric groups by default, especially any group marked as company-core, business-core, or sub-business-core
 - identify the experiment's primary business domain first, then apply domain-first recall before ordering metric groups
 - perform attribution, risk review, and evidence-boundary labeling when needed
-- output a structured experiment report as a Feishu/Lark doc using standard Markdown (tables, direction markers, blockquotes, bold) rather than scattered analysis fragments
+- output a structured experiment report as a Feishu/Lark doc using standard Markdown (tables, direction markers, bold emphasis) rather than scattered analysis fragments
 
 ### Beautification Rules (Auto When Token Available) | 美化规则（有 token 自动执行）
 
@@ -87,9 +87,11 @@ MUST DO:
 - ✅ significance marking: L1 (color+bold+bg) > L2 (direction markers: `↑` / `↓` / `↗` / `↘` / `➖`) > L3 (plain labels)
 - ✅ format split: Base Layer Markdown uses `↑` / `↓` / `↗` / `↘` / `➖`; Enhanced Layer L1 removes those markers and keeps only styled `+/-` numeric values
 - ✅ summary tables: 3 columns; appendix tables: 5 columns; row_count <= 8 (split when needed)
+- ✅ even when a metric is `不显著`, keep relative change / absolute change / CI / p-value whenever the source provides them; `—` only means the source value is truly missing
 - ✅ experiment info: inline text (bold key + value)
 - ✅ degrade silently when Block API fails
 - ✅ emit at most one legend / reading-guide block in Base Layer; let the packaged beautification script own legend replacement/deduplication
+- ✅ use plain paragraph emphasis for conclusion / risk highlights (for example `💡 **结论：...**` / `⚠️ **风险：...**`), not Markdown blockquote
 
 MUST NOT:
 
