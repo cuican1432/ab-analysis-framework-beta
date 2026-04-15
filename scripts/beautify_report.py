@@ -614,7 +614,9 @@ def _delete_child_block_by_id(token: str, doc_id: str, parent_id: str, target_bl
             return True
         _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
         time.sleep(0.15)
-    return False
+    # Final verification: the delete may have succeeded but index was stale during retries.
+    kids = _get_parent_children(token, doc_id, parent_id)
+    return not any(b.get("block_id") == target_block_id for b in kids)
 
 
 def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> int:
@@ -756,7 +758,8 @@ def _colorize_inline_elements(elements: list[dict[str, Any]] | None) -> tuple[li
             if start > last:
                 out.append(_clone_text_run_with_content(el, content[last:start]))
             marker, value = m.group(1), m.group(2)
-            out.append(sig_tr(value, _sig_from_marker(marker)))
+            # Body context: keep the arrow marker visible; tables strip markers separately.
+            out.append(sig_tr(f"{marker} {value}", _sig_from_marker(marker)))
             last = end
             local_changed = True
         if local_changed:
