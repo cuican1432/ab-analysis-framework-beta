@@ -53,8 +53,8 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - Near the beginning of the doc (right after `总结论 / 总建议`), include a small professional reference block.
 - Recommended fields:
   - generation note: `本报告由 AI 基于 PRD 与 Raw Data 自动整理生成，结论以引用数据和原始报告为准。`
-  - PRD reference: link or doc title
-  - Raw Data reference: link or doc title
+  - PRD reference: clickable link when URL is available; otherwise doc title
+  - Raw Data reference: clickable link when URL is available; otherwise doc title
   - optional: data date range / generation time / source_hash
 - Keep the wording professional and concise. Do not expose framework-internal terms in this block.
 

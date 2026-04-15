@@ -457,6 +457,9 @@ def create_callout(
         return None
     cid = r["data"]["children"][0]["block_id"]
     _post_children(token, doc_id, cid, children_blocks)
+    # Feishu may leave an auto-generated empty first child under new callouts.
+    # Clean it up immediately so conclusion/risk callouts do not render a blank line.
+    cleanup_first_placeholder_under_parent(token, doc_id, cid)
     return cid
 
 
@@ -582,10 +585,45 @@ def insert_section(token: str, doc_id: str, parent_id: str, title: str, blocks: 
     _post_children(token, doc_id, parent_id, [make_section_heading(title)] + blocks)
 
 
+def _strip_leading_status_emoji_from_elements(elements: list[dict[str, Any]] | None) -> list[dict[str, Any]]:
+    """
+    Callouts render their own icon, so remove any leading inline status emoji
+    to avoid showing a duplicated icon in the first line.
+    """
+    if not elements:
+        return []
+    out = json.loads(json.dumps(elements))
+    emojis = ("💡", "⚠️", "🤖", "🚨")
+    for el in out:
+        trn = el.get("text_run")
+        if not isinstance(trn, dict):
+            continue
+        content = str(trn.get("content", ""))
+        if not content.strip():
+            continue
+        s = content.lstrip()
+        changed = False
+        while True:
+            removed = False
+            for emoji in emojis:
+                if s.startswith(emoji):
+                    s = s[len(emoji) :].lstrip()
+                    removed = True
+                    changed = True
+                    break
+            if not removed:
+                break
+        if changed:
+            trn["content"] = s
+        break
+    return out
+
+
 def insert_conclusion_callout(token: str, doc_id: str, parent_id: str, text_elements: list[dict[str, Any]], level: str = "positive") -> str | None:
     configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
     bg, border, emoji = configs.get(level, configs["positive"])
-    return create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(text_elements)])
+    clean_elements = _strip_leading_status_emoji_from_elements(text_elements)
+    return create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)])
 
 
 def insert_attribution_chain(token: str, doc_id: str, parent_id: str, steps: list[tuple[str, list[dict[str, Any]]]]) -> None:
