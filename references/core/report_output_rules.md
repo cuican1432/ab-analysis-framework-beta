@@ -81,6 +81,9 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - `不显著` does NOT mean empty.
   - If the source provides relative change / absolute change / CI / p-value, keep those values even when the judgment is `不显著`.
   - Use `—` only when the source field is truly missing or unavailable.
+- If the Raw Data contains embedded `<sheet token="..."/>` tables, do not treat summary bullets as enough evidence to fill a 5-column appendix row.
+  - Prefer the embedded sheet as the source of truth for `相对变化 / 绝对变化 / 95% CI / p-value`.
+  - If the sheet has not been read yet, do not silently backfill those fields as `—`.
 
 ### Coloring | 染色
 
@@ -188,6 +191,7 @@ Terminology mapping (user-facing):
 - The appendix is the "absolute evidence chain" for review. Do not truncate or summarize the underlying detail tables.
 - Source format handling:
   - if the Raw Data contains structured Feishu table nodes, clone them directly
+  - if the Raw Data contains embedded `<sheet token="..."/>` tables, read the sheet values first and rebuild/clone the appendix rows from the sheet, not from the summary bullets
   - if the Raw Data is in text / list format (for example, `指标名 正向显著 +X% ... p值：Y`), parse the text into a structured native Feishu table before placing it in the appendix; preserve all original values without rounding or truncation
 - Preferred path:
   - fetch all detail tables from the bottom of the Raw Data doc via API and "physically clone" the table nodes into the new doc.
@@ -197,3 +201,4 @@ Terminology mapping (user-facing):
   3. Manual fallback (last resort): manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
 - When cloning or manually rebuilding appendix rows, do NOT drop numeric fields simply because a row is `不显著`.
   - Preserve relative change, absolute change, 95% CI, and p-value whenever the source exposes them.
+  - If the embedded sheet has not been successfully read yet, prefer `待从嵌入表补齐` / `部分证据` wording over fake `—` placeholders.

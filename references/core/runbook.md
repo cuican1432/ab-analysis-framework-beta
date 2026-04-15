@@ -298,6 +298,12 @@ Execution note:
    - summary tables: 3 columns, row_count <= 8
    - appendix tables: 5 columns, row_count <= 8 (split when needed)
 
+Appendix evidence rule:
+
+- If Raw Data `docs +fetch` returns embedded `<sheet token="..."/>` tables, those sheets are the primary source for appendix rows.
+- Do not build a 5-column appendix table from summary bullets alone when an embedded sheet still exists but has not been read.
+- If sheet access is missing or fails, mark the report as partial evidence and explicitly say `完整数据需在原始报告中逐项确认 / 待从嵌入表补齐`.
+
 Significance marking degradation (core):
 
 - L1: color+bold+bg via Block API (prefer this; do not use emoji when L1 works)

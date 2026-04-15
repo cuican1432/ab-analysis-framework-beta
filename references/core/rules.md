@@ -112,6 +112,9 @@ When metric group data exists in the source but cannot be fully parsed by the cu
 - clearly distinguish between "full evidence" (all metrics readable) and "partial evidence" (only summary available)
 - for decision purposes: significant signals extracted from summaries can be used, but the absence of other metrics in that group cannot be treated as "flat / no regression" — label as `完整数据需在原始报告中逐项确认`
 - add partially-available groups to the `to confirm` list
+- if the doc contains embedded `<sheet token="..."/>` tables, treat those sheets as the primary evidence source for appendix reconstruction, not as optional extras
+- do NOT rebuild a 5-column appendix row from summary bullets alone when the embedded sheet still exists but has not been read yet
+- if sheet access is temporarily unavailable, mark the group as `部分证据 / 待从嵌入表补齐`, rather than converting unavailable fields into `—`
 
 ### Metric Tiering
 
