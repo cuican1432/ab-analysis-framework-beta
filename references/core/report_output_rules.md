@@ -19,8 +19,8 @@ Supported patterns (examples):
 | Significant negative | direction marker | `↓ -0.1484%` |
 | Marginal result | direction marker | `↗ +0.0613%` / `↘ -0.0584%` |
 | Not significant | marker/text | `➖ 不显著` |
-| Conclusion highlight | plain paragraph + emoji prefix | `🤖 **结论：...**` |
-| Risk highlight | plain paragraph + emoji prefix | `🚨 **风险：...**` |
+| Conclusion highlight | plain paragraph + emoji prefix | `💡 **结论：...**` |
+| Risk highlight | plain paragraph + emoji prefix | `⚠️ **风险：...**` |
 | To confirm | plain paragraph + emoji prefix | `📝 **To Confirm**：...` |
 | Divider | `---` | `---` |
 
@@ -169,8 +169,8 @@ Terminology mapping (user-facing):
 ### Callouts | 高亮块
 
 - Use a plain paragraph + emoji prefix + bold label (do not use Markdown blockquote `>`):
-  - conclusion / core insights: `🤖 **结论：...**`
-  - risk / warning: `🚨 **风险：...**`
+  - conclusion / core insights: `💡 **结论：...**`
+  - risk / warning: `⚠️ **风险：...**`
 
 ### To Confirm | 待确认清单
 

@@ -622,8 +622,8 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
     Upgrade plain-paragraph conclusion/risk lines into Callout blocks.
 
     Trigger patterns (Base Layer):
-    - startswith '🤖' or contains '结论：'
-    - startswith '🚨' or contains '风险：'
+    - startswith '💡' or contains '结论：'
+    - startswith '⚠️' or contains '风险：'
     """
     patched = 0
     # Work from bottom to top to reduce index shifting impact.
@@ -639,9 +639,9 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
             continue
 
         level: str | None = None
-        if text.startswith("🤖") or "结论：" in text:
+        if text.startswith("💡") or "结论：" in text:
             level = "positive"
-        elif text.startswith("🚨") or "风险：" in text:
+        elif text.startswith("⚠️") or "风险：" in text:
             level = "warning"
         else:
             continue
@@ -652,7 +652,7 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
             idx = next((i for i, b in enumerate(kids) if b.get("block_id") == bid), None)
             if idx is None:
                 continue
-            configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+            configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
             bg, border, emoji = configs.get(level, configs["positive"])
             callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(elements)], index=idx)
             if not callout_id:
