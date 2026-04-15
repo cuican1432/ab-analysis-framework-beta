@@ -462,6 +462,9 @@ def create_callout(
         return None
     cid = r["data"]["children"][0]["block_id"]
     _post_children(token, doc_id, cid, children_blocks)
+    # Feishu may leave an auto-generated empty first child under new callouts.
+    # Clean it up immediately so conclusion/risk callouts do not render a blank line.
+    cleanup_first_placeholder_under_parent(token, doc_id, cid)
     return cid
 
 
