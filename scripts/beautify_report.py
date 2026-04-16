@@ -151,6 +151,15 @@ def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]
         r = _api(token, "PATCH", url, {"requests": chunk})
         if r.get("code") not in (0, "0", None):
             logger.warning("batch_update chunk %d-%d failed: %s", i, i + len(chunk), str(r.get("msg", ""))[:120])
+            # Fallback: retry each request individually (best-effort). This prevents losing
+            # a whole chunk when some block_ids become invalid after structural changes.
+            for req in chunk:
+                try:
+                    r2 = _api(token, "PATCH", url, {"requests": [req]})
+                    if r2.get("code") in (0, "0", None):
+                        updated += 1
+                except Exception:
+                    continue
             continue
         updated += len(chunk)
     return updated
@@ -642,8 +651,93 @@ def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
     return "".join(out)
 
 
+def _get_parent_children(token: str, doc_id: str, parent_id: str) -> list[dict[str, Any]]:
+    rr = _get_children(token, doc_id, parent_id)
+    if rr.get("code") not in (0, "0", None):
+        return []
+    return [_unwrap_block(it) for it in list((rr.get("data") or {}).get("items") or [])]
+
+
+def _delete_child_block_by_id(token: str, doc_id: str, parent_id: str, target_block_id: str) -> bool:
+    """
+    Delete a specific child block by its block_id. Returns True if gone.
+
+    Note: Deletion is index-based, so we must re-fetch to locate the latest index.
+    """
+    for _ in range(2):
+        kids = _get_parent_children(token, doc_id, parent_id)
+        idx = next((i for i, b in enumerate(kids) if b.get("block_id") == target_block_id), None)
+        if idx is None:
+            return True
+        _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
+        time.sleep(0.15)
+    # Final verification: avoid false negatives when delete succeeded but index was stale.
+    kids = _get_parent_children(token, doc_id, parent_id)
+    return not any(b.get("block_id") == target_block_id for b in kids)
+
+
 SIG_MARKER_PREFIXES = ("↑ ", "↓ ", "↗ ", "↘ ", "➖ ")
 SIG_INLINE_RE = re.compile(r"(↑|↓|↗|↘|➖)\s*((?:[+-]\d[\d,]*(?:\.\d+)?%?)|不显著)")
+
+
+_CONCLUSION_PREFIX_RE = re.compile(r"^💡\s*\*{0,2}(结论|核心发现|Conclusion)", re.IGNORECASE)
+_RISK_PREFIX_RE = re.compile(r"^⚠️\s*\*{0,2}(风险|警示|注意|Risk|Warning)", re.IGNORECASE)
+
+
+def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> int:
+    """
+    Upgrade Base Layer plain-text conclusion / risk lines into Callout blocks.
+
+    This is a structural change (create new blocks + delete original blocks), so it
+    should run BEFORE any batch_update that relies on stable block_ids.
+    """
+    targets: list[tuple[str, int, str, list[dict[str, Any]]]] = []
+    for idx, blk in enumerate(children):
+        if blk.get("block_type") != BLOCK_TEXT:
+            continue
+        bid = blk.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        elements = (blk.get("text") or {}).get("elements") or []
+        text = _extract_plain_text(elements).strip()
+        if not text:
+            continue
+        level: str | None = None
+        if _CONCLUSION_PREFIX_RE.match(text):
+            level = "positive"
+        elif _RISK_PREFIX_RE.match(text):
+            level = "warning"
+        if level is not None:
+            targets.append((bid, idx, level, elements))
+
+    if not targets:
+        return 0
+
+    upgraded_ids: list[str] = []
+    for bid, orig_idx, level, elements in reversed(targets):
+        try:
+            clean_elements = _strip_leading_status_emoji_from_elements(elements)
+            # Use the same callout palette as insert_conclusion_callout.
+            configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+            bg, border, emoji = configs.get(level, configs["positive"])
+            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=orig_idx)
+            if callout_id:
+                upgraded_ids.append(bid)
+        except Exception as e:
+            logger.warning("Callout upgrade create failed for %s (degrade): %s", bid, e)
+
+    if not upgraded_ids:
+        return 0
+
+    # Delete originals (best-effort, with retry+verification inside helper).
+    removed = 0
+    for bid in upgraded_ids:
+        try:
+            if _delete_child_block_by_id(token, doc_id, parent_id, bid):
+                removed += 1
+        except Exception as e:
+            logger.warning("Callout upgrade delete failed for %s (degrade): %s", bid, e)
+    return removed
 
 
 def _strip_sig_marker_prefix(text: str) -> str:
@@ -1172,6 +1266,18 @@ def main() -> int:
                 logger.warning("Cleanup failed (degrade): %s", e)
         logger.info("Legend-only done. API calls: %d", _call_count)
         return 0
+
+    # Stage C+ Step 2.5: Upgrade conclusion/risk text blocks to callouts BEFORE batch_update.
+    try:
+        upgraded = upgrade_conclusion_risk_to_callouts(token, doc_id, parent_id, children)
+        if upgraded:
+            logger.info("Upgraded conclusion/risk blocks to callouts: %d", upgraded)
+            # Structural changes may invalidate block_ids; re-fetch to ensure later patch requests are valid.
+            all_blocks = _get_all_blocks(token, doc_id)
+            children_map = _build_children_map(all_blocks) if all_blocks else {}
+            children = list(children_map.get(parent_id, [])) if children_map else children
+    except Exception as e:
+        logger.warning("Callout upgrade failed (degrade): %s", e)
 
     # Stage C+ Step 3: Beautify top-to-bottom (best-effort). Each step must degrade silently.
     if all_blocks and children_map:
