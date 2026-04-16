@@ -629,7 +629,8 @@ def _strip_leading_status_emoji_from_elements(elements: list[dict[str, Any]] | N
 
 
 def insert_conclusion_callout(token: str, doc_id: str, parent_id: str, text_elements: list[dict[str, Any]], level: str = "positive") -> str | None:
-    configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+    # Match V5 style: positive uses checkmark, warning uses warning sign.
+    configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
     bg, border, emoji = configs.get(level, configs["positive"])
     clean_elements = _strip_leading_status_emoji_from_elements(text_elements)
     return create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)])
@@ -680,8 +681,9 @@ SIG_MARKER_PREFIXES = ("↑ ", "↓ ", "↗ ", "↘ ", "➖ ")
 SIG_INLINE_RE = re.compile(r"(↑|↓|↗|↘|➖)\s*((?:[+-]\d[\d,]*(?:\.\d+)?%?)|不显著)")
 
 
-_CONCLUSION_PREFIX_RE = re.compile(r"^💡\s*\*{0,2}(结论|核心发现|Conclusion)", re.IGNORECASE)
-_RISK_PREFIX_RE = re.compile(r"^⚠️\s*\*{0,2}(风险|警示|注意|Risk|Warning)", re.IGNORECASE)
+# Allow both with/without emoji prefix, and tolerate Markdown emphasis markers (`**结论：...**`).
+_CONCLUSION_PREFIX_RE = re.compile(r"^(?:💡\s*)?\*{0,3}\s*(结论|核心发现|conclusion)\s*[:：]", re.IGNORECASE)
+_RISK_PREFIX_RE = re.compile(r"^(?:⚠️\s*)?\*{0,3}\s*(风险|警示|注意|risk|warning)\s*[:：]", re.IGNORECASE)
 
 
 def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str, children: list[dict[str, Any]]) -> int:
@@ -717,8 +719,8 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
     for bid, orig_idx, level, elements in reversed(targets):
         try:
             clean_elements = _strip_leading_status_emoji_from_elements(elements)
-            # Use the same callout palette as insert_conclusion_callout.
-            configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+            # Use the same callout palette as insert_conclusion_callout (V5 style).
+            configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
             bg, border, emoji = configs.get(level, configs["positive"])
             callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=orig_idx)
             if callout_id:
