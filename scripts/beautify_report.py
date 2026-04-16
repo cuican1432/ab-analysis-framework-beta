@@ -1210,13 +1210,60 @@ def collect_to_confirm_colorize_requests(
 
 
 _CALLOUT_VALUE_RE = re.compile(r"(?<![pP]=)(?<![pP]<)(?<![pP]>)([+-]\d[\d,]*(?:\.\d+)?%)")
+_P_VALUE_RE = re.compile(r"p\s*([<>=])\s*(0?\.\d+)", re.IGNORECASE)
+
+
+def _infer_callout_sig_from_context(content: str, start: int, end: int, value: str) -> str | None:
+    """
+    Only colorize callout values when the surrounding text states a significance fact.
+
+    Rules:
+    - Significant / marginal-significant facts -> colorize
+    - Non-significant facts -> do NOT colorize
+    - Pure numeric deltas without significance context -> do NOT colorize
+    """
+    before = content[max(0, start - 80) : start]
+    after = content[end : min(len(content), end + 48)]
+    window = f"{before}{after}"
+
+    nonsig_cues = ("不显著", "未显著", "无显著", "未达显著", "无统计显著")
+    if any(cue in window for cue in nonsig_cues):
+        return None
+
+    lower_window = window.lower()
+    if any(cue in lower_window for cue in ("边际", "弱显著", "接近显著")):
+        return "marginal_pos" if value.startswith("+") else "marginal_neg"
+
+    neg_cues = ("显著下降", "显著负向", "负向显著", "显著下滑", "显著降低", "显著回落")
+    if any(cue in window for cue in neg_cues):
+        return "neg"
+    pos_cues = ("显著上升", "显著正向", "正向显著", "显著提升", "显著增长", "显著改善", "显著增加")
+    if any(cue in window for cue in pos_cues):
+        return "pos"
+    if "显著" in window:
+        return "pos" if value.startswith("+") else "neg"
+
+    # Numeric p-value evidence is also a significance fact.
+    for m in _P_VALUE_RE.finditer(after):
+        op = m.group(1)
+        try:
+            p = float(m.group(2))
+        except Exception:
+            continue
+        if op == "<":
+            return "pos" if value.startswith("+") else "neg"
+        if op == "=" and p <= 0.05:
+            return "pos" if value.startswith("+") else "neg"
+        if op == "=" and 0.05 < p <= 0.1:
+            return "marginal_pos" if value.startswith("+") else "marginal_neg"
+    return None
 
 
 def collect_callout_value_colorize_requests(
     all_blocks: list[dict[str, Any]],
     callout_block_ids: set[str],
 ) -> list[dict[str, Any]]:
-    """Colorize bare +/- percentage values inside callout children."""
+    """Colorize bare +/- percentage values inside callouts only when significance is explicit."""
     requests: list[dict[str, Any]] = []
     for block in all_blocks:
         bid = block.get("block_id")
@@ -1240,9 +1287,11 @@ def collect_callout_value_colorize_requests(
             for m in _CALLOUT_VALUE_RE.finditer(content):
                 start, end = m.span()
                 value = m.group(1)
+                sig = _infer_callout_sig_from_context(content, start, end, value)
+                if sig is None:
+                    continue
                 if start > last:
                     new_elements.append(_clone_text_run_with_content(el, content[last:start]))
-                sig = "pos" if value.startswith("+") else "neg"
                 new_elements.append(sig_tr(value, sig))
                 last = end
                 local_changed = True
