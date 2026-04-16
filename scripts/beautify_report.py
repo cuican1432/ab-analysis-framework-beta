@@ -793,6 +793,10 @@ def _clone_text_run_with_content(el: dict[str, Any], content: str) -> dict[str, 
     return out
 
 
+def _deep_copy_element(el: dict[str, Any]) -> dict[str, Any]:
+    return json.loads(json.dumps(el))
+
+
 def _colorize_inline_elements(elements: list[dict[str, Any]] | None) -> tuple[list[dict[str, Any]], bool]:
     """
     Convert inline L2 markers inside a text-like block into L1-styled numeric values.
@@ -1164,6 +1168,95 @@ def collect_inline_value_colorize_requests_from_blocks(
     return requests
 
 
+_TO_CONFIRM_H2_RE = re.compile(r"待确认|To\s*Confirm", re.IGNORECASE)
+
+
+def collect_to_confirm_colorize_requests(
+    children: list[dict[str, Any]],
+    _children_map: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    """Colorize the first bold title token in ordered-list items under the '待确认' H2."""
+    requests: list[dict[str, Any]] = []
+    in_to_confirm = False
+    for blk in children:
+        btype = blk.get("block_type")
+        if btype == BLOCK_H2:
+            text = _extract_block_plain_text(blk).strip()
+            in_to_confirm = bool(_TO_CONFIRM_H2_RE.search(text))
+            continue
+        if not in_to_confirm or btype != BLOCK_ORDERED:
+            continue
+        elements = (blk.get("ordered") or {}).get("elements") or []
+        if not elements:
+            continue
+        new_elements: list[dict[str, Any]] = []
+        colored = False
+        for el in elements:
+            trn = el.get("text_run")
+            if not colored and isinstance(trn, dict):
+                style = trn.get("text_element_style") or {}
+                if style.get("bold"):
+                    new_el = _deep_copy_element(el)
+                    new_el["text_run"]["text_element_style"] = {**style, "text_color": COLOR_ORANGE}
+                    new_elements.append(new_el)
+                    colored = True
+                    continue
+            new_elements.append(el)
+        if colored:
+            bid = blk.get("block_id")
+            if isinstance(bid, str):
+                requests.append({"block_id": bid, "update_text_elements": {"elements": new_elements}})
+    return requests
+
+
+_CALLOUT_VALUE_RE = re.compile(r"(?<![pP]=)(?<![pP]<)(?<![pP]>)([+-]\d[\d,]*(?:\.\d+)?%)")
+
+
+def collect_callout_value_colorize_requests(
+    all_blocks: list[dict[str, Any]],
+    callout_block_ids: set[str],
+) -> list[dict[str, Any]]:
+    """Colorize bare +/- percentage values inside callout children."""
+    requests: list[dict[str, Any]] = []
+    for block in all_blocks:
+        bid = block.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        if block.get("parent_id") not in callout_block_ids:
+            continue
+        elements = _get_text_elements_for_block(block)
+        if not elements:
+            continue
+        new_elements: list[dict[str, Any]] = []
+        changed = False
+        for el in elements:
+            trn = el.get("text_run")
+            if not isinstance(trn, dict):
+                new_elements.append(el)
+                continue
+            content = str(trn.get("content", ""))
+            last = 0
+            local_changed = False
+            for m in _CALLOUT_VALUE_RE.finditer(content):
+                start, end = m.span()
+                value = m.group(1)
+                if start > last:
+                    new_elements.append(_clone_text_run_with_content(el, content[last:start]))
+                sig = "pos" if value.startswith("+") else "neg"
+                new_elements.append(sig_tr(value, sig))
+                last = end
+                local_changed = True
+            if local_changed:
+                if last < len(content):
+                    new_elements.append(_clone_text_run_with_content(el, content[last:]))
+                changed = True
+            else:
+                new_elements.append(el)
+        if changed:
+            requests.append({"block_id": bid, "update_text_elements": {"elements": new_elements}})
+    return requests
+
+
 
 def main() -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
@@ -1285,7 +1378,12 @@ def main() -> int:
     if all_blocks and children_map:
         patch_requests: list[dict[str, Any]] = []
         table_cell_ids: set[str] = set()
+        callout_block_ids: set[str] = set()
         for b in all_blocks:
+            if b.get("block_type") == BLOCK_CALLOUT:
+                bid = b.get("block_id")
+                if isinstance(bid, str):
+                    callout_block_ids.add(bid)
             if b.get("block_type") != BLOCK_TABLE:
                 continue
             cells = ((b.get("table") or {}).get("cells")) or []
@@ -1295,6 +1393,8 @@ def main() -> int:
             patch_requests.extend(collect_h2_patch_requests(children, args.max_headings))
         patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
+        patch_requests.extend(collect_to_confirm_colorize_requests(children, children_map))
+        patch_requests.extend(collect_callout_value_colorize_requests(all_blocks, callout_block_ids))
         try:
             updated = _batch_update_blocks(token, doc_id, patch_requests)
             logger.info("Batch updated blocks (H2 + table cells + inline values): %d", updated)
