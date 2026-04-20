@@ -116,6 +116,13 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - acceptable: the source provides an explicit significant flag plus a traceable source_location
   - if p-value is missing, the metric can only be described directionally (no significance claim), and it must be added into `to confirm`
 
+- Direction markers in conclusion / risk lines (CRITICAL):
+  - When a `💡 **结论：...**` or `⚠️ **风险：...**` line cites a numeric value from experiment data,
+    it MUST carry the same direction marker (`↑`/`↓`/`↗`/`↘`/`➖`) as the corresponding evidence row.
+  - The marker encodes the significance judgment decided during Stage A extraction.
+    Dropping it forces Enhanced Layer to infer significance from context, which is unreliable.
+  - If a value has not been tested for significance, do not write a marker or a bare value; use qualitative wording only.
+
 ### Evidence Manifest | 证据清单
 
 - When the report contains any significant claims (`↑` / `↓` or Enhanced Layer L1 coloring), include a `## 证据清单 (Evidence Manifest)` section before `## 待确认 (To Confirm)`.
@@ -178,6 +185,9 @@ Terminology mapping (user-facing):
 - Use plain paragraph + emoji + bold:
   - conclusion / core insights: `💡 **结论：...**`
   - risk / warning: `⚠️ **风险：...**`
+ - When conclusion / risk lines cite numeric values, always include direction markers:
+   - `💡 **结论：文本 ↑ +0.53%、语音 ↑ +0.70%、相机 ↑ +1.37%**`
+   - `⚠️ **风险：click_report/user ↓ +4.1495%（p<0.001）**`
 
 ### To Confirm | 待确认清单
 

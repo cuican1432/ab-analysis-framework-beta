@@ -1209,87 +1209,10 @@ def collect_to_confirm_colorize_requests(
     return requests
 
 
-_CALLOUT_VALUE_RE = re.compile(r"(?<![pP]=)(?<![pP]<)(?<![pP]>)([+-]\d[\d,]*(?:\.\d+)?%)")
-
-
-def _infer_callout_sig_from_context(content: str, start: int, end: int, value: str) -> str | None:
-    """
-    Only colorize callout values when the surrounding text states a significance fact.
-
-    Rules:
-    - Significant / marginal-significant facts -> colorize
-    - Non-significant facts -> do NOT colorize
-    - Pure numeric deltas without significance context -> do NOT colorize
-    """
-    before = content[max(0, start - 80) : start]
-    after = content[end : min(len(content), end + 48)]
-    window = f"{before}{after}"
-
-    nonsig_cues = ("不显著", "未显著", "无显著", "未达显著", "无统计显著")
-    if any(cue in window for cue in nonsig_cues):
-        return None
-
-    lower_window = window.lower()
-    if any(cue in lower_window for cue in ("边际", "弱显著", "接近显著")):
-        return "marginal_pos" if value.startswith("+") else "marginal_neg"
-
-    neg_cues = ("显著下降", "显著负向", "负向显著", "显著下滑", "显著降低", "显著回落")
-    if any(cue in window for cue in neg_cues):
-        return "neg"
-    pos_cues = ("显著上升", "显著正向", "正向显著", "显著提升", "显著增长", "显著改善", "显著增加")
-    if any(cue in window for cue in pos_cues):
-        return "pos"
-    if "显著" in window:
-        return "pos" if value.startswith("+") else "neg"
-
-    return None
-
-
-def collect_callout_value_colorize_requests(
-    all_blocks: list[dict[str, Any]],
-    callout_block_ids: set[str],
-) -> list[dict[str, Any]]:
-    """Colorize bare +/- percentage values inside callouts only when significance is explicit."""
-    requests: list[dict[str, Any]] = []
-    for block in all_blocks:
-        bid = block.get("block_id")
-        if not isinstance(bid, str):
-            continue
-        if block.get("parent_id") not in callout_block_ids:
-            continue
-        elements = _get_text_elements_for_block(block)
-        if not elements:
-            continue
-        new_elements: list[dict[str, Any]] = []
-        changed = False
-        for el in elements:
-            trn = el.get("text_run")
-            if not isinstance(trn, dict):
-                new_elements.append(el)
-                continue
-            content = str(trn.get("content", ""))
-            last = 0
-            local_changed = False
-            for m in _CALLOUT_VALUE_RE.finditer(content):
-                start, end = m.span()
-                value = m.group(1)
-                sig = _infer_callout_sig_from_context(content, start, end, value)
-                if sig is None:
-                    continue
-                if start > last:
-                    new_elements.append(_clone_text_run_with_content(el, content[last:start]))
-                new_elements.append(sig_tr(value, sig))
-                last = end
-                local_changed = True
-            if local_changed:
-                if last < len(content):
-                    new_elements.append(_clone_text_run_with_content(el, content[last:]))
-                changed = True
-            else:
-                new_elements.append(el)
-        if changed:
-            requests.append({"block_id": bid, "update_text_elements": {"elements": new_elements}})
-    return requests
+#
+# NOTE: We intentionally do NOT infer significance for "naked" values inside callouts.
+# Significance must be decided in Stage A and encoded via direction markers (L2) in Base Layer text.
+# Beautification consumes those markers and renders L1 styling; it should not guess from p-values or +/- signs.
 
 
 
@@ -1413,12 +1336,7 @@ def main() -> int:
     if all_blocks and children_map:
         patch_requests: list[dict[str, Any]] = []
         table_cell_ids: set[str] = set()
-        callout_block_ids: set[str] = set()
         for b in all_blocks:
-            if b.get("block_type") == BLOCK_CALLOUT:
-                bid = b.get("block_id")
-                if isinstance(bid, str):
-                    callout_block_ids.add(bid)
             if b.get("block_type") != BLOCK_TABLE:
                 continue
             cells = ((b.get("table") or {}).get("cells")) or []
@@ -1429,7 +1347,6 @@ def main() -> int:
         patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
         patch_requests.extend(collect_to_confirm_colorize_requests(children, children_map))
-        patch_requests.extend(collect_callout_value_colorize_requests(all_blocks, callout_block_ids))
         try:
             updated = _batch_update_blocks(token, doc_id, patch_requests)
             logger.info("Batch updated blocks (H2 + table cells + inline values): %d", updated)
