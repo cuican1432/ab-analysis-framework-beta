@@ -96,6 +96,34 @@ def _api(token: str, method: str, url: str, body: dict[str, Any] | None = None) 
             return {"code": e.code, "msg": err}
 
 
+def _is_rate_limited(resp: dict[str, Any] | None) -> bool:
+    if not isinstance(resp, dict):
+        return False
+    msg = str(resp.get("msg", "")).lower()
+    code = str(resp.get("code", ""))
+    return ("rate limit" in msg) or ("too many" in msg) or code in {"429", "99991663", "99991400"}
+
+
+def _is_invalid_param(resp: dict[str, Any] | None) -> bool:
+    if not isinstance(resp, dict):
+        return False
+    msg = str(resp.get("msg", "")).lower()
+    code = str(resp.get("code", ""))
+    return ("invalid param" in msg) or (code == "1770001")
+
+
+def _summarize_batch_update_req(req: dict[str, Any]) -> str:
+    try:
+        bid = str(req.get("block_id", ""))
+        ute = req.get("update_text_elements") or {}
+        els = (ute.get("elements") or []) if isinstance(ute, dict) else []
+        eln = len(els) if isinstance(els, list) else 0
+        keys = ",".join(sorted(req.keys()))
+        return f"block_id={bid} keys=[{keys}] elements={eln}"
+    except Exception:
+        return "<unprintable req>"
+
+
 def _post_children(token: str, doc_id: str, parent_block_id: str, children: list[dict[str, Any]], index: int = -1) -> dict[str, Any]:
     url = f"{DOCX_BASE}/{doc_id}/blocks/{parent_block_id}/children"
     payload: dict[str, Any] = {"children": children}
@@ -128,6 +156,18 @@ def _get_all_blocks(token: str, doc_id: str, page_size: int = 500) -> list[dict[
         if page_token:
             url += f"&page_token={page_token}"
         r = _api(token, "GET", url)
+        if _is_rate_limited(r):
+            recovered = False
+            for delay in (0.5, 1.0, 2.0):
+                logger.warning("get_all_blocks hit rate limit; retrying in %.1fs", delay)
+                time.sleep(delay)
+                r = _api(token, "GET", url)
+                if not _is_rate_limited(r):
+                    recovered = True
+                    break
+            if not recovered and r.get("code") not in (0, "0", None):
+                logger.warning("get_all_blocks failed after retries: %s", str(r.get("msg", ""))[:120])
+                break
         if r.get("code") not in (0, "0", None):
             logger.warning("get_all_blocks failed: %s", str(r.get("msg", ""))[:120])
             break
@@ -141,6 +181,37 @@ def _get_all_blocks(token: str, doc_id: str, page_size: int = 500) -> list[dict[
     return all_blocks
 
 
+def _batch_update_with_bisect(token: str, url: str, chunk: list[dict[str, Any]], base_i: int) -> int:
+    """
+    When a batch_update chunk fails with invalid-param, bisect to locate the bad request(s)
+    and continue applying the rest. Returns number of successfully applied requests.
+    """
+    if not chunk:
+        return 0
+    r = _api(token, "PATCH", url, {"requests": chunk})
+    if r.get("code") in (0, "0", None):
+        return len(chunk)
+    if _is_rate_limited(r):
+        ok = 0
+        for req in chunk:
+            rr = _api(token, "PATCH", url, {"requests": [req]})
+            if rr.get("code") in (0, "0", None):
+                ok += 1
+        return ok
+    if len(chunk) == 1:
+        logger.warning(
+            "batch_update invalid request at %d: %s msg=%s",
+            base_i,
+            _summarize_batch_update_req(chunk[0]),
+            str(r.get("msg", ""))[:160],
+        )
+        return 0
+    mid = len(chunk) // 2
+    ok_left = _batch_update_with_bisect(token, url, chunk[:mid], base_i)
+    ok_right = _batch_update_with_bisect(token, url, chunk[mid:], base_i + mid)
+    return ok_left + ok_right
+
+
 def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]) -> int:
     if not requests:
         return 0
@@ -151,6 +222,9 @@ def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]
         r = _api(token, "PATCH", url, {"requests": chunk})
         if r.get("code") not in (0, "0", None):
             logger.warning("batch_update chunk %d-%d failed: %s", i, i + len(chunk), str(r.get("msg", ""))[:120])
+            if _is_invalid_param(r):
+                updated += _batch_update_with_bisect(token, url, chunk, i)
+                continue
             # Fallback: retry each request individually (best-effort).
             for req in chunk:
                 r2 = _api(token, "PATCH", url, {"requests": [req]})
@@ -159,6 +233,24 @@ def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]
             continue
         updated += len(chunk)
     return updated
+
+
+def _dedupe_patch_requests_by_block_id(requests: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    Keep only the last patch request for each block_id.
+
+    Later collectors are considered more specific, so they win on conflicts.
+    """
+    last_by_block: dict[str, dict[str, Any]] = {}
+    ordered_ids: list[str] = []
+    for req in requests:
+        bid = req.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        if bid not in last_by_block:
+            ordered_ids.append(bid)
+        last_by_block[bid] = req
+    return [last_by_block[bid] for bid in ordered_ids]
 
 
 def _batch_delete_children(token: str, doc_id: str, parent_id: str, start_index: int, end_index: int, document_revision_id: int = -1) -> dict[str, Any]:
@@ -1025,6 +1117,8 @@ def _infer_sig_from_text(text: str) -> str | None:
         return "marginal"
     if s.startswith("➖ "):
         return "ns"
+    if s == "不显著":
+        return "ns"
     return None
 
 
@@ -1532,8 +1626,12 @@ def main() -> int:
             patch_requests.extend(collect_h2_patch_requests(children, args.max_headings))
         patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
+        deduped_patch_requests = _dedupe_patch_requests_by_block_id(patch_requests)
+        dup_count = len(patch_requests) - len(deduped_patch_requests)
+        if dup_count > 0:
+            logger.info("Deduped %d duplicate patch requests by block_id", dup_count)
         try:
-            updated = _batch_update_blocks(token, doc_id, patch_requests)
+            updated = _batch_update_blocks(token, doc_id, deduped_patch_requests)
             logger.info("Batch updated blocks (H2 + table cells + inline values): %d", updated)
         except Exception as e:
             logger.warning("Batch update failed (degrade): %s", e)
