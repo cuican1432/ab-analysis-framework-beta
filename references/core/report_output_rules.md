@@ -92,6 +92,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - negative significant: `↓ -X%`
   - marginal positive/negative: `↗ +X%` / `↘ -X%`
   - not significant: `➖ 不显著`
+  - do NOT output a bare `—` as the relative-change signal for a non-significant row; the non-significant status must be encoded explicitly with `➖`
 - Enhanced layer (Lark Block API / L1) uses styled numeric values only:
   - keep the numeric sign (`+` / `-`)
   - remove `↑` / `↓` / `↗` / `↘` / `➖`

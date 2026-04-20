@@ -1302,7 +1302,22 @@ def collect_table_ns_gray_requests_from_blocks(
             rel_child = _first_text_child_in_cell(children_map, rel_cid)
             if not rel_child:
                 continue
-            sig = _infer_sig_from_text(_extract_block_plain_text(rel_child))
+            rel_text = _extract_block_plain_text(rel_child).strip()
+            sig = _infer_sig_from_text(rel_text)
+            if sig is None and rel_text in ("—", "\u2014"):
+                # Conservative fallback: if the relative-change cell is a bare dash but the row
+                # already contains explicit "不显著", treat the row as ns for gray rendering only.
+                for j in range(n_cols):
+                    cid = cell_ids[r * n_cols + j]
+                    if not isinstance(cid, str):
+                        continue
+                    child = _first_text_child_in_cell(children_map, cid)
+                    if not child:
+                        continue
+                    txt = _extract_block_plain_text(child).strip()
+                    if txt.startswith("➖ ") or txt == "不显著":
+                        sig = "ns"
+                        break
             if sig != "ns":
                 continue
 
@@ -1333,7 +1348,7 @@ def collect_table_ns_gray_requests_from_blocks(
     return requests
 
 
-_BLUE_SUBLABEL_RE = re.compile(r"^(归因链路|平台一致性|新用户维度亮点)\s*[:：]?$")
+_BLUE_SUBLABEL_RE = re.compile(r"^(归因链路|归因分析|归因补充|平台一致性|新用户维度亮点)\s*[:：]?$")
 
 
 def collect_blue_sublabel_requests(children: list[dict[str, Any]]) -> list[dict[str, Any]]:
