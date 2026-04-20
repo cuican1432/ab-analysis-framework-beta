@@ -1210,7 +1210,6 @@ def collect_to_confirm_colorize_requests(
 
 
 _CALLOUT_VALUE_RE = re.compile(r"(?<![pP]=)(?<![pP]<)(?<![pP]>)([+-]\d[\d,]*(?:\.\d+)?%)")
-_P_VALUE_RE = re.compile(r"p\s*([<>=])\s*(0?\.\d+)", re.IGNORECASE)
 
 
 def _infer_callout_sig_from_context(content: str, start: int, end: int, value: str) -> str | None:
@@ -1243,19 +1242,6 @@ def _infer_callout_sig_from_context(content: str, start: int, end: int, value: s
     if "显著" in window:
         return "pos" if value.startswith("+") else "neg"
 
-    # Numeric p-value evidence is also a significance fact.
-    for m in _P_VALUE_RE.finditer(after):
-        op = m.group(1)
-        try:
-            p = float(m.group(2))
-        except Exception:
-            continue
-        if op == "<":
-            return "pos" if value.startswith("+") else "neg"
-        if op == "=" and p <= 0.05:
-            return "pos" if value.startswith("+") else "neg"
-        if op == "=" and 0.05 < p <= 0.1:
-            return "marginal_pos" if value.startswith("+") else "marginal_neg"
     return None
 
 
