@@ -240,6 +240,24 @@ def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]
     return updated
 
 
+def _dedupe_patch_requests_by_block_id(requests: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    Keep only the last patch request for each block_id.
+
+    Later collectors are considered more specific, so they win on conflicts.
+    """
+    last_by_block: dict[str, dict[str, Any]] = {}
+    ordered_ids: list[str] = []
+    for req in requests:
+        bid = req.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        if bid not in last_by_block:
+            ordered_ids.append(bid)
+        last_by_block[bid] = req
+    return [last_by_block[bid] for bid in ordered_ids]
+
+
 def _batch_delete_children(token: str, doc_id: str, parent_id: str, start_index: int, end_index: int, document_revision_id: int = -1) -> dict[str, Any]:
     """
     Delete a child range under a parent block.
@@ -1756,8 +1774,12 @@ def main() -> int:
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
         patch_requests.extend(collect_to_confirm_colorize_requests(children, children_map))
         patch_requests.extend(collect_blue_sublabel_requests(children))
+        deduped_patch_requests = _dedupe_patch_requests_by_block_id(patch_requests)
+        dup_count = len(patch_requests) - len(deduped_patch_requests)
+        if dup_count > 0:
+            logger.info("Deduped %d duplicate patch requests by block_id", dup_count)
         try:
-            updated = _batch_update_blocks(token, doc_id, patch_requests)
+            updated = _batch_update_blocks(token, doc_id, deduped_patch_requests)
             logger.info("Batch updated blocks (H2 + table cells + inline values): %d", updated)
         except Exception as e:
             logger.warning("Batch update failed (degrade): %s", e)
