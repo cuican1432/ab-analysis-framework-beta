@@ -96,6 +96,14 @@ def _api(token: str, method: str, url: str, body: dict[str, Any] | None = None) 
             return {"code": e.code, "msg": err}
 
 
+def _is_rate_limited(resp: dict[str, Any] | None) -> bool:
+    if not isinstance(resp, dict):
+        return False
+    msg = str(resp.get("msg", "")).lower()
+    code = str(resp.get("code", ""))
+    return ("rate limit" in msg) or ("too many" in msg) or code in {"429", "99991663"}
+
+
 def _post_children(token: str, doc_id: str, parent_block_id: str, children: list[dict[str, Any]], index: int = -1) -> dict[str, Any]:
     url = f"{DOCX_BASE}/{doc_id}/blocks/{parent_block_id}/children"
     payload: dict[str, Any] = {"children": children}
@@ -128,6 +136,18 @@ def _get_all_blocks(token: str, doc_id: str, page_size: int = 500) -> list[dict[
         if page_token:
             url += f"&page_token={page_token}"
         r = _api(token, "GET", url)
+        if _is_rate_limited(r):
+            recovered = False
+            for delay in (0.5, 1.0, 2.0):
+                logger.warning("get_all_blocks hit rate limit; retrying in %.1fs", delay)
+                time.sleep(delay)
+                r = _api(token, "GET", url)
+                if not _is_rate_limited(r):
+                    recovered = True
+                    break
+            if not recovered and r.get("code") not in (0, "0", None):
+                logger.warning("get_all_blocks failed after retries: %s", str(r.get("msg", ""))[:120])
+                break
         if r.get("code") not in (0, "0", None):
             logger.warning("get_all_blocks failed: %s", str(r.get("msg", ""))[:120])
             break
@@ -717,6 +737,7 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
         return 0
 
     upgraded_ids: list[str] = []
+    skipped = 0
     for bid, orig_idx, level, elements in reversed(targets):
         try:
             clean_elements = _strip_leading_status_emoji_from_elements(elements)
@@ -726,10 +747,15 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
             callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=orig_idx)
             if callout_id:
                 upgraded_ids.append(bid)
+            else:
+                skipped += 1
         except Exception as e:
+            skipped += 1
             logger.warning("Callout upgrade create failed for %s (degrade): %s", bid, e)
 
     if not upgraded_ids:
+        if skipped:
+            logger.info("Skipped %d conclusion/risk blocks during callout upgrade", skipped)
         return 0
 
     # Delete originals (best-effort, with retry+verification inside helper).
@@ -740,6 +766,8 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
                 removed += 1
         except Exception as e:
             logger.warning("Callout upgrade delete failed for %s (degrade): %s", bid, e)
+    if skipped:
+        logger.info("Skipped %d conclusion/risk blocks during callout upgrade", skipped)
     return removed
 
 
@@ -852,6 +880,8 @@ def _infer_sig_from_text(text: str) -> str | None:
     if s.startswith("↗ ") or s.startswith("↘ "):
         return "marginal"
     if s.startswith("➖ "):
+        return "ns"
+    if s == "不显著":
         return "ns"
     return None
 
