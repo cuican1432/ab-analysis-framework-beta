@@ -630,7 +630,8 @@ def _strip_leading_status_emoji_from_elements(elements: list[dict[str, Any]] | N
 
 def insert_conclusion_callout(token: str, doc_id: str, parent_id: str, text_elements: list[dict[str, Any]], level: str = "positive") -> str | None:
     # Match V5 style: positive uses checkmark, warning uses warning sign.
-    configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+    # User preference: conclusion callout uses 💡 (emoji_id "lightbulb").
+    configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
     bg, border, emoji = configs.get(level, configs["positive"])
     clean_elements = _strip_leading_status_emoji_from_elements(text_elements)
     return create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)])
@@ -719,8 +720,8 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
     for bid, orig_idx, level, elements in reversed(targets):
         try:
             clean_elements = _strip_leading_status_emoji_from_elements(elements)
-            # Use the same callout palette as insert_conclusion_callout (V5 style).
-            configs = {"positive": (4, 4, "white_check_mark"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
+            # Use the same callout palette as insert_conclusion_callout.
+            configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
             bg, border, emoji = configs.get(level, configs["positive"])
             callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=orig_idx)
             if callout_id:
@@ -1305,8 +1306,9 @@ def collect_table_ns_gray_requests_from_blocks(
             rel_text = _extract_block_plain_text(rel_child).strip()
             sig = _infer_sig_from_text(rel_text)
             if sig is None and rel_text in ("—", "\u2014"):
-                # Conservative fallback: if the relative-change cell is a bare dash but the row
-                # already contains explicit "不显著", treat the row as ns for gray rendering only.
+                # Conservative fallback: treat bare "—" as ns only when the row also contains
+                # explicit non-significant hints (either "不显著" or a dashed p-value cell).
+                saw_ns_hint = False
                 for j in range(n_cols):
                     cid = cell_ids[r * n_cols + j]
                     if not isinstance(cid, str):
@@ -1316,8 +1318,24 @@ def collect_table_ns_gray_requests_from_blocks(
                         continue
                     txt = _extract_block_plain_text(child).strip()
                     if txt.startswith("➖ ") or txt == "不显著":
-                        sig = "ns"
+                        saw_ns_hint = True
                         break
+                if not saw_ns_hint:
+                    for j in range(n_cols):
+                        cid = cell_ids[r * n_cols + j]
+                        if not isinstance(cid, str):
+                            continue
+                        child = _first_text_child_in_cell(children_map, cid)
+                        if not child:
+                            continue
+                        txt = _extract_block_plain_text(child).strip()
+                        if _P_VALUE_CELL_RE.match(txt) or txt in ("—", "\u2014"):
+                            # If p-value exists but is dashed, we treat this row as ns for gray rendering only.
+                            if j == p_col:
+                                saw_ns_hint = True
+                                break
+                if saw_ns_hint:
+                    sig = "ns"
             if sig != "ns":
                 continue
 
@@ -1348,7 +1366,7 @@ def collect_table_ns_gray_requests_from_blocks(
     return requests
 
 
-_BLUE_SUBLABEL_RE = re.compile(r"^(归因链路|归因分析|归因补充|平台一致性|新用户维度亮点)\s*[:：]?$")
+_BLUE_SUBLABEL_RE = re.compile(r"^(归因链路|归因分析|归因补充|归因|平台一致性|新用户维度亮点|维度亮点)\s*[:：]?$")
 
 
 def collect_blue_sublabel_requests(children: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -1649,7 +1667,6 @@ def main() -> int:
         if args.decorate_headings:
             patch_requests.extend(collect_h2_patch_requests(children, args.max_headings))
         patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
-        patch_requests.extend(collect_table_pvalue_colorize_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_table_ns_gray_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
         patch_requests.extend(collect_to_confirm_colorize_requests(children, children_map))
