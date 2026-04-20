@@ -104,6 +104,58 @@ def _is_rate_limited(resp: dict[str, Any] | None) -> bool:
     return ("rate limit" in msg) or ("too many" in msg) or code in {"429", "99991663"}
 
 
+def _is_invalid_param(resp: dict[str, Any] | None) -> bool:
+    if not isinstance(resp, dict):
+        return False
+    msg = str(resp.get("msg", "")).lower()
+    code = str(resp.get("code", ""))
+    return ("invalid param" in msg) or (code == "1770001")
+
+
+def _summarize_batch_update_req(req: dict[str, Any]) -> str:
+    try:
+        bid = str(req.get("block_id", ""))
+        ute = req.get("update_text_elements") or {}
+        els = (ute.get("elements") or []) if isinstance(ute, dict) else []
+        eln = len(els) if isinstance(els, list) else 0
+        keys = ",".join(sorted(req.keys()))
+        return f"block_id={bid} keys=[{keys}] elements={eln}"
+    except Exception:
+        return "<unprintable req>"
+
+
+def _batch_update_with_bisect(token: str, url: str, chunk: list[dict[str, Any]], base_i: int) -> int:
+    """
+    When a batch_update chunk fails with invalid-param, bisect to locate the bad request(s)
+    and continue applying the rest. Returns number of successfully applied requests.
+    """
+    if not chunk:
+        return 0
+    r = _api(token, "PATCH", url, {"requests": chunk})
+    if r.get("code") in (0, "0", None):
+        return len(chunk)
+    if _is_rate_limited(r):
+        # Degrade to per-item retry under rate limit.
+        ok = 0
+        for req in chunk:
+            rr = _api(token, "PATCH", url, {"requests": [req]})
+            if rr.get("code") in (0, "0", None):
+                ok += 1
+        return ok
+    if len(chunk) == 1:
+        logger.warning(
+            "batch_update invalid request at %d: %s msg=%s",
+            base_i,
+            _summarize_batch_update_req(chunk[0]),
+            str(r.get("msg", ""))[:160],
+        )
+        return 0
+    mid = len(chunk) // 2
+    ok_left = _batch_update_with_bisect(token, url, chunk[:mid], base_i)
+    ok_right = _batch_update_with_bisect(token, url, chunk[mid:], base_i + mid)
+    return ok_left + ok_right
+
+
 def _post_children(token: str, doc_id: str, parent_block_id: str, children: list[dict[str, Any]], index: int = -1) -> dict[str, Any]:
     url = f"{DOCX_BASE}/{doc_id}/blocks/{parent_block_id}/children"
     payload: dict[str, Any] = {"children": children}
@@ -171,6 +223,9 @@ def _batch_update_blocks(token: str, doc_id: str, requests: list[dict[str, Any]]
         r = _api(token, "PATCH", url, {"requests": chunk})
         if r.get("code") not in (0, "0", None):
             logger.warning("batch_update chunk %d-%d failed: %s", i, i + len(chunk), str(r.get("msg", ""))[:120])
+            if _is_invalid_param(r):
+                updated += _batch_update_with_bisect(token, url, chunk, i)
+                continue
             # Fallback: retry each request individually (best-effort). This prevents losing
             # a whole chunk when some block_ids become invalid after structural changes.
             for req in chunk:
