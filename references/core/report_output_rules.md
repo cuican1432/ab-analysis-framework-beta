@@ -122,6 +122,8 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - The marker encodes the significance judgment decided during Stage A extraction.
     Dropping it forces Enhanced Layer to infer significance from context, which is unreliable.
   - If a value has not been tested for significance, do not write a marker or a bare value; use qualitative wording only.
+  - ✅ `💡 **结论：MuF Active Chat/User ↑ +0.5001%（p<0.001）显著正向**`
+  - ❌ `💡 **结论：文本 +0.53%、语音 +0.70%**` (missing markers; Enhanced Layer cannot determine significance)
 
 ### Evidence Manifest | 证据清单
 
@@ -185,7 +187,7 @@ Terminology mapping (user-facing):
 - Use plain paragraph + emoji + bold:
   - conclusion / core insights: `💡 **结论：...**`
   - risk / warning: `⚠️ **风险：...**`
- - When conclusion / risk lines cite numeric values, always include direction markers:
+- When conclusion / risk lines cite numeric values, always include direction markers:
    - `💡 **结论：文本 ↑ +0.53%、语音 ↑ +0.70%、相机 ↑ +1.37%**`
    - `⚠️ **风险：click_report/user ↓ +4.1495%（p<0.001）**`
 
