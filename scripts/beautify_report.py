@@ -1245,6 +1245,141 @@ def collect_table_pvalue_colorize_requests_from_blocks(
     return requests
 
 
+def collect_table_ns_gray_requests_from_blocks(
+    all_blocks: list[dict[str, Any]],
+    children_map: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    """
+    Gray out placeholder cells in non-significant rows to match V5 readability.
+
+    Rendering only:
+    - row significance is inferred from the L2 marker in the relative-change cell
+    - we only gray simple placeholders ("—") and the "不显著" label
+    """
+    requests: list[dict[str, Any]] = []
+    for tb in all_blocks:
+        if tb.get("block_type") != BLOCK_TABLE:
+            continue
+        table = tb.get("table") or {}
+        prop = table.get("property") or {}
+        cell_ids = (table.get("cells")) or []
+        if not isinstance(cell_ids, list) or not cell_ids:
+            continue
+
+        n_cols = prop.get("column_size")
+        n_rows = prop.get("row_size")
+        if not isinstance(n_cols, int) or n_cols <= 0:
+            continue
+        if not isinstance(n_rows, int) or n_rows <= 1:
+            continue
+        if len(cell_ids) < n_rows * n_cols:
+            continue
+
+        # Locate relative-change column; fallback to p-value-1 when possible.
+        rel_col: int | None = None
+        p_col: int | None = None
+        for j in range(n_cols):
+            cid = cell_ids[j]
+            if not isinstance(cid, str):
+                continue
+            header_child = _first_text_child_in_cell(children_map, cid)
+            if not header_child:
+                continue
+            header_txt = _extract_block_plain_text(header_child).strip().strip("`").strip()
+            if p_col is None and _P_VALUE_HEADER_RE.match(header_txt):
+                p_col = j
+            if rel_col is None and _REL_CHANGE_HEADER_RE.search(header_txt):
+                rel_col = j
+        if rel_col is None and p_col is not None and p_col > 0:
+            rel_col = p_col - 1
+        if rel_col is None:
+            continue
+
+        for r in range(1, n_rows):
+            rel_cid = cell_ids[r * n_cols + rel_col]
+            if not isinstance(rel_cid, str):
+                continue
+            rel_child = _first_text_child_in_cell(children_map, rel_cid)
+            if not rel_child:
+                continue
+            sig = _infer_sig_from_text(_extract_block_plain_text(rel_child))
+            if sig != "ns":
+                continue
+
+            for j in range(n_cols):
+                cid = cell_ids[r * n_cols + j]
+                if not isinstance(cid, str):
+                    continue
+                child = _first_text_child_in_cell(children_map, cid)
+                if not child:
+                    continue
+                txt = _extract_block_plain_text(child).strip()
+                if not txt:
+                    continue
+                if txt in ("—", "\u2014"):
+                    requests.append(
+                        {
+                            "block_id": child["block_id"],
+                            "update_text_elements": {"elements": [sig_tr("—", "ns")]},
+                        }
+                    )
+                elif txt.startswith("➖ ") or txt == "不显著":
+                    requests.append(
+                        {
+                            "block_id": child["block_id"],
+                            "update_text_elements": {"elements": [sig_tr(_strip_sig_marker_prefix(txt), "ns")]},
+                        }
+                    )
+    return requests
+
+
+_BLUE_SUBLABEL_RE = re.compile(r"^(归因链路|平台一致性|新用户维度亮点)\s*[:：]?$")
+
+
+def collect_blue_sublabel_requests(children: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """
+    Colorize known sublabels (V5 style) in blue:
+    - H3 headings: set the whole heading to blue+bold when the title matches
+    - Text/list blocks: if the first bold token is a known sublabel, set it blue
+    """
+    requests: list[dict[str, Any]] = []
+    for blk in children:
+        btype = blk.get("block_type")
+        bid = blk.get("block_id")
+        if not isinstance(bid, str):
+            continue
+
+        if btype == BLOCK_H3:
+            title = _extract_block_plain_text(blk).strip()
+            if _BLUE_SUBLABEL_RE.match(title):
+                requests.append({"block_id": bid, "update_text_elements": {"elements": [tr(title, bold=True, color=COLOR_BLUE)]}})
+            continue
+
+        if btype not in (BLOCK_TEXT, BLOCK_BULLET, BLOCK_ORDERED):
+            continue
+        elements = _get_text_elements_for_block(blk) or []
+        if not elements:
+            continue
+        new_elements: list[dict[str, Any]] = []
+        colored = False
+        for el in elements:
+            trn = el.get("text_run")
+            if not colored and isinstance(trn, dict):
+                style = trn.get("text_element_style") or {}
+                if style.get("bold"):
+                    content = str(trn.get("content", "")).strip()
+                    if _BLUE_SUBLABEL_RE.match(content):
+                        new_el = _deep_copy_element(el)
+                        new_el["text_run"]["text_element_style"] = {**style, "text_color": COLOR_BLUE}
+                        new_elements.append(new_el)
+                        colored = True
+                        continue
+            new_elements.append(el)
+        if colored:
+            requests.append({"block_id": bid, "update_text_elements": {"elements": new_elements}})
+    return requests
+
+
 def _get_text_elements_for_block(block: dict[str, Any]) -> list[dict[str, Any]] | None:
     btype = block.get("block_type")
     if btype == BLOCK_TEXT:
@@ -1500,8 +1635,10 @@ def main() -> int:
             patch_requests.extend(collect_h2_patch_requests(children, args.max_headings))
         patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_table_pvalue_colorize_requests_from_blocks(all_blocks, children_map))
+        patch_requests.extend(collect_table_ns_gray_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
         patch_requests.extend(collect_to_confirm_colorize_requests(children, children_map))
+        patch_requests.extend(collect_blue_sublabel_requests(children))
         try:
             updated = _batch_update_blocks(token, doc_id, patch_requests)
             logger.info("Batch updated blocks (H2 + table cells + inline values): %d", updated)
