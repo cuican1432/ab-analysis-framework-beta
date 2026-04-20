@@ -1136,6 +1136,115 @@ def collect_table_colorize_requests_from_blocks(
     return requests
 
 
+_P_VALUE_HEADER_RE = re.compile(r"^(p[\s-]*value|p[\s-]*val|p\s*值|p值)$", re.IGNORECASE)
+_REL_CHANGE_HEADER_RE = re.compile(r"(相对变化|变化|Δ%|delta)", re.IGNORECASE)
+_P_VALUE_CELL_RE = re.compile(r"^(?:0?\.\d+|1(?:\.0+)?)$", re.IGNORECASE)
+
+
+def _first_text_child_in_cell(children_map: dict[str, list[dict[str, Any]]], cell_id: str) -> dict[str, Any] | None:
+    for child in children_map.get(cell_id, []):
+        if child.get("block_type") in (BLOCK_TEXT, BLOCK_BULLET, BLOCK_ORDERED):
+            bid = child.get("block_id")
+            if isinstance(bid, str):
+                return child
+    return None
+
+
+def collect_table_pvalue_colorize_requests_from_blocks(
+    all_blocks: list[dict[str, Any]],
+    children_map: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    """
+    Colorize p-value cells based on the significance marker in the same row's relative-change cell.
+
+    This is rendering only:
+    - sig is inferred from L2 direction markers (↑/↓/↗/↘/➖) in the relative-change cell
+    - p-value itself is NOT used to infer significance
+    """
+    requests: list[dict[str, Any]] = []
+    for tb in all_blocks:
+        if tb.get("block_type") != BLOCK_TABLE:
+            continue
+        table = tb.get("table") or {}
+        prop = table.get("property") or {}
+        cell_ids = (table.get("cells")) or []
+        if not isinstance(cell_ids, list) or not cell_ids:
+            continue
+
+        n_cols = prop.get("column_size")
+        n_rows = prop.get("row_size")
+        if not isinstance(n_cols, int) or n_cols <= 0:
+            continue
+        if not isinstance(n_rows, int) or n_rows <= 1:
+            continue
+        if len(cell_ids) < n_rows * n_cols:
+            continue
+
+        # Locate header indices.
+        p_col: int | None = None
+        rel_col: int | None = None
+        for j in range(n_cols):
+            cid = cell_ids[j]
+            if not isinstance(cid, str):
+                continue
+            header_child = _first_text_child_in_cell(children_map, cid)
+            if not header_child:
+                continue
+            header_txt = _extract_block_plain_text(header_child).strip()
+            header_txt = header_txt.strip("`").strip()
+            if p_col is None and _P_VALUE_HEADER_RE.match(header_txt):
+                p_col = j
+            if rel_col is None and _REL_CHANGE_HEADER_RE.search(header_txt):
+                rel_col = j
+        if p_col is None:
+            continue
+        if rel_col is None and p_col > 0:
+            rel_col = p_col - 1
+        if rel_col is None:
+            continue
+
+        for r in range(1, n_rows):
+            rel_cid = cell_ids[r * n_cols + rel_col]
+            p_cid = cell_ids[r * n_cols + p_col]
+            if not isinstance(rel_cid, str) or not isinstance(p_cid, str):
+                continue
+
+            rel_child = _first_text_child_in_cell(children_map, rel_cid)
+            p_child = _first_text_child_in_cell(children_map, p_cid)
+            if not rel_child or not p_child:
+                continue
+
+            sig = _infer_sig_from_text(_extract_block_plain_text(rel_child))
+            if sig is None:
+                continue
+
+            p_txt = _extract_block_plain_text(p_child).strip()
+            if not p_txt:
+                continue
+            if p_txt == "—":
+                # Only gray the dash when the row is not significant (matches V5 style).
+                if sig == "ns":
+                    requests.append(
+                        {
+                            "block_id": p_child["block_id"],
+                            "update_text_elements": {"elements": [sig_tr("—", "ns")]},
+                        }
+                    )
+                continue
+
+            # Only colorize numeric p-values.
+            if not _P_VALUE_CELL_RE.match(p_txt):
+                continue
+
+            requests.append(
+                {
+                    "block_id": p_child["block_id"],
+                    "update_text_elements": {"elements": [sig_tr(p_txt, sig)]},
+                }
+            )
+    return requests
+
+
 def _get_text_elements_for_block(block: dict[str, Any]) -> list[dict[str, Any]] | None:
     btype = block.get("block_type")
     if btype == BLOCK_TEXT:
@@ -1390,6 +1499,7 @@ def main() -> int:
         if args.decorate_headings:
             patch_requests.extend(collect_h2_patch_requests(children, args.max_headings))
         patch_requests.extend(collect_table_colorize_requests_from_blocks(all_blocks, children_map))
+        patch_requests.extend(collect_table_pvalue_colorize_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
         patch_requests.extend(collect_to_confirm_colorize_requests(children, children_map))
         try:
