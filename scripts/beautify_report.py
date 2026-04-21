@@ -1458,6 +1458,50 @@ def _get_text_elements_for_block(block: dict[str, Any]) -> list[dict[str, Any]] 
     return None
 
 
+_NAKED_PERCENT_RE = re.compile(r"([+-]\d[\d,]*(?:\.\d+)?%)")
+
+
+def _warn_callout_naked_values_without_markers(all_blocks: list[dict[str, Any]]) -> None:
+    """
+    Transition guardrail only: if callout children contain bare +/- percentages without direction markers,
+    log a warning so we can catch A-stage rule violations during smoke tests.
+    """
+    callout_ids: set[str] = set()
+    for b in all_blocks:
+        if b.get("block_type") == BLOCK_CALLOUT:
+            bid = b.get("block_id")
+            if isinstance(bid, str):
+                callout_ids.add(bid)
+    if not callout_ids:
+        return
+
+    marker_chars = set("↑↓↗↘➖")
+    warned = 0
+    for b in all_blocks:
+        if b.get("parent_id") not in callout_ids:
+            continue
+        bid = b.get("block_id")
+        if not isinstance(bid, str):
+            continue
+        txt = _extract_plain_text(_get_text_elements_for_block(b) or [])
+        if not txt:
+            continue
+        for m in _NAKED_PERCENT_RE.finditer(txt):
+            i = m.start(1) - 1
+            while i >= 0 and txt[i].isspace():
+                i -= 1
+            if i >= 0 and txt[i] in marker_chars:
+                continue
+            warned += 1
+            snippet = txt.strip().replace("\n", " ")
+            if len(snippet) > 120:
+                snippet = snippet[:117] + "..."
+            logger.warning("Callout child %s has naked values without direction markers: %s", bid, snippet)
+            break
+    if warned:
+        logger.warning("Found %d callout child blocks with naked values; Base Layer should add direction markers.", warned)
+
+
 def collect_inline_value_colorize_requests_from_blocks(
     all_blocks: list[dict[str, Any]],
     table_cell_ids: set[str],
@@ -1476,6 +1520,47 @@ def collect_inline_value_colorize_requests_from_blocks(
         if not changed:
             continue
         requests.append({"block_id": bid, "update_text_elements": {"elements": new_elements}})
+    return requests
+
+
+_TO_CONFIRM_H2_RE = re.compile(r"待确认|To\s*Confirm", re.IGNORECASE)
+
+
+def collect_to_confirm_colorize_requests(
+    children: list[dict[str, Any]],
+    _children_map: dict[str, list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    """Colorize the first bold title token in ordered-list items under the '待确认' H2."""
+    requests: list[dict[str, Any]] = []
+    in_to_confirm = False
+    for blk in children:
+        btype = blk.get("block_type")
+        if btype == BLOCK_H2:
+            text = _extract_block_plain_text(blk).strip()
+            in_to_confirm = bool(_TO_CONFIRM_H2_RE.search(text))
+            continue
+        if not in_to_confirm or btype != BLOCK_ORDERED:
+            continue
+        elements = (blk.get("ordered") or {}).get("elements") or []
+        if not elements:
+            continue
+        new_elements: list[dict[str, Any]] = []
+        colored = False
+        for el in elements:
+            trn = el.get("text_run")
+            if not colored and isinstance(trn, dict):
+                style = trn.get("text_element_style") or {}
+                if style.get("bold"):
+                    new_el = _deep_copy_element(el)
+                    new_el["text_run"]["text_element_style"] = {**style, "text_color": COLOR_ORANGE}
+                    new_elements.append(new_el)
+                    colored = True
+                    continue
+            new_elements.append(el)
+        if colored:
+            bid = blk.get("block_id")
+            if isinstance(bid, str):
+                requests.append({"block_id": bid, "update_text_elements": {"elements": new_elements}})
     return requests
 
 
@@ -1788,6 +1873,7 @@ def main() -> int:
 
     # Stage C+ Step 3: Beautify top-to-bottom (best-effort). Each step must degrade silently.
     if all_blocks and children_map:
+        _warn_callout_naked_values_without_markers(all_blocks)
         patch_requests: list[dict[str, Any]] = []
         table_cell_ids: set[str] = set()
         for b in all_blocks:
@@ -1802,6 +1888,7 @@ def main() -> int:
         patch_requests.extend(collect_table_ns_gray_requests_from_blocks(all_blocks, children_map))
         patch_requests.extend(collect_inline_value_colorize_requests_from_blocks(all_blocks, table_cell_ids))
         patch_requests.extend(collect_blue_sublabel_requests(children))
+        patch_requests.extend(collect_to_confirm_colorize_requests(children, children_map))
         deduped_patch_requests = _dedupe_patch_requests_by_block_id(patch_requests)
         dup_count = len(patch_requests) - len(deduped_patch_requests)
         if dup_count > 0:
