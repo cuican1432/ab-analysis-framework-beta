@@ -185,13 +185,23 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 ### Language Discipline | 语言纪律
 
 - The report is written for decision-makers (PM, leads, stakeholders), not for framework developers or data analysts.
-- Framework-internal terms are forbidden in the report body. Translate or rephrase them:
+- Hard rule: the final report must "说人话".
+  - Any framework-internal label, prompt-engineering tag, evidence tag, confidence tier, or methodology shorthand must be rewritten into business-facing natural Chinese before it appears in the report body.
+  - Do not expose raw internal tags such as bracket labels, English evidence labels, confidence buckets, or analysis-framework jargon directly to readers.
+  - Prefer consequence-oriented explanation over taxonomy labels:
+    - explain *why the reader should care*,
+    - *what uncertainty remains*,
+    - and *what action is needed next*.
+- Framework-internal / methodological wording is forbidden in the report body. Non-exhaustive examples:
   - ✗ `PRD scope 外` → ✓ `不在本次实验改动范围内`
-  - ✗ `artifact` → ✓ `数据口径问题导致的虚假信号` 或 `统计噪声`
-  - ✗ `blocking regression` → ✓ `阻断性回退` 或 `明显恶化`
+  - ✗ `artifact` / `caliber artifact` → ✓ `数据口径问题导致的虚假信号` / `统计噪声`
+  - ✗ `blocking regression` → ✓ `阻断性回退` / `明显恶化`
   - ✗ `embedded sheets 无法解析` → ✓ `完整数据需在原始报告中逐项确认`
   - ✗ `归为 [monitoring]` → ✓ `建议持续关注，暂不作为决策阻断项`
-  - ✗ `caliber artifact` → ✓ `指标口径问题导致的虚假显著`
+  - ✗ `novelty 消退风险` → ✓ `实验初期新鲜感效应可能随时间减弱`
+  - ✗ `置信度：Medium/High/Low` → ✓ `受限于 13 天数据，结论稳定性待验证`
+  - ✗ `[direct evidence]` / `[indirect evidence]` → ✓ `有直接数据支撑` / `间接推断`
+  - ✗ `small base effect` → ✓ `基线极低导致相对变化被放大`
 - Metric names follow their original language in Raw Data (usually English); all other text uses Chinese.
 - Avoid mid-sentence language switching. If an English term must appear (for example, a proper noun), wrap it in parentheses after the Chinese equivalent.
 
