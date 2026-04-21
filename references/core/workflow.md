@@ -59,11 +59,31 @@ Use this default order for experiment analysis:
 
 ### Stage B: Logic and Attribution
 
-8. Turn Stage A facts into Stage B logic.
+Stage B converts Stage A facts into decision-ready reasoning.
+Before writing Stage C, the system MUST fill in the Stage B template: `references/core/stage_b_template.md`.
+If evidence is insufficient for any section, write `[insufficient evidence]` rather than skipping.
+
+8. Validity sanity check (B0).
+   - SRM (sample ratio mismatch): record `Not Available` unless the source exposes sample sizes per arm. Do not fabricate a pass.
+   - Pre-period balance: check if baseline/pre-period is available; otherwise record `Not Available`.
+   - Rollout anomalies: single ramp vs multiple ramps/pauses/reverts; if unknown, record `Unknown`.
+   - Metric coverage: compare Stage A recall set vs available groups; flag `listed but no data provided`.
+9. Attribution chains (B1) for each Tier A / Tier B significant group.
+   - Product/UX delta: cite a specific PRD anchor (entry point / trigger / interaction change).
+   - Most credible mechanism: PRD delta and/or intermediate metrics; label `[direct evidence]` / `[indirect evidence]` / `[hypothesis to verify]`.
+   - Metric movement: cite relative change, absolute change (if available), p-value, CI (if available).
+   - Business implication: one sentence actionable interpretation.
+   - Uncertainty & alternatives: at least one competing explanation and maturity risk when applicable.
+10. Cross-signal analysis (B2): contradictions, tradeoffs, PRD-expected regressions, unexpected movements.
+11. Effect size & practical significance (B3): baseline context, small-base screening, consistency across platform/segment/time, precision (CI width).
+12. Temporal & maturity analysis (B4): maturity ratio, novelty/decay, early-read risk, external events, launch artifact.
+13. Segment & dimension deep-dive (B5): top deviations, direction flips, null segments; do not over-read slices.
+14. Multi-arm comparison (B6, if applicable): explain WHY arms differ (product delta + mechanism), not just counts.
+15. Decision frame (B7): ship recommendation + confidence + blocking risks + monitoring + next actions + rollout strategy.
 
 ### Stage C: Final Report
 
-9. Write Stage C report.
+16. Write Stage C report.
    - Preserve the L2 direction marker from Stage A evidence whenever a value is meant to be beautified later.
    - This applies especially to conclusion/risk lines, evidence-manifest rows, and any inline metric citation reused from the evidence table.
    - Do not strip `↑` / `↓` / `↗` / `↘` / `➖` in Stage C; Enhanced Layer removes them only after L1 styling succeeds.

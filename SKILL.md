@@ -31,6 +31,9 @@ If the main goal is to build or normalize the knowledge store itself rather than
 - Input priority: treat Feishu/Lark doc links (PRD + Raw Data docx) as the primary inputs. If the user did not provide links, ask for them before making interpretation claims.
 - Follow the strict report structure: `总结论 + 总建议` first, then repeat `分结论 -> 归因链路 -> 细节表格`.
 - Keep attribution evidence-bound. No unsupported psych speculation.
+- Stage B must be completed (internally) before writing Stage C. Populate `references/core/stage_b_template.md` first. If evidence is insufficient for any section, mark it `[insufficient evidence]` rather than skipping.
+- Stage C must reflect Stage B reasoning: callouts trace back to B1 attribution chains; risks reference B2 cross-signal analysis; recommendations reference B7 decision frame; segment insights come from B5.
+- The Stage B working notes are internal; do not include the template verbatim in the final report, but do not skip generating it.
 - Fully disclose significant movements of core secondary metrics; do not hide them because they are not the headline metric.
 - Before writing `实验背景与设计`, extract required setup/config fields from the source header verbatim. Missing fields must be `not found`; PRD/Raw Data conflicts must be shown side-by-side with `to confirm`.
 - Near the beginning of the report, keep the document reference fields (`generation note`, `PRD`, `Raw Data`, `数据日期`, `Run Signature`) in one compact block, and prefer clickable links for `PRD` / `Raw Data` when URLs are available.

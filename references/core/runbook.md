@@ -124,6 +124,27 @@ Always add after the chain:
 
 - `Alternative explanations:` list at least 1 competing explanation (external/time/data-quality/spillover) that could also produce the movement.
 
+## Stage B Checklist (Quick Reference)
+
+Before writing Stage C, confirm:
+
+- [ ] B0: Validity pre-check done (SRM: default `Not Available` unless sample sizes exist; rollout; metric coverage).
+- [ ] B1: Attribution chain for every Tier A/B significant group.
+- [ ] B2: Cross-signal contradictions/tradeoffs resolved with a net assessment.
+- [ ] B3: Small-base effects flagged; absolute magnitude/baseline context noted when available.
+- [ ] B4: Data maturity assessed; novelty risk flagged when applicable.
+- [ ] B5: Top-3 segment deviations identified; direction flips flagged with risk level.
+- [ ] B6: Multi-arm comparison done (if multi-arm experiment).
+- [ ] B7: Decision frame filled (ship recommendation + confidence + actions).
+- [ ] B8: To-confirm list complete with specific owners/timelines.
+
+Common Stage B failure modes:
+
+- Skipping B entirely and going straight to data listing.
+- Writing "需要进一步分析" without specifying who/what/when.
+- Citing relative changes without absolute magnitude/baseline context when the source provides it.
+- Missing alternative explanations (treating the first explanation as the only one).
+
 ### Attribution Red Lines (Anti-Hallucination) | 归因推演红线（反幻觉）
 
 - Attribution and logic chains must be grounded in source facts.

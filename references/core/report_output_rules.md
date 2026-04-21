@@ -43,6 +43,53 @@ Key constraints (v1.2):
 
 Canonical spec: `references/core/beautification_spec_v1.2.md`
 
+## Stage C Reasoning Requirements | Stage C 推理要求
+
+Stage C converts Stage B working notes into a reader-facing decision memo.
+Do not skip Stage B: every key reasoning element in Stage C must trace back to Stage B.
+If evidence is insufficient, write `[insufficient evidence]` rather than skipping.
+
+### Per-Section Requirements (分结论)
+
+Each `分结论` section should include, in this order:
+
+1. One callout line (`💡 **结论：...**` or `⚠️ **风险：...**`) with 1-2 key numbers and direction markers.
+2. Attribution paragraph (from Stage B B1 chain):
+   - product/UX delta (cite a specific PRD anchor),
+   - most credible mechanism (include evidence label),
+   - business implication.
+3. Evidence table (metrics with direction markers).
+4. Uncertainty & alternatives:
+   - what could invalidate this interpretation,
+   - at least 1 competing explanation,
+   - mention data maturity when applicable.
+5. Cross-signal note (when Stage B B2 surfaced contradictions/tradeoffs in this domain).
+
+### 总结论 / 总建议 Requirements
+
+- 总结论 must include:
+  - data maturity statement: `当前数据 X 天 / 计划 Y 天` (or `not available`),
+  - evidence completeness rating: High / Medium / Low with 1-sentence justification,
+  - ship recommendation: Yes / No / Conditional, with confidence level.
+- 总建议 must be:
+  - actionable (verb + object; include owner/team when possible),
+  - prioritized (blocking risks first, then monitoring, then optimizations),
+  - traceable (each action points back to a Stage B decision-frame item).
+
+### 多维分析 Requirements
+
+- Include top-3 segment deviations (Stage B B5) with short business hypotheses.
+- Flag direction-flip segments with risk level and recommended action.
+- Do not dump slice tables without an insight summary.
+
+### 风险 Section Requirements
+
+Each risk item must include:
+- metric + numbers + direction markers (and p-value when available),
+- attribution / hypothesis for WHY (not just "it went up"),
+- practical significance context (absolute magnitude and/or baseline when available),
+- recommended action (specific: who/what/when).
+
 ### Feishu Doc Output | 飞书文档输出
 
 - Preferred: create a Feishu/Lark doc and return the doc link.
