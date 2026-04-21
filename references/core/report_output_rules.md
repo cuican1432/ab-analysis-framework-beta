@@ -89,6 +89,12 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - Use standard Markdown tables (they may be converted into native tables by Feishu automatically).
 - Do NOT use Markdown code blocks for tables.
 - Avoid too-wide tables; split into sub-tables when columns exceed 6.
+- `不显著` does NOT mean empty.
+  - If the source provides relative change / absolute change / CI / p-value, keep those values even when the judgment is `不显著`.
+  - Use `—` only when the source field is truly missing or unavailable.
+- If the Raw Data contains embedded `<sheet token="..."/>` tables, do not treat summary bullets as enough evidence to fill a 5-column appendix row.
+  - Prefer the embedded sheet as the source of truth for `相对变化 / 绝对变化 / 95% CI / p-value`.
+  - If the sheet has not been read yet, do not silently backfill those fields as `—`.
 
 ### Coloring | 染色
 
@@ -97,6 +103,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - negative significant: `↓ -X%`
   - marginal positive/negative: `↗ +X%` / `↘ -X%`
   - not significant: `➖ 不显著`
+  - do NOT output a bare `—` as the relative-change signal for a non-significant row; the non-significant status must be encoded explicitly with `➖`
 - Enhanced layer (Lark Block API / L1) uses styled numeric values only:
   - keep the numeric sign (`+` / `-`)
   - remove `↑` / `↓` / `↗` / `↘` / `➖`
@@ -120,6 +127,15 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - preferred: p-value is present
   - acceptable: the source provides an explicit significant flag plus a traceable source_location
   - if p-value is missing, the metric can only be described directionally (no significance claim), and it must be added into `to confirm`
+
+- Direction markers in conclusion / risk lines (CRITICAL):
+  - When a `💡 **结论：...**` or `⚠️ **风险：...**` line cites a numeric value from experiment data,
+    it MUST carry the same direction marker (`↑`/`↓`/`↗`/`↘`/`➖`) as the corresponding evidence row.
+  - The marker encodes the significance judgment decided during Stage A extraction.
+    Dropping it forces Enhanced Layer to infer significance from context, which is unreliable.
+  - If a value has not been tested for significance, do not write a marker or a bare value; use qualitative wording only.
+  - ✅ `💡 **结论：MuF Active Chat/User ↑ +0.5001%（p<0.001）显著正向**`
+  - ❌ `💡 **结论：文本 +0.53%、语音 +0.70%**` (missing markers; Enhanced Layer cannot determine significance)
 
 ### Evidence Manifest | 证据清单
 
@@ -182,6 +198,9 @@ Terminology mapping (user-facing):
 - Use a plain paragraph + emoji prefix + bold label (do not use Markdown blockquote `>`):
   - conclusion / core insights: `💡 **结论：...**`
   - risk / warning: `⚠️ **风险：...**`
+- When conclusion / risk lines cite numeric values, always include direction markers:
+  - `💡 **结论：文本 ↑ +0.53%、语音 ↑ +0.70%、相机 ↑ +1.37%**`
+  - `⚠️ **风险：click_report/user ↓ +4.1495%（p<0.001）**`
 
 ### To Confirm | 待确认清单
 
@@ -195,6 +214,7 @@ Terminology mapping (user-facing):
 - The appendix is the "absolute evidence chain" for review. Do not truncate or summarize the underlying detail tables.
 - Source format handling:
   - if the Raw Data contains structured Feishu table nodes, clone them directly
+  - if the Raw Data contains embedded `<sheet token="..."/>` tables, read the sheet values first and rebuild/clone the appendix rows from the sheet, not from the summary bullets
   - if the Raw Data is in text / list format (for example, `指标名 正向显著 +X% ... p值：Y`), parse the text into a structured native Feishu table before placing it in the appendix; preserve all original values without rounding or truncation
 - Preferred path:
   - fetch all detail tables from the bottom of the Raw Data doc via API and "physically clone" the table nodes into the new doc.
@@ -202,3 +222,6 @@ Terminology mapping (user-facing):
   1. Copy/export the full raw tables into the appendix without summarization, and explicitly list which raw tables could not be cloned and why (permission/tooling/unavailable).
   2. Link-type lowest-fidelity fallback: if full-table copy/export is not possible, place direct links to the raw doc tables (or table nodes / screenshots) and list the missing tables and reasons. This still enables review to open the original evidence.
   3. Manual fallback (last resort): manually create native Feishu tables and fill in all rows/columns as-is from the source, and explicitly state this is a manual fallback and what limitation caused it.
+- When cloning or manually rebuilding appendix rows, do NOT drop numeric fields simply because a row is `不显著`.
+  - Preserve relative change, absolute change, 95% CI, and p-value whenever the source exposes them.
+  - If the embedded sheet has not been successfully read yet, prefer `待从嵌入表补齐` / `部分证据` wording over fake `—` placeholders.

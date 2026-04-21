@@ -88,6 +88,8 @@ MUST DO:
 - ✅ significance marking: L1 (color+bold+bg) > L2 (direction markers: `↑` / `↓` / `↗` / `↘` / `➖`) > L3 (plain labels)
 - ✅ format split: Base Layer Markdown uses `↑` / `↓` / `↗` / `↘` / `➖`; Enhanced Layer L1 removes those markers and keeps only styled `+/-` numeric values
 - ✅ summary tables: 3 columns; appendix tables: 5 columns; row_count <= 8 (split when needed)
+- ✅ even when a metric is `不显著`, keep relative change / absolute change / CI / p-value whenever the source provides them; `—` only means the source value is truly missing
+- ✅ if `docs +fetch` returns embedded `<sheet token="..."/>` tables, read those sheets before rebuilding appendix rows; do not treat summary bullets as enough to fill a 5-column appendix
 - ✅ experiment info: inline text (bold key + value)
 - ✅ degrade silently when Block API fails
 - ✅ emit at most one legend / reading-guide block in Base Layer; let the packaged beautification script own legend replacement/deduplication
@@ -99,6 +101,7 @@ MUST NOT:
 - ❌ restructure original chapters
 - ❌ create tables > 8 rows
 - ❌ hardcode tokens or log tokens
+- ❌ when an embedded sheet exists but has not been read yet, fill `绝对变化 / 95% CI / p-value` with fake `—` placeholders as if they were true missing values
 
 ## 2) Report Generation with Temporary Guidance
 
