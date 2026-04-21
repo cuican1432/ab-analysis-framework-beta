@@ -1511,13 +1511,46 @@ def collect_table_colorize_requests_from_blocks(
         return out, changed
 
     requests: list[dict[str, Any]] = []
-    for b in all_blocks:
-        if b.get("block_type") != BLOCK_TABLE:
+    for tb in all_blocks:
+        if tb.get("block_type") != BLOCK_TABLE:
             continue
-        cell_ids = ((b.get("table") or {}).get("cells")) or []
-        if not isinstance(cell_ids, list):
+        table = tb.get("table") or {}
+        prop = table.get("property") or {}
+        cell_ids = table.get("cells") or []
+        if not isinstance(cell_ids, list) or not cell_ids:
             continue
-        for cell_id in cell_ids:
+
+        n_cols = prop.get("column_size")
+        n_rows = prop.get("row_size")
+        if not isinstance(n_cols, int) or n_cols <= 0:
+            continue
+        if not isinstance(n_rows, int) or n_rows <= 1:
+            continue
+        if len(cell_ids) < n_rows * n_cols:
+            continue
+
+        rel_col: int | None = None
+        p_col: int | None = None
+        for j in range(n_cols):
+            cid = cell_ids[j]
+            if not isinstance(cid, str):
+                continue
+            header_child = _first_text_child_in_cell(children_map, cid)
+            if not header_child:
+                continue
+            header_txt = _extract_block_plain_text(header_child).strip().strip("`").strip()
+            if p_col is None and _P_VALUE_HEADER_RE.match(header_txt):
+                p_col = j
+            if rel_col is None and _REL_CHANGE_HEADER_RE.search(header_txt):
+                rel_col = j
+        if rel_col is None and p_col is not None and p_col > 0:
+            rel_col = p_col - 1
+        if rel_col is None:
+            # Stay conservative when we cannot identify the relative-change column.
+            continue
+
+        for r in range(1, n_rows):
+            cell_id = cell_ids[r * n_cols + rel_col]
             if not isinstance(cell_id, str):
                 continue
             for child in children_map.get(cell_id, []):
