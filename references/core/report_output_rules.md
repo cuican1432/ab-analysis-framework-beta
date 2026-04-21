@@ -182,6 +182,24 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - When Raw Data provides only the English name, use the English name as-is; do not invent a Chinese translation. If a bilingual name is needed and the Chinese mapping is uncertain, add the metric to the `to confirm` list.
 - Do NOT output `[数据缺失]` unless the source data is truly missing; if missing, state what is missing and which source should contain it.
 
+### Experiment Info Section | 实验信息段
+
+- In Base Layer, experiment info fields (`实验名称` / `实验描述` / `实验分组` / `实验流量` / `实验周期` etc.) must be rendered as:
+  - one field per line, or
+  - a bullet list.
+- Do NOT place multiple `**字段名**：值` pairs inside the same paragraph line; Feishu markdown import may collapse them into one run-on sentence.
+- Recommended format:
+  - `- **实验名称**：xxx`
+  - `- **实验描述**：xxx`
+  - `- **实验分组**：`
+    then describe arms as sub-bullets or one arm per line.
+
+### Analytical Reasoning | 分析推理段落
+
+- Cross-signal comparison, contradiction analysis, attribution reasoning, and net assessment must be written as narrative paragraphs, not as tables.
+- Tables are reserved for data display (metrics, relative changes, p-values, CI, sample-size-like evidence), not for causal judgment or contradiction resolution.
+- Example: if `举报↑` and `拉黑↓` need to be reconciled, write a short analysis paragraph explaining the relationship and net decision impact; do not use a 4-column reasoning table.
+
 ### Language Discipline | 语言纪律
 
 - The report is written for decision-makers (PM, leads, stakeholders), not for framework developers or data analysts.

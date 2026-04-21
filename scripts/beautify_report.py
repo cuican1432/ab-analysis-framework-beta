@@ -1484,6 +1484,32 @@ def collect_table_colorize_requests_from_blocks(
     all_blocks: list[dict[str, Any]],
     children_map: dict[str, list[dict[str, Any]]],
 ) -> list[dict[str, Any]]:
+    def _colorize_marker_inline_elements(elements: list[dict[str, Any]] | None) -> tuple[list[dict[str, Any]], bool]:
+        out: list[dict[str, Any]] = []
+        changed = False
+        for el in (elements or []):
+            trn = el.get("text_run")
+            if not isinstance(trn, dict):
+                out.append(el)
+                continue
+            content = str(trn.get("content", ""))
+            last = 0
+            local_changed = False
+            for m in SIG_INLINE_RE.finditer(content):
+                start, end = m.span()
+                if start > last:
+                    out.append(_clone_text_run_with_content(el, content[last:start]))
+                out.append(sig_tr(m.group(2), _sig_from_marker(m.group(1))))
+                last = end
+                local_changed = True
+            if local_changed:
+                if last < len(content):
+                    out.append(_clone_text_run_with_content(el, content[last:]))
+                changed = True
+            else:
+                out.append(el)
+        return out, changed
+
     requests: list[dict[str, Any]] = []
     for b in all_blocks:
         if b.get("block_type") != BLOCK_TABLE:
@@ -1500,15 +1526,14 @@ def collect_table_colorize_requests_from_blocks(
                     continue
                 if child.get("block_type") not in (BLOCK_TEXT, BLOCK_BULLET, BLOCK_ORDERED):
                     continue
-                text = _extract_block_plain_text(child)
-                sig = _infer_sig_from_text(text)
-                if sig is None:
+                elements = _get_text_elements_for_block(child)
+                new_elements, changed = _colorize_marker_inline_elements(elements)
+                if not changed:
                     continue
-                clean_value = _strip_sig_marker_prefix(text)
                 requests.append(
                     {
                         "block_id": block_id,
-                        "update_text_elements": {"elements": [sig_tr(clean_value, sig)]},
+                        "update_text_elements": {"elements": new_elements},
                     }
                 )
                 break
@@ -1612,9 +1637,10 @@ def collect_to_confirm_colorize_requests(
         elements = (blk.get("ordered") or {}).get("elements") or []
         if not elements:
             continue
+        base_elements, _ = _colorize_inline_elements(elements)
         new_elements: list[dict[str, Any]] = []
         colored = False
-        for el in elements:
+        for el in base_elements:
             trn = el.get("text_run")
             if not colored and isinstance(trn, dict):
                 style = trn.get("text_element_style") or {}
