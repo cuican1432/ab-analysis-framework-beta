@@ -64,6 +64,9 @@ Use this default order for experiment analysis:
 ### Stage C: Final Report
 
 9. Write Stage C report.
+   - Preserve the L2 direction marker from Stage A evidence whenever a value is meant to be beautified later.
+   - This applies especially to conclusion/risk lines, evidence-manifest rows, and any inline metric citation reused from the evidence table.
+   - Do not strip `↑` / `↓` / `↗` / `↘` / `➖` in Stage C; Enhanced Layer removes them only after L1 styling succeeds.
 
 ## Live Libra Branch
 

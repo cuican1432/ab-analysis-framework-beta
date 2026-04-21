@@ -109,6 +109,10 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - keep the numeric sign (`+` / `-`)
   - remove `↑` / `↓` / `↗` / `↘` / `➖`
   - express significance through color + bold (+ background when applicable), not through arrows
+- Stage C must preserve the L2 direction marker in Base Layer text whenever a value is intended to be beautified later.
+  - Think of `↑` / `↓` / `↗` / `↘` / `➖` as the semantic anchor consumed by Enhanced Layer.
+  - The marker is written in Stage C on purpose and removed only after L1 styling succeeds.
+  - Do NOT drop the marker early just because the final beautified doc is expected to hide it.
 - L2 direction markers must reflect business meaning, not raw arithmetic direction:
   - `↑` = favorable to the business / experiment goal
   - `↓` = unfavorable to the business / experiment goal
@@ -149,6 +153,8 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
   - N / sample size signal (when available)
   - source_location (where it came from in Raw Data)
 - This manifest is used to prevent inconsistent significance labeling across sections.
+- If an entry includes a relative-change value in Stage C text/table form, preserve the same direction marker used by the source evidence row (for example `↑ +0.35%`, `↘ -0.08%`, `➖ 不显著`).
+- Do not rewrite a marker-bearing evidence value into a bare `+/-X%` token before beautification.
 
 ### Recall Manifest | 召回清单
 

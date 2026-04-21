@@ -87,6 +87,7 @@ MUST DO:
 - ✅ token from env (no hardcode): `LARK_USER_ACCESS_TOKEN` or `MIRA_LARK_USER_ACCESS_TOKEN`
 - ✅ significance marking: L1 (color+bold+bg) > L2 (direction markers: `↑` / `↓` / `↗` / `↘` / `➖`) > L3 (plain labels)
 - ✅ format split: Base Layer Markdown uses `↑` / `↓` / `↗` / `↘` / `➖`; Enhanced Layer L1 removes those markers and keeps only styled `+/-` numeric values
+- ✅ Stage C must keep L2 markers on any value that should later be beautified (for example values in conclusion/risk lines, evidence manifest rows, and eligible inline citations); do not drop the marker before beautification
 - ✅ summary tables: 3 columns; appendix tables: 5 columns; row_count <= 8 (split when needed)
 - ✅ even when a metric is `不显著`, keep relative change / absolute change / CI / p-value whenever the source provides them; `—` only means the source value is truly missing
 - ✅ if `docs +fetch` returns embedded `<sheet token="..."/>` tables, read those sheets before rebuilding appendix rows; do not treat summary bullets as enough to fill a 5-column appendix
