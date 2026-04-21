@@ -6,3 +6,6 @@ __pycache__/
 
 # Temporary packaging workspace
 tmp/
+
+# Local smoke / readback artifacts
+workspace/
