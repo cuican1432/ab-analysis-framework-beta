@@ -442,12 +442,25 @@ def cleanup_empty_blocks_from_blocks(
 
 def cleanup_first_placeholder_under_parent(token: str, doc_id: str, parent_id: str) -> None:
     try:
-        rr = _get_children(token, doc_id, parent_id)
-        if rr.get("code") not in (0, "0", None):
-            return
-        kids = [_unwrap_block(it) for it in list((rr.get("data") or {}).get("items") or [])]
-        if len(kids) > 1 and _is_empty_placeholder_text_block(kids[0]):
-            _batch_delete_children(token, doc_id, parent_id, 0, 1, document_revision_id=-1)
+        # Feishu sometimes materializes the placeholder child asynchronously.
+        # Best-effort retry to avoid leaving an extra blank line in new callouts.
+        for _ in range(3):
+            rr = _get_children(token, doc_id, parent_id)
+            if rr.get("code") not in (0, "0", None):
+                return
+            kids = [_unwrap_block(it) for it in list((rr.get("data") or {}).get("items") or [])]
+            if len(kids) <= 1:
+                return
+            # Placeholder is usually at index 0, but be robust to slight ordering shifts.
+            deleted = False
+            for i in range(min(3, len(kids))):
+                if _is_empty_placeholder_text_block(kids[i]):
+                    _batch_delete_children(token, doc_id, parent_id, i, i + 1, document_revision_id=-1)
+                    deleted = True
+                    break
+            if not deleted:
+                return
+            time.sleep(0.12)
     except Exception as e:
         logger.warning("cleanup_first_placeholder_under_parent: %s failed: %s", parent_id, e)
 
@@ -553,9 +566,10 @@ def create_callout(
     if r.get("code") not in (0, "0"):
         return None
     cid = r["data"]["children"][0]["block_id"]
-    _post_children(token, doc_id, cid, children_blocks)
-    # Feishu may leave an auto-generated empty first child under new callouts.
-    # Clean it up immediately so conclusion/risk callouts do not render a blank line.
+    # Prefer inserting real content at index 0. Feishu may auto-create an empty placeholder child;
+    # inserting at index 0 avoids a leading blank line even if cleanup is delayed.
+    _post_children(token, doc_id, cid, children_blocks, index=0)
+    # Best-effort cleanup for Feishu auto-generated empty children.
     cleanup_first_placeholder_under_parent(token, doc_id, cid)
     return cid
 
@@ -830,7 +844,38 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
     - startswith '💡' or contains '结论：'
     - startswith '⚠️' or contains '风险：'
     """
-    targets: list[tuple[int, str, list[dict[str, Any]], str]] = []
+    def _is_trigger_text(t: str) -> str | None:
+        if t.startswith("💡") or "结论：" in t:
+            return "positive"
+        if t.startswith("⚠️") or "风险：" in t:
+            return "warning"
+        return None
+
+    def _trigger_line_is_header_only(t: str) -> bool:
+        s = (t or "").strip()
+        # The common problematic pattern is a pure header ending with a colon, with content in later blocks.
+        return s.endswith(("：", ":")) and len(s) >= 2
+
+    def _clone_callout_continuation_block(blk: dict[str, Any]) -> dict[str, Any] | None:
+        btype = blk.get("block_type")
+        if btype == BLOCK_TEXT:
+            return make_text((blk.get("text") or {}).get("elements") or [])
+        if btype == BLOCK_BULLET:
+            return make_bullet((blk.get("bullet") or {}).get("elements") or [])
+        if btype == BLOCK_ORDERED:
+            return make_ordered((blk.get("ordered") or {}).get("elements") or [])
+        return None
+
+    def _is_continuation_block(blk: dict[str, Any]) -> bool:
+        btype = blk.get("block_type")
+        if btype not in (BLOCK_TEXT, BLOCK_BULLET, BLOCK_ORDERED):
+            return False
+        # Do not swallow another trigger line.
+        txt = _extract_block_plain_text(blk).strip()
+        return _is_trigger_text(txt) is None
+
+    # (orig_idx, trigger_bid, trigger_elements, level, continuation_bids, continuation_blocks)
+    targets: list[tuple[int, str, list[dict[str, Any]], str, list[str], list[dict[str, Any]]]] = []
     for idx, blk in enumerate(children):
         if blk.get("block_type") != BLOCK_TEXT:
             continue
@@ -842,26 +887,44 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
         if not text:
             continue
 
-        level: str | None = None
-        if text.startswith("💡") or "结论：" in text:
-            level = "positive"
-        elif text.startswith("⚠️") or "风险：" in text:
-            level = "warning"
-        if level is not None:
-            targets.append((idx, bid, elements, level))
+        level = _is_trigger_text(text)
+        if level is None:
+            continue
+
+        continuation_bids: list[str] = []
+        continuation_blocks: list[dict[str, Any]] = []
+        if _trigger_line_is_header_only(text):
+            # Pull following blocks into the callout until a heading/divider/next trigger appears.
+            for j in range(idx + 1, len(children)):
+                nxt = children[j]
+                nbtype = nxt.get("block_type")
+                if nbtype in (3, BLOCK_H2, BLOCK_H3, BLOCK_DIVIDER, BLOCK_CALLOUT, BLOCK_QUOTE_CONTAINER, BLOCK_TABLE):
+                    break
+                if not _is_continuation_block(nxt):
+                    break
+                nbid = nxt.get("block_id")
+                if isinstance(nbid, str):
+                    cloned = _clone_callout_continuation_block(nxt)
+                    if cloned:
+                        continuation_bids.append(nbid)
+                        continuation_blocks.append(cloned)
+        targets.append((idx, bid, elements, level, continuation_bids, continuation_blocks))
 
     if not targets:
         return 0
 
-    created: list[tuple[str, str]] = []
+    # (trigger_bid, callout_id, bids_to_delete)
+    created: list[tuple[str, str, set[str]]] = []
     configs = {"positive": (4, 4, "lightbulb"), "warning": (3, 2, "warning"), "negative": (1, 1, "x")}
-    for orig_idx, bid, elements, level in reversed(targets):
+    for orig_idx, bid, elements, level, continuation_bids, continuation_blocks in reversed(targets):
         try:
             bg, border, emoji = configs.get(level, configs["positive"])
             clean_elements = _strip_leading_status_emoji_from_elements(elements)
-            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, [make_text(clean_elements)], index=orig_idx)
+            callout_children = [make_text(clean_elements)] + continuation_blocks
+            callout_id = create_callout(token, doc_id, parent_id, bg, border, emoji, callout_children, index=orig_idx)
             if callout_id:
-                created.append((bid, callout_id))
+                delete_ids = {bid, *continuation_bids}
+                created.append((bid, callout_id, delete_ids))
         except Exception as e:
             logger.warning("Upgrade callout create failed for %s (degrade): %s", bid, e)
 
@@ -870,8 +933,12 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
 
     time.sleep(0.2)
     kids = _get_parent_children(token, doc_id, parent_id)
-    orig_ids = {orig_bid for orig_bid, _ in created}
-    indices_to_delete = [i for i, b in enumerate(kids) if b.get("block_id") in orig_ids]
+    all_delete_ids: set[str] = set()
+    trigger_ids: set[str] = set()
+    for orig_bid, _, del_ids in created:
+        trigger_ids.add(orig_bid)
+        all_delete_ids |= del_ids
+    indices_to_delete = [i for i, b in enumerate(kids) if b.get("block_id") in all_delete_ids]
     for idx in sorted(indices_to_delete, reverse=True):
         try:
             _batch_delete_children(token, doc_id, parent_id, idx, idx + 1, document_revision_id=-1)
@@ -880,13 +947,14 @@ def upgrade_conclusion_risk_to_callouts(token: str, doc_id: str, parent_id: str,
 
     time.sleep(0.15)
     remaining = {b.get("block_id") for b in _get_parent_children(token, doc_id, parent_id)}
-    for orig_bid, _ in created:
-        if orig_bid in remaining and _delete_child_block_by_id(token, doc_id, parent_id, orig_bid):
-            remaining.discard(orig_bid)
-    patched = sum(1 for orig_bid, _ in created if orig_bid not in remaining)
-    if patched < len(created):
-        logger.warning("Upgrade callout partial delete: created=%d, removed=%d", len(created), patched)
-    return patched
+    # Final per-id cleanup (best-effort).
+    for bid in list(all_delete_ids):
+        if bid in remaining and _delete_child_block_by_id(token, doc_id, parent_id, bid):
+            remaining.discard(bid)
+    patched_triggers = sum(1 for orig_bid in trigger_ids if orig_bid not in remaining)
+    if patched_triggers < len(trigger_ids):
+        logger.warning("Upgrade callout partial delete: created=%d, removed=%d", len(trigger_ids), patched_triggers)
+    return patched_triggers
 
 
 def _extract_plain_text(elements: list[dict[str, Any]] | None) -> str:
