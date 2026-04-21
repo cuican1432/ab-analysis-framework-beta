@@ -21,7 +21,7 @@ Supported patterns (examples):
 | Not significant | marker/text | `➖ 不显著` |
 | Conclusion highlight | plain paragraph + emoji prefix | `💡 **结论：...**` |
 | Risk highlight | plain paragraph + emoji prefix | `⚠️ **风险：...**` |
-| To confirm | plain paragraph + emoji prefix | `📝 **To Confirm**：...` |
+| To confirm | plain paragraph + emoji + bold | `📝 **To Confirm**：...` |
 | Divider | `---` | `---` |
 
 ### Enhanced Layer (Block API Post-Processing) | 增强层（Block API 后处理）
@@ -51,6 +51,7 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 ### Document Header Block | 文档头部信息
 
 - Place the reference block at the very top of the doc body, right after the H1 title and BEFORE `总结论 / 总建议`.
+- This placement is mandatory. Do not move the reference block below `总结论 / 总建议` or merge it into later sections.
 - Prefer a single merged top block that combines:
   - generation note / report reference
   - PRD / Raw Data / data date / run signature
@@ -205,6 +206,9 @@ Terminology mapping (user-facing):
 ### To Confirm | 待确认清单
 
 - Always include a `## 待确认 (To Confirm)` section near the end of the main body (before `## 数据附录 (Data Appendix)`).
+- Use a short numbered list as the default form for this section.
+- Do NOT render the `To Confirm` section as a Markdown blockquote (`>`).
+- If a one-line reminder is needed outside the main numbered list, use a plain paragraph + emoji + bold label, for example: `📝 **To Confirm**：...`.
 - Each item should include: what is missing/uncertain, where it should come from (PRD / Raw Data / glossary), and the impact on the decision.
 - Prefer a short numbered list (do not bury to-confirm items inside paragraphs).
 
