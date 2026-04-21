@@ -168,6 +168,9 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 
 ### Metric Naming | 指标命名
 
+- Hard rule (all narrative mentions): in plain text paragraphs / bullets (non-table), whenever you cite a metric, use:
+  - `中文意思（完整英文指标全名）` + change marker/value token (for example `↑ +9.0%` / `↓ -9.0%` / `➖ 不显著`)
+  - Do NOT switch to abbreviated or English-only naming in later mentions unless explicitly required by space constraints.
 - In the report body (first appearance), use: `中文解释（完整英文指标名）` + change marker.
   - Example: `发送或点赞消息天数（Send or Like Message Days/Days） ↑ +0.0156%`
 - Chinese meaning source priority:
