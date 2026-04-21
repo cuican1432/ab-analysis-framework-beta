@@ -182,16 +182,44 @@ Canonical spec: `references/core/beautification_spec_v1.2.md`
 - When Raw Data provides only the English name, use the English name as-is; do not invent a Chinese translation. If a bilingual name is needed and the Chinese mapping is uncertain, add the metric to the `to confirm` list.
 - Do NOT output `[数据缺失]` unless the source data is truly missing; if missing, state what is missing and which source should contain it.
 
+### Experiment Info Section | 实验信息段
+
+- In Base Layer, experiment info fields (`实验名称` / `实验描述` / `实验分组` / `实验流量` / `实验周期` etc.) must be rendered as:
+  - one field per line, or
+  - a bullet list.
+- Do NOT place multiple `**字段名**：值` pairs inside the same paragraph line; Feishu markdown import may collapse them into one run-on sentence.
+- Recommended format:
+  - `- **实验名称**：xxx`
+  - `- **实验描述**：xxx`
+  - `- **实验分组**：`
+    then describe arms as sub-bullets or one arm per line.
+
+### Analytical Reasoning | 分析推理段落
+
+- Cross-signal comparison, contradiction analysis, attribution reasoning, and net assessment must be written as narrative paragraphs, not as tables.
+- Tables are reserved for data display (metrics, relative changes, p-values, CI, sample-size-like evidence), not for causal judgment or contradiction resolution.
+- Example: if `举报↑` and `拉黑↓` need to be reconciled, write a short analysis paragraph explaining the relationship and net decision impact; do not use a 4-column reasoning table.
+
 ### Language Discipline | 语言纪律
 
 - The report is written for decision-makers (PM, leads, stakeholders), not for framework developers or data analysts.
-- Framework-internal terms are forbidden in the report body. Translate or rephrase them:
+- Hard rule: the final report must "说人话".
+  - Any framework-internal label, prompt-engineering tag, evidence tag, confidence tier, or methodology shorthand must be rewritten into business-facing natural Chinese before it appears in the report body.
+  - Do not expose raw internal tags such as bracket labels, English evidence labels, confidence buckets, or analysis-framework jargon directly to readers.
+  - Prefer consequence-oriented explanation over taxonomy labels:
+    - explain *why the reader should care*,
+    - *what uncertainty remains*,
+    - and *what action is needed next*.
+- Framework-internal / methodological wording is forbidden in the report body. Non-exhaustive examples:
   - ✗ `PRD scope 外` → ✓ `不在本次实验改动范围内`
-  - ✗ `artifact` → ✓ `数据口径问题导致的虚假信号` 或 `统计噪声`
-  - ✗ `blocking regression` → ✓ `阻断性回退` 或 `明显恶化`
+  - ✗ `artifact` / `caliber artifact` → ✓ `数据口径问题导致的虚假信号` / `统计噪声`
+  - ✗ `blocking regression` → ✓ `阻断性回退` / `明显恶化`
   - ✗ `embedded sheets 无法解析` → ✓ `完整数据需在原始报告中逐项确认`
   - ✗ `归为 [monitoring]` → ✓ `建议持续关注，暂不作为决策阻断项`
-  - ✗ `caliber artifact` → ✓ `指标口径问题导致的虚假显著`
+  - ✗ `novelty 消退风险` → ✓ `实验初期新鲜感效应可能随时间减弱`
+  - ✗ `置信度：Medium/High/Low` → ✓ `受限于 13 天数据，结论稳定性待验证`
+  - ✗ `[direct evidence]` / `[indirect evidence]` → ✓ `有直接数据支撑` / `间接推断`
+  - ✗ `small base effect` → ✓ `基线极低导致相对变化被放大`
 - Metric names follow their original language in Raw Data (usually English); all other text uses Chinese.
 - Avoid mid-sentence language switching. If an English term must appear (for example, a proper noun), wrap it in parentheses after the Chinese equivalent.
 
