@@ -7,6 +7,9 @@
 - Stage C+ beautification: changed from opt-in to auto-trigger when Block API token is available.
 
 ### Changed
+- `ab-analysis-framework-beta` now syncs `tt-social-experiment-wiki` at runtime and uses the synced wiki cache as its default reusable-knowledge source.
+- Analysis read order now prefers `wiki/index.md` → `wiki/core-metrics.md` → relevant `wiki/digests/*`, then deeper wiki evidence pages only when needed.
+- `userdata/ab-knowledge-builder-beta/*` and `references/knowledge/*` are no longer the default runtime knowledge source for `ab-analysis-framework-beta`.
 - 将 `SKILL.md` 收敛为三大主场景：`Experiment Report Generation`、`Report Generation with Temporary Guidance`、`Knowledge Ingestion`。
 - 移除容易产生理解负担的独立 `Glossary` 主场景，相关能力并入 `Knowledge Ingestion` 链路。
 - 将原先单独占位的 `Routing / Reference Map` 降为简短内部说明，不再作为主索引项。
@@ -17,6 +20,7 @@
 ### Added
 - 在 `Knowledge Ingestion` 中明确 confirmed / draft / to confirm 的分流方式。
 - 保留 `Storage Hint`，明确 shared knowledge、runtime local layer 与 memory 的边界。
+- Added `scripts/sync_social_experiment_wiki.py` for cache-first runtime wiki sync against `https://code.byted.org/elaine.cui/tt-social-experiment-wiki`.
 
 ### Packaging
 - 当前版本适合直接重新打包并作为 Mira 可发布 skill 包使用。

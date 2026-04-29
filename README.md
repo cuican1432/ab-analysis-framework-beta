@@ -7,38 +7,38 @@ Source repository for two Mira skills that work together:
 - `ab-knowledge-builder-beta`
   - knowledge-builder skill for glossary / KB ingestion, normalization, and live knowledge maintenance
 
-This repo is meant to be used as a paired setup:
-- the builder skill seeds and maintains the live knowledge store under `userdata/ab-knowledge-builder-beta/*`
-- the framework skill reads that knowledge store and applies the analysis schema
+This repo contains two related but no longer tightly coupled skills:
+- `ab-analysis-framework-beta` reads experiment knowledge from a runtime-synced `tt-social-experiment-wiki` cache
+- `ab-knowledge-builder-beta` remains the local knowledge-builder / curation companion
 
 ---
 
 ## Quick Start | 快速开始
 
-### Step 1. Download these two packages
+### Step 1. Download the package(s) you need
 
 - [Download `ab-knowledge-builder-beta.zip`](https://github.com/cuican1432/ab-analysis-framework-beta/raw/main/release/ab-knowledge-builder-beta.zip)
 - [Download `ab-analysis-framework-beta.zip`](https://github.com/cuican1432/ab-analysis-framework-beta/raw/main/release/ab-analysis-framework-beta.zip)
 
 Do not use the GitHub auto-generated source zip from the repo page.
 
-### Step 2. Install the two packages in Mira
+### Step 2. Install in Mira
 
 1. Open `Mira`
 2. Open `Skills`
 3. Open `Manage Skills`
-4. Upload `ab-knowledge-builder-beta.zip`
-5. Wait until the first upload finishes
+4. If you need local knowledge curation, upload `ab-knowledge-builder-beta.zip`
+5. Wait until that upload finishes
 6. Upload `ab-analysis-framework-beta.zip`
-7. Wait until the second upload finishes
+7. Wait until the upload finishes
 
-Install them in this order:
-- upload the knowledge-builder package first
-- then upload the analysis framework package
+Install order rule:
+- if you install both, upload the knowledge-builder package first
+- if you only need experiment analysis, `ab-analysis-framework-beta` can be installed by itself
 
 ### Step 3. Why this order matters
-- the builder package ships seeded social KB / glossary content inside `userdata/ab-knowledge-builder-beta/*`
-- the framework package can then read that knowledge layer immediately
+- the analysis package now syncs `tt-social-experiment-wiki` at runtime and no longer depends on builder-side `userdata/*` as its default knowledge source
+- the builder package is still useful when you want a separate local workflow for knowledge curation or migration
 
 ### Step 4. What success looks like after upload
 - `SKILL.md` at zip root
@@ -60,10 +60,16 @@ If you want to quickly verify that the framework really works, use one of these 
 
 The simplest validation flow is:
 
-1. Install the two skills above.
+1. Install `ab-analysis-framework-beta` (and `ab-knowledge-builder-beta` only if you need local curation).
 2. In your Mira conversation, reference `ab-analysis-framework-beta`.
 3. Pass the `PRD` link and `Raw Data` link directly into the skill.
-4. Check whether it can follow the doc-first path and produce a structured experiment report.
+4. Make sure the runtime can access `https://code.byted.org/elaine.cui/tt-social-experiment-wiki`.
+5. Check whether it can sync the wiki cache, follow the doc-first path, and produce a structured experiment report.
+
+Runtime prerequisite:
+- `git` must be available in the runtime environment
+- the runtime must be able to access `code.byted.org/elaine.cui/tt-social-experiment-wiki`
+- if the first sync fails and no cache exists yet, the analysis skill cannot complete the reusable-knowledge consult step
 
 Note (beautification):
 - Conclusion / Risk callouts render their own icon. Do not keep a leading inline status emoji (e.g. `💡`, `⚠️`) in the same line, or it may show as "double emoji".
@@ -96,7 +102,7 @@ Raw Data 链接：https://bytedance.larkoffice.com/docx/GTtkd0Ixnos3VExjttecsuKE
 Use this when the main job is:
 - generating an experiment report
 - reading PRD + raw data together in order to write the report
-- applying the stored glossary / KB during that report-writing workflow
+- applying synced experiment wiki knowledge during that report-writing workflow
 
 Typical use cases:
 - A/B 实验观测结束，需要输出实验报告
@@ -131,7 +137,7 @@ Raw Data 链接：[URL]
 
 What the system will do:
 - run the doc-first analysis flow
-- silently read the stored glossary and KB first
+- sync `tt-social-experiment-wiki` first, then read the relevant wiki digest / metric-group / event pages
 - use the existing analysis rules and report schema
 - output a structured experiment report instead of scattered notes
 
@@ -237,57 +243,65 @@ Hard analysis layer:
 - runbook
 - memory / tooling guidance
 
-### `references/knowledge/*`
+### `runtime_cache/tt-social-experiment-wiki/*`
 
-Reading layer:
-- indexes
-- guides
-- interpretation patterns
-- stable examples
-- migration-time references
+Runtime synced knowledge layer for analysis:
+- `wiki/index.md`
+- `wiki/core-metrics.md`
+- `wiki/digests/*`
+- `wiki/metric_groups/index.md`
+- `wiki/metric_families/*`
+- `wiki/events/*`
+- `wiki/fields/*`
+- `wiki/tables/*`
+- `wiki/sql/*`
+- `wiki/dimensions/*`
 
-This layer tells the skills:
-- how to read knowledge
-- how to navigate knowledge
-- how to interpret common patterns
+This is the default knowledge source for `ab-analysis-framework-beta`.
 
 ### `userdata/ab-knowledge-builder-beta/*`
 
-Live knowledge layer:
-- actual glossary content
-- actual KB content
+Builder-owned local layer:
+- glossary content
+- KB content
 - custom rules
-- continuously updated local knowledge
+- continuously updated local knowledge for `ab-knowledge-builder-beta`
 
 Path note:
 
-- Paths like `userdata/...` and `references/...` are relative to the installed skill root (zip root), not the sandbox/workspace `pwd`.
+- Paths like `references/...`, `scripts/...`, `runtime_cache/...`, and `userdata/...` are relative to the installed skill root (zip root), not the sandbox/workspace `pwd`.
 
-This is the layer that should keep growing over time.
+`ab-analysis-framework-beta` no longer treats this builder-owned layer as its default runtime read source.
 
 ---
 
-## Current Live Knowledge Root | 当前 live knowledge 根目录
+## Runtime Wiki Cache | 当前 analysis 运行时知识根目录
+
+```text
+runtime_cache/tt-social-experiment-wiki/
+└── wiki/
+    ├── index.md
+    ├── core-metrics.md
+    ├── digests/*.md
+    ├── metric_groups/index.md
+    ├── metric_families/*.md
+    ├── events/*.md
+    ├── fields/*.md
+    ├── tables/*.md
+    ├── sql/*.md
+    └── dimensions/*.md
+```
+
+This cache is created and refreshed at runtime by `python3 scripts/sync_social_experiment_wiki.py`.
+
+Builder local layer remains separate:
 
 ```text
 userdata/ab-knowledge-builder-beta/
 ├── glossary/
-│   ├── metric_groups.md
-│   ├── metric_groups_table.md
-│   ├── dimensions.md
-│   ├── dimension_values.md
-│   └── metrics_by_group/*.md
 ├── kb/
-│   ├── business_kb.md
-│   ├── dm.md
-│   ├── messaging_support.md
-│   ├── platform_terms.md
-│   ├── story.md
-│   └── ur.md
 └── custom_rules/
 ```
-
-The builder package includes this seeded live knowledge so that a new user starts with a usable social KB instead of an empty userdata layer.
 
 ---
 
@@ -303,7 +317,7 @@ Owns:
 ### `ab-analysis-framework-beta`
 
 Owns:
-- reading the live knowledge layer
+- syncing and reading the runtime wiki cache
 - applying experiment-analysis rules
 - using domain-first recall and metric interpretation logic
 - producing report-ready analysis
@@ -314,8 +328,8 @@ Owns:
 
 This repo uses a one-way linkage rule:
 
-- `ab-knowledge-builder-beta` is the source-of-truth editor for live knowledge content
-- `ab-analysis-framework-beta` is the consumer of that knowledge layer
+- `ab-analysis-framework-beta` consumes a runtime-synced copy of `tt-social-experiment-wiki`
+- `ab-knowledge-builder-beta` remains a separate local curation tool and is not the default runtime knowledge source for analysis
 
 Update the framework skill only when one of these changes:
 - the knowledge path changes
@@ -336,9 +350,9 @@ Do not update the framework skill for pure knowledge-content growth by default.
   - knowledge-builder skill entry
 - `references/core/*`
   - analysis rules and workflow
-- `references/knowledge/*`
-  - reading-layer indexes, guides, and patterns
+- `scripts/sync_social_experiment_wiki.py`
+  - runtime wiki sync helper for analysis
 - `userdata/ab-knowledge-builder-beta/*`
-  - live glossary / KB / custom rules
+  - builder-owned local glossary / KB / custom rules
 - `release/*.zip`
   - Mira install packages

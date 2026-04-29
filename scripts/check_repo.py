@@ -65,8 +65,11 @@ def check_knowledge_layer() -> None:
 
 def main() -> None:
     check_exists(REPO / "references" / "core" / "report_output_rules.md")
+    check_exists(REPO / "scripts" / "sync_social_experiment_wiki.py")
     check_file_contains(REPO / "references" / "core" / "index.md", "report_output_rules.md")
     check_file_contains(REPO / "SKILL.md", "report_output_rules.md")
+    check_file_contains(REPO / "SKILL.md", "sync_social_experiment_wiki.py")
+    check_file_contains(REPO / "references" / "core" / "workflow.md", "sync_social_experiment_wiki.py")
 
     check_knowledge_layer()
 
@@ -77,6 +80,7 @@ def main() -> None:
             "README.md",
             "CHANGELOG.md",
             "references/core/report_output_rules.md",
+            "scripts/sync_social_experiment_wiki.py",
         ],
         must_not_have_prefixes=[],
     )
@@ -95,4 +99,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

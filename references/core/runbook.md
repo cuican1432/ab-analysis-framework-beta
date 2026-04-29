@@ -12,7 +12,7 @@
    - extract setup / config fields from the source header
    - identify the experiment object
    - identify the main metrics and guardrails
-   - consult glossary / KB
+   - sync and consult the experiment wiki
    - build the candidate metric set
 3. Turn Stage A into Stage B logic.
 4. Write Stage C as a decision-oriented memo.
@@ -23,6 +23,21 @@ Practical reminder:
 - start by making sure the source set is complete,
 - then make sure the metric recall set is complete,
 - and only then move into writing.
+
+## When Consulting the Experiment Wiki
+
+- Always sync the wiki first with `python3 scripts/sync_social_experiment_wiki.py`.
+- Use the synced `wiki/index.md` as the single navigation page.
+- For experiment analysis, prefer this order:
+  1. `wiki/index.md`
+  2. `wiki/core-metrics.md`
+  3. relevant `wiki/digests/*`
+  4. `wiki/metric_groups/index.md` only when you need the metric-group body page or need help locating a digest
+  5. then, when needed, `wiki/metric_families/*`, `wiki/events/*`, `wiki/fields/*`, `wiki/tables/*`, `wiki/sql/*`, and `wiki/dimensions/*`
+- Digest pages are the fast routing layer, not the full evidence layer.
+- If a digest points to event / field / family pages, continue reading those pages before making a strong mechanism claim.
+- Do not use `references/knowledge/*`, `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`, or `userdata/ab-knowledge-builder-beta/*` as the default runtime knowledge source for analysis.
+- If wiki sync fails and there is no valid cache, stop and surface the sync problem instead of silently falling back to local glossary / KB files.
 
 ## When Maintaining Glossary / Business Knowledge
 

@@ -43,7 +43,8 @@ If the main goal is to build or normalize the knowledge store itself rather than
 
 ### What the system will do
 - run the doc-first analysis workflow
-- silently prioritize stored metric glossary and business knowledge
+- sync the latest `tt-social-experiment-wiki` `main` branch into a local runtime cache before consulting knowledge
+- use the synced wiki's `index` / `core-metrics` / `metric_groups` / `digests` as the primary knowledge entry points
 - recall core-flag metric groups by default, especially any group marked as company-core, business-core, or sub-business-core
 - identify the experiment's primary business domain first, then apply domain-first recall before ordering metric groups
 - perform attribution, risk review, and evidence-boundary labeling when needed
@@ -128,14 +129,17 @@ MUST NOT:
 
 - Report Generation →
   - `references/core/*`
-  - `references/knowledge/glossary/index.md`
-  - `references/knowledge/kb/index.md`
-  - then follow default read order steps `3-6` below when the case needs knowledge recall
+  - `scripts/sync_social_experiment_wiki.py`
+  - synced wiki: `wiki/index.md`, `wiki/core-metrics.md`, relevant `wiki/digests/*`
+  - then `wiki/metric_groups/index.md` when digest routing needs the metric-group body page
+  - then follow default read order steps `3-7` below when the case needs knowledge recall
 - Temporary Guidance Report →
   - `references/core/*`
-  - `references/knowledge/glossary/index.md`
-  - `references/knowledge/kb/index.md`
-  - current-run temporary guidance first, then follow default read order steps `3-6` below
+  - current-run temporary guidance
+  - `scripts/sync_social_experiment_wiki.py`
+  - synced wiki: `wiki/index.md`, `wiki/core-metrics.md`, relevant `wiki/digests/*`
+  - then `wiki/metric_groups/index.md` when digest routing needs the metric-group body page
+  - then follow default read order steps `3-7` below
 
 ## Core Read Order
 
@@ -148,55 +152,55 @@ When reading `references/core/*`, use this order:
 5. `report_output_rules.md`
 6. `tooling.md`
 
-## Storage Hint
-
-- Knowledge reading layer → `references/knowledge/*`
-- Packaged userdata snapshot (read-only fallback) → `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`
-- Long-term live glossary content → `userdata/ab-knowledge-builder-beta/glossary/*`
-- Long-term live business knowledge → `userdata/ab-knowledge-builder-beta/kb/*`
-- Glossary maintenance rules → `references/knowledge/glossary_guide.md`
-- Business knowledge maintenance rules → `references/knowledge/knowledge_guide.md`
-- Runtime local incremental layer → `userdata/ab-knowledge-builder-beta/*`
-- Memory can help recall, but it is not the main glossary store
+## Runtime Wiki Sync
 
 Path note:
 
-- Paths like `userdata/...` and `references/...` are relative to the skill install root (zip root), not the sandbox/workspace `pwd`.
+- `references/...` and `scripts/...` are relative to the skill install root (zip root), not the sandbox/workspace `pwd`.
+- The synced wiki cache lives under `runtime_cache/tt-social-experiment-wiki/` relative to the skill root.
 
-## Userdata Boundary
+Before consulting knowledge for experiment analysis:
 
-When the user wants to inject local knowledge, local data files, or run-specific reusable notes, use `userdata/ab-knowledge-builder-beta/` as the default writable layer.
+- ALWAYS run the packaged sync script first:
+  - `python3 scripts/sync_social_experiment_wiki.py`
+- The script:
+  - clones the repo on first use
+  - reuses the cache on later runs
+  - tries to refresh to the latest `main`
+  - falls back to the cached copy only when refresh fails
+- If sync fails and there is no valid cache, do not silently fall back to local glossary / KB paths.
 
-- Local glossary additions / partial confirmations → `userdata/ab-knowledge-builder-beta/glossary/`
-- Local business notes / project context → `userdata/ab-knowledge-builder-beta/kb/`
-- User-specific interpretation rules / temporary reusable overrides → `userdata/ab-knowledge-builder-beta/custom_rules/`
+## Deprecated Analysis Sources
 
-Do not casually rewrite packaged shared references during normal ingestion:
+- For `ab-analysis-framework-beta`, do NOT treat these as the default knowledge source anymore:
+  - `references/knowledge/*`
+  - `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`
+  - `userdata/ab-knowledge-builder-beta/*`
+- Those paths may still exist in the repository for builder-side maintenance or historical compatibility, but they are not the runtime consult path for experiment analysis.
 
-- packaged knowledge guides and reading indexes stay in `references/knowledge/*`
-- local evolving and long-term live knowledge should go to `userdata/ab-knowledge-builder-beta/*`
-
-Default read order:
+## Default Knowledge Read Order
 
 1. `references/core/*`
 2. current-run explicit temporary guidance
-3. `references/knowledge/*`
-4. `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*` (read-only fallback when userdata is missing)
-5. `userdata/ab-knowledge-builder-beta/custom_rules/*`
-6. `userdata/ab-knowledge-builder-beta/glossary/*`
-7. `userdata/ab-knowledge-builder-beta/kb/*`
+3. synced wiki `wiki/index.md`
+4. synced wiki `wiki/core-metrics.md`
+5. relevant synced wiki `wiki/digests/*`
+6. synced wiki `wiki/metric_groups/index.md` when you need the metric-group body page or need help locating a missing digest
+7. when needed for attribution or evidence boundaries, continue into synced wiki `wiki/metric_families/*`, `wiki/events/*`, `wiki/fields/*`, `wiki/dimensions/*`, `wiki/tables/*`, and `wiki/sql/*`
 
-If both snapshot and userdata exist, prefer `userdata/` (writable/live) and treat snapshot as a safety net for install/runtime environments that lose userdata.
+Reading rule:
 
-Do not use generic roots such as `userdata/glossary/` or `userdata/kb/`; keep the skill-scoped namespace to avoid collisions with other packages.
+- Do not load the whole wiki by default.
+- Use `wiki/index.md` as the single navigation source.
+- Treat digest pages as the fast entry point, not as the only evidence layer.
 
 Metric recall reminder:
 
 - do not narrow the recall set only to the experiment's most obvious business theme
-- any glossary metric group marked as company-core, business-core, or sub-business-core should be recalled by default
+- any wiki metric group or core-metrics entry marked as company-core, business-core, or sub-business-core should be recalled by default
 - for the experiment's own subdomain, also recall the related `001`, `011`, and `111` metric groups by default
-- if a flagged core group is missing from the source, state that it is unavailable instead of silently dropping it
-- treat glossary `importance` as a base priority
+- if a flagged core group is missing from the source or the synced wiki, state that it is unavailable instead of silently dropping it
+- treat wiki priority hints / digest routing as a base priority
 - do not treat one domain's stored priority table as universal; a `DM`-scoped ordering may need to be re-ranked when the experiment's primary business domain is `Share&Repost`, `Sticker`, `Inbox`, or another domain
 - identify the experiment's primary business domain first, then order metric groups with a domain-first lens:
   - same-domain groups first
@@ -206,13 +210,18 @@ Metric recall reminder:
 
 ## Linkage Rule With `ab-knowledge-builder-beta`
 
-`ab-analysis-framework-beta` reads the live knowledge layer under `userdata/ab-knowledge-builder-beta/*`, but it does not own detailed knowledge-content editing.
+`ab-analysis-framework-beta` no longer reads `ab-knowledge-builder-beta` local files as its default runtime knowledge source.
 
-Compatibility note: some older installs may still place knowledge under `userdata/ab-analysis-framework-beta/*`. If both paths exist, prefer the `ab-knowledge-builder-beta` namespace.
+Instead, it:
+
+- syncs `tt-social-experiment-wiki` from `https://code.byted.org/elaine.cui/tt-social-experiment-wiki`
+- reads the synced wiki cache during analysis
+- keeps `ab-knowledge-builder-beta` as a separate builder/curation skill rather than the default live read layer for experiment reports
 
 Update this framework skill when one of these changes:
 
 - the knowledge path changes
+- the synced wiki repo URL or branch changes
 - the knowledge schema changes
 - the read order changes
 - new required indexes or reading categories are introduced

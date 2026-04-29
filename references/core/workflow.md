@@ -44,11 +44,19 @@ Use this default order for experiment analysis:
      - N / sample size signal (optional when the source provides it)
      - source_location (where in the Raw Data this evidence came from: table name / section / screenshot reference)
    - If p_value is missing, do not claim significance even if the source uses words like "显著"; add it into `to confirm`.
-5. Consult the glossary and KB.
-   - Disambiguate metric names, metric groups, business-domain terms, and caliber rules.
-   - Resolve `userdata/...` and `references/...` paths relative to the skill install root (zip root), not the workspace/sandbox CWD.
-   - Use `references/knowledge/glossary/index.md` and `references/knowledge/kb/index.md` as the reading-order entry pages.
-   - If live `userdata/ab-knowledge-builder-beta/*` is unavailable, fall back to `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`.
+5. Sync and consult the experiment wiki.
+   - Before reading any reusable knowledge, run `python3 scripts/sync_social_experiment_wiki.py`.
+   - Resolve `references/...`, `scripts/...`, and `runtime_cache/...` relative to the skill install root (zip root), not the workspace/sandbox CWD.
+   - Use the synced wiki's `wiki/index.md` as the single navigation source.
+   - Read in this priority order:
+     - `wiki/index.md`
+     - `wiki/core-metrics.md`
+     - relevant `wiki/digests/*`
+     - `wiki/metric_groups/index.md` only when you need the metric-group body page or need help locating a missing digest
+     - then, when attribution or evidence boundaries require deeper proof, continue into `wiki/metric_families/*`, `wiki/events/*`, `wiki/fields/*`, `wiki/dimensions/*`, `wiki/tables/*`, and `wiki/sql/*`
+   - Treat digest pages as the fast experiment-analysis entry point, not as the full evidence layer.
+   - Do not silently fall back to `references/knowledge/*`, `references/knowledge/userdata_snapshot/ab-knowledge-builder-beta/*`, or `userdata/ab-knowledge-builder-beta/*` as default analysis sources.
+   - If wiki sync fails and no valid cache exists, stop and surface the sync failure instead of inventing local knowledge.
 6. Read the PRD carefully.
    - Identify target metrics, guardrails, mechanism clues, and experiment object details.
 7. Build the recall set.
